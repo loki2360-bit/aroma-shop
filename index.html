@@ -3,26 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Производство — Трекер задач</title>
+  <title>Производство — Вход</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <aside class="sidebar">
-      <h2>Участки</h2>
-      <ul id="stations-list"></ul>
-      <button id="admin-btn" style="margin-top: 20px; width: 100%;">Админка</button>
-    </aside>
+  <!-- Экран входа -->
+  <div id="login-screen" class="auth-screen">
+    <div class="auth-form">
+      <h2>Вход в систему</h2>
+      <input type="text" id="login-username" placeholder="Имя оператора" />
+      <input type="password" id="login-password" placeholder="Пароль" />
+      <button id="login-btn">Войти</button>
+      <p id="login-error" style="color: red; margin-top: 8px; display: none;"></p>
+    </div>
+  </div>
 
-    <main class="main-content">
-      <header>
-        <input type="text" id="order-input" placeholder="Номер заказа" />
-        <button id="add-order">Добавить</button>
-        <input type="text" id="search-input" placeholder="Поиск по №" />
-      </header>
+  <!-- Основное приложение (скрыто до входа) -->
+  <div id="app" style="display: none;">
+    <div class="container">
+      <aside class="sidebar">
+        <div style="padding: 8px 0; font-weight: bold;" id="current-user"></div>
+        <h2>Участки</h2>
+        <ul id="stations-list"></ul>
+        <button id="logout-btn" style="margin-top: 20px; width: 100%;">Выйти</button>
+      </aside>
 
-      <div id="orders-container"></div>
-    </main>
+      <main class="main-content">
+        <header>
+          <input type="text" id="order-input" placeholder="Номер заказа" />
+          <button id="add-order">Добавить</button>
+          <input type="text" id="search-input" placeholder="Поиск по №" />
+        </header>
+        <div id="orders-container"></div>
+      </main>
+    </div>
   </div>
 
   <script src="main.js"></script>
