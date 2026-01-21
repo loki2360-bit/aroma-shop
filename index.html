@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Производство — Трекер задач</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2>Участки</h2>
+      <ul id="stations-list"></ul>
+    </aside>
+
+    <main class="main-content">
+      <header>
+        <input type="text" id="order-input" placeholder="Номер заказа" />
+        <button id="add-order">Добавить</button>
+        <input type="text" id="search-input" placeholder="Поиск по №" />
+      </header>
+
+      <div id="orders-container"></div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

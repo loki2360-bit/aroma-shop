@@ -1,0 +1,82 @@
+﻿* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: white;
+  color: black;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  padding: 16px;
+  border-right: 1px solid #ccc;
+}
+
+.sidebar h2 {
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 8px 0;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.sidebar li:hover,
+.sidebar li.active {
+  font-weight: bold;
+}
+
+.main-content {
+  flex: 1;
+  padding: 16px;
+}
+
+header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+input, button {
+  padding: 6px 10px;
+  border: 1px solid #000;
+  background: white;
+  color: black;
+}
+
+button {
+  cursor: pointer;
+}
+
+.order-card {
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid #000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-id {
+  font-weight: bold;
+}
+
+.status-buttons button {
+  margin-left: 8px;
+}
