@@ -7,12 +7,9 @@ let stations = JSON.parse(localStorage.getItem('stations')) || [
 let orders = JSON.parse(localStorage.getItem('orders')) || [];
 let users = JSON.parse(localStorage.getItem('users')) || [];
 
-// Создаём первого пользователя по умолчанию (если нет)
+// Создаём первого пользователя по умолчанию
 if (users.length === 0) {
-  users.push({
-    username: 'оператор',
-    password: '12345' // ← вы можете изменить
-  });
+  users.push({ username: 'оператор', password: '12345' });
   localStorage.setItem('users', JSON.stringify(users));
 }
 
@@ -26,6 +23,11 @@ function saveData() {
   localStorage.setItem('users', JSON.stringify(users));
 }
 
+// === Генерация уникального ID ===
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
 // === DOM ===
 const loginScreen = document.getElementById('login-screen');
 const app = document.getElementById('app');
@@ -34,6 +36,7 @@ const loginPassword = document.getElementById('login-password');
 const loginBtn = document.getElementById('login-btn');
 const loginError = document.getElementById('login-error');
 const logoutBtn = document.getElementById('logout-btn');
+const adminBtn = document.getElementById('admin-btn'); // ← новая кнопка
 const currentUserEl = document.getElementById('current-user');
 
 // === Проверка автоматического входа ===
@@ -55,7 +58,6 @@ function checkAutoLogin() {
 loginBtn.addEventListener('click', () => {
   const username = loginUsername.value.trim();
   const password = loginPassword.value;
-
   const user = users.find(u => u.username === username && u.password === password);
   if (user) {
     currentUser = user;
@@ -130,15 +132,15 @@ function loadOrders(searchTerm = null) {
 
   filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  filtered.forEach((order, index) => {
+  filtered.forEach(order => {
     const card = document.createElement('div');
     card.className = 'order-card';
 
     card.innerHTML = `
       <div class="order-id">#${order.orderId}</div>
       <div class="status-buttons">
-        <button onclick="showMoveDialog(${index})">Переместить</button>
-        <button onclick="closeOrder(${index})">Закрыть</button>
+        <button onclick="showMoveDialog('${order.id}')">Переместить</button>
+        <button onclick="closeOrder('${order.id}')">Закрыть</button>
       </div>
     `;
     container.appendChild(card);
@@ -152,6 +154,7 @@ document.getElementById('add-order').addEventListener('click', () => {
   if (orders.some(o => o.orderId === orderId)) return alert('Такой заказ уже есть');
 
   orders.push({
+    id: generateId(),
     orderId,
     station: stations[0],
     createdAt: new Date().toISOString()
@@ -168,8 +171,11 @@ document.getElementById('search-input').addEventListener('input', (e) => {
   loadOrders(e.target.value.trim());
 });
 
-// === Переместить заказ ===
-window.showMoveDialog = (index) => {
+// === Переместить заказ (по ID!) ===
+window.showMoveDialog = (orderId) => {
+  const order = orders.find(o => o.id === orderId);
+  if (!order) return;
+
   const modal = document.createElement('div');
   modal.id = 'move-modal';
   modal.style = `
@@ -179,15 +185,15 @@ window.showMoveDialog = (index) => {
   `;
 
   let options = stations.map(s => 
-    `<option value="${s}" ${s === orders[index].station ? 'selected' : ''}>${s}</option>`
+    `<option value="${s}" ${s === order.station ? 'selected' : ''}>${s}</option>`
   ).join('');
 
   modal.innerHTML = `
     <div style="background: white; padding: 20px; color: black; max-width: 300px; width: 90%;">
-      <h4>Переместить #${orders[index].orderId}</h4>
+      <h4>Переместить #${order.orderId}</h4>
       <select id="move-select" style="width: 100%; margin: 10px 0;">${options}</select>
       <div>
-        <button onclick="confirmMove(${index})" style="margin-right: 10px;">OK</button>
+        <button onclick="confirmMove('${orderId}')" style="margin-right: 10px;">OK</button>
         <button onclick="closeMoveDialog()">Отмена</button>
       </div>
     </div>
@@ -195,10 +201,13 @@ window.showMoveDialog = (index) => {
   document.body.appendChild(modal);
 };
 
-window.confirmMove = (index) => {
+window.confirmMove = (orderId) => {
   const select = document.getElementById('move-select');
-  orders[index].station = select.value;
-  saveData();
+  const order = orders.find(o => o.id === orderId);
+  if (order) {
+    order.station = select.value;
+    saveData();
+  }
   closeMoveDialog();
   renderStations();
   loadOrders();
@@ -209,14 +218,112 @@ window.closeMoveDialog = () => {
   if (el) el.remove();
 };
 
-// === Закрыть заказ (удалить) ===
-window.closeOrder = (index) => {
-  if (confirm(`Закрыть заказ #${orders[index].orderId}?`)) {
-    orders.splice(index, 1);
+// === Закрыть заказ (по ID!) ===
+window.closeOrder = (orderId) => {
+  const order = orders.find(o => o.id === orderId);
+  if (!order) return;
+
+  if (confirm(`Закрыть заказ #${order.orderId}?`)) {
+    orders = orders.filter(o => o.id !== orderId);
     saveData();
     renderStations();
     loadOrders();
   }
+};
+
+// === Админка ===
+adminBtn.addEventListener('click', () => {
+  const pass = prompt('Админ-пароль:');
+  if (pass !== 'admin123') { // ← замените на свой!
+    alert('Неверный пароль');
+    return;
+  }
+
+  const adminPanel = document.createElement('div');
+  adminPanel.id = 'admin-panel';
+  adminPanel.style = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); z-index: 1000; padding: 20px;
+    display: flex; justify-content: center; align-items: center;
+  `;
+
+  let stationsHtml = stations.map(s => 
+    `<div>${s} <button onclick="deleteStation('${s}')">✕</button></div>`
+  ).join('');
+
+  adminPanel.innerHTML = `
+    <div style="background: white; padding: 20px; color: black; max-width: 500px; width: 90%;">
+      <h3>Админ-панель</h3>
+      
+      <h4>Участки</h4>
+      <div id="admin-stations">${stationsHtml}</div>
+      <input type="text" id="new-station" placeholder="Новый участок" />
+      <button onclick="addStation()">Добавить</button>
+
+      <h4 style="margin-top: 20px;">Заказы</h4>
+      <div id="admin-orders"></div>
+
+      <h4 style="margin-top: 20px;">Пользователи</h4>
+      <div id="admin-users"></div>
+
+      <button onclick="document.body.removeChild(document.getElementById('admin-panel'))" 
+              style="margin-top: 20px;">Закрыть</button>
+    </div>
+  `;
+
+  // Загрузка списка заказов
+  const ordersHtml = orders.map(o => 
+    `<div>#${o.orderId} (${o.station}) 
+       <button onclick="deleteOrder('${o.id}')">Удалить</button>
+     </div>`
+  ).join('');
+  adminPanel.querySelector('#admin-orders').innerHTML = ordersHtml || '<p>Нет заказов</p>';
+
+  // Загрузка списка пользователей
+  const usersHtml = users.map(u => 
+    `<div>${u.username} 
+       <button onclick="deleteUser('${u.username}')">✕</button>
+     </div>`
+  ).join('');
+  adminPanel.querySelector('#admin-users').innerHTML = usersHtml || '<p>Нет пользователей</p>';
+
+  document.body.appendChild(adminPanel);
+});
+
+// === Функции админки ===
+window.addStation = () => {
+  const input = document.getElementById('new-station');
+  const name = input.value.trim();
+  if (!name) return;
+  if (stations.includes(name)) return alert('Участок уже существует');
+  stations.push(name);
+  saveData();
+  location.reload();
+};
+
+window.deleteStation = (name) => {
+  if (stations.length <= 1) return alert('Нужен хотя бы один участок');
+  if (!confirm(`Удалить участок "${name}"?`)) return;
+  stations = stations.filter(s => s !== name);
+  if (!stations.includes(currentStation)) currentStation = stations[0];
+  saveData();
+  location.reload();
+};
+
+window.deleteOrder = (orderId) => {
+  if (confirm(`Удалить заказ #${orders.find(o => o.id === orderId)?.orderId}?`)) {
+    orders = orders.filter(o => o.id !== orderId);
+    saveData();
+    location.reload();
+  }
+};
+
+window.deleteUser = (username) => {
+  if (users.length <= 1) return alert('Нужен хотя бы один пользователь');
+  if (!confirm(`Удалить пользователя "${username}"?`)) return;
+  users = users.filter(u => u.username !== username);
+  saveData();
+  location.reload();
 };
 
 // === Запуск ===
