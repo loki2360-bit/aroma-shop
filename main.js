@@ -1,9 +1,12 @@
 // === Supabase config ===
 // 🔑 ЗАМЕНИТЕ ЭТИ ЗНАЧЕНИЯ НА ВАШИ ИЗ SUPABASE!
-const supabaseUrl = 'https://zitdekerfjocbulmfuyo.supabase.co';
-const supabaseAnonKey = 'sb_publishable_41ROEqZ74QbA4B6_JASt4w_DeRDGXWR';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_41ROEqZ74QbA4B6_JASt4w_DeRDGXWR';
 
+// Создаём клиент Supabase — только один раз!
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// === Участки ===
 const stations = [
   "Распил", "ЧПУ", "Покраска", "Фрезеровка",
   "Шпонировка", "Сборка", "Упаковка"
@@ -11,18 +14,26 @@ const stations = [
 
 let currentStation = stations[0];
 
+// === DOM элементы ===
+const stationsList = document.getElementById('stations-list');
+const ordersContainer = document.getElementById('orders-container');
+const orderInput = document.getElementById('order-input');
+const addOrderBtn = document.getElementById('add-order');
+const searchInput = document.getElementById('search-input');
+const adminBtn = document.getElementById('admin-btn');
+
 // === Загрузка при старте ===
 document.addEventListener('DOMContentLoaded', () => {
   renderStations();
   loadOrders();
 });
 
-// === Рендер участков ===
+// === Рендер участков с счётчиками ===
 async function renderStations() {
   const counts = {};
   stations.forEach(s => counts[s] = 0);
 
-  const { data } = await supabase.from('orders').select('station');
+  const { data } = await supabaseClient.from('orders').select('station');
   if (data) {
     data.forEach(row => {
       if (counts.hasOwnProperty(row.station)) {
@@ -31,8 +42,7 @@ async function renderStations() {
     });
   }
 
-  const list = document.getElementById('stations-list');
-  list.innerHTML = '';
+  stationsList.innerHTML = '';
   stations.forEach(station => {
     const li = document.createElement('li');
     li.textContent = `${station} (${counts[station]})`;
@@ -42,13 +52,13 @@ async function renderStations() {
       renderStations();
       loadOrders();
     });
-    list.appendChild(li);
+    stationsList.appendChild(li);
   });
 }
 
 // === Загрузка заказов ===
 async function loadOrders(searchTerm = null) {
-  let query = supabase.from('orders').select('*');
+  let query = supabaseClient.from('orders').select('*');
 
   if (searchTerm) {
     query = query.ilike('order_id', `%${searchTerm}%`);
@@ -61,11 +71,10 @@ async function loadOrders(searchTerm = null) {
 }
 
 function renderOrders(ordersList) {
-  const container = document.getElementById('orders-container');
-  container.innerHTML = '';
+  ordersContainer.innerHTML = '';
 
   if (ordersList.length === 0) {
-    container.innerHTML = '<p>Нет задач</p>';
+    ordersContainer.innerHTML = '<p>Нет задач</p>';
     return;
   }
 
@@ -92,16 +101,16 @@ function renderOrders(ordersList) {
 
     card.appendChild(idDiv);
     card.appendChild(buttonsDiv);
-    container.appendChild(card);
+    ordersContainer.appendChild(card);
   });
 }
 
 // === Добавление заказа ===
-document.getElementById('add-order').addEventListener('click', async () => {
-  const orderId = document.getElementById('order-input').value.trim();
+addOrderBtn.addEventListener('click', async () => {
+  const orderId = orderInput.value.trim();
   if (!orderId) return alert('Введите номер заказа');
 
-  const { error } = await supabase.from('orders').insert({
+  const { error } = await supabaseClient.from('orders').insert({
     order_id: orderId,
     station: stations[0]
   });
@@ -109,14 +118,14 @@ document.getElementById('add-order').addEventListener('click', async () => {
   if (error) {
     alert('Ошибка: ' + error.message);
   } else {
-    document.getElementById('order-input').value = '';
+    orderInput.value = '';
     if (currentStation === stations[0]) loadOrders();
     renderStations();
   }
 });
 
 // === Поиск ===
-document.getElementById('search-input').addEventListener('input', (e) => {
+searchInput.addEventListener('input', (e) => {
   loadOrders(e.target.value.trim());
 });
 
@@ -156,7 +165,7 @@ function showMoveDialog(orderId) {
 }
 
 async function confirmMove(orderId, newStation) {
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('orders')
     .update({ station: newStation })
     .eq('id', orderId);
@@ -174,7 +183,7 @@ async function confirmMove(orderId, newStation) {
 async function closeOrder(orderId) {
   if (!confirm('Закрыть заказ?')) return;
 
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('orders')
     .delete()
     .eq('id', orderId);
@@ -188,7 +197,7 @@ async function closeOrder(orderId) {
 }
 
 // === Админка ===
-document.getElementById('admin-btn').addEventListener('click', () => {
+adminBtn.addEventListener('click', () => {
   const pass = prompt('Админ-пароль:');
   if (pass !== 'admin123') {
     alert('Неверный пароль');
