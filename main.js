@@ -2,10 +2,10 @@
 // 🔑 ЗАМЕНИТЕ ЭТИ ЗНАЧЕНИЯ НА ВАШИ ИЗ SUPABASE!
 const supabaseUrl = 'https://zitdekerfjocbulmfuyo.supabase.co';
 const supabaseAnonKey = 'sb_publishable_41ROEqZ74QbA4B6_JASt4w_DeRDGXWR';
+// Создаём клиент Supabase — только один раз!
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
-
-// === Участки (можно вынести в БД позже) ===
+// === Участки ===
 const stations = [
   "Распил", "ЧПУ", "Покраска", "Фрезеровка",
   "Шпонировка", "Сборка", "Упаковка"
@@ -27,7 +27,7 @@ const currentUserEl = document.getElementById('current-user');
 
 // === Автоматический вход ===
 async function checkAutoLogin() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await supabaseClient.auth.getSession();
   if (session) {
     currentUser = session.user;
     showApp();
@@ -41,13 +41,14 @@ loginBtn.addEventListener('click', async () => {
   const email = loginUsername.value.trim();
   const password = loginPassword.value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
   });
 
   if (error) {
-    loginError.textContent = 'Ошибка: ' + error.message;
+    console.error('Ошибка входа:', error);
+    loginError.textContent = 'Ошибка: ' + (error.message || 'неизвестная');
     loginError.style.display = 'block';
   } else {
     currentUser = data.user;
@@ -58,7 +59,7 @@ loginBtn.addEventListener('click', async () => {
 
 // === Выход ===
 logoutBtn.addEventListener('click', async () => {
-  await supabase.auth.signOut();
+  await supabaseClient.auth.signOut();
   currentUser = null;
   app.style.display = 'none';
   loginScreen.style.display = 'flex';
@@ -80,8 +81,8 @@ async function renderStations() {
   const counts = {};
   stations.forEach(s => counts[s] = 0);
 
-  const { data } = await supabase.from('orders').select('station');
-  if (data) {
+  const { data, error } = await supabaseClient.from('orders').select('station');
+  if (!error && data) {
     data.forEach(row => {
       if (counts.hasOwnProperty(row.station)) {
         counts[row.station]++;
@@ -106,7 +107,7 @@ async function renderStations() {
 
 // === Загрузка заказов ===
 async function loadOrders(searchTerm = null) {
-  let query = supabase.from('orders').select('*');
+  let query = supabaseClient.from('orders').select('*');
 
   if (searchTerm) {
     query = query.ilike('order_id', `%${searchTerm}%`);
@@ -166,7 +167,7 @@ document.getElementById('add-order').addEventListener('click', async () => {
   const orderId = document.getElementById('order-input').value.trim();
   if (!orderId) return alert('Введите номер заказа');
 
-  const { error } = await supabase.from('orders').insert({
+  const { error } = await supabaseClient.from('orders').insert({
     order_id: orderId,
     station: stations[0]
   });
@@ -221,7 +222,7 @@ function showMoveDialog(orderId) {
 }
 
 async function confirmMove(orderId, newStation) {
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('orders')
     .update({ station: newStation })
     .eq('id', orderId);
@@ -239,7 +240,7 @@ async function confirmMove(orderId, newStation) {
 async function closeOrder(orderId) {
   if (!confirm('Закрыть заказ?')) return;
 
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('orders')
     .delete()
     .eq('id', orderId);
@@ -252,7 +253,7 @@ async function closeOrder(orderId) {
   }
 }
 
-// === Админка (упрощённая — только для управления участниками через БД) ===
+// === Админка ===
 adminBtn.addEventListener('click', () => {
   alert('Админка пока не реализована. Управление участниками — в коде или через Supabase SQL.');
 });
