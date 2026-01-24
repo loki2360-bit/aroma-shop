@@ -192,9 +192,28 @@ async function renderOrders(ordersList) {
     const card = document.createElement('div');
     card.className = 'order-card';
 
+    // Контейнер для ID и возможного комментария
+    const idContainer = document.createElement('div');
+    idContainer.style.position = 'relative';
+    idContainer.style.cursor = 'pointer';
+    idContainer.title = order.comment ? 'Просмотреть комментарий' : 'Добавить комментарий';
+
     const idDiv = document.createElement('div');
     idDiv.className = 'order-id';
     idDiv.textContent = `#${order.order_id}`;
+    
+    // Обработчик клика по номеру заказа
+    idContainer.addEventListener('click', () => {
+      if (order.comment) {
+        // Показать существующий комментарий
+        showCommentView(order.comment);
+      } else {
+        // Добавить новый комментарий
+        showCommentDialog(order.id);
+      }
+    });
+
+    idContainer.appendChild(idDiv);
 
     // Выпадающий список для перемещения
     const moveSelect = document.createElement('select');
@@ -220,13 +239,11 @@ async function renderOrders(ordersList) {
 
         if (error) throw error;
 
-        // Обновляем интерфейс
         loadOrders();
         renderStations();
       } catch (error) {
         console.error('Ошибка перемещения:', error);
         alert('Ошибка при перемещении заказа.');
-        // Возвращаем старое значение
         moveSelect.value = order.station;
       }
     });
@@ -240,10 +257,99 @@ async function renderOrders(ordersList) {
     buttonsDiv.appendChild(moveSelect);
     buttonsDiv.appendChild(closeBtn);
 
-    card.appendChild(idDiv);
+    card.appendChild(idContainer);
     card.appendChild(buttonsDiv);
     ordersContainer.appendChild(card);
   });
+}
+
+// === Диалог добавления комментария ===
+function showCommentDialog(orderId) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.id = 'comment-modal';
+
+  const textarea = document.createElement('textarea');
+  textarea.placeholder = 'Введите комментарий к заказу...';
+  textarea.rows = 4;
+
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Сохранить';
+  saveBtn.addEventListener('click', async () => {
+    const comment = textarea.value.trim();
+    if (!comment) {
+      alert('Комментарий не может быть пустым');
+      return;
+    }
+
+    try {
+      const { error } = await supabaseClient
+        .from('orders')
+        .update({ comment: comment })
+        .eq('id', orderId);
+
+      if (error) throw error;
+
+      document.getElementById('comment-modal')?.remove();
+      loadOrders();
+    } catch (error) {
+      console.error('Ошибка добавления комментария:', error);
+      alert('Ошибка при добавлении комментария.');
+    }
+  });
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Отмена';
+  cancelBtn.addEventListener('click', () => {
+    document.getElementById('comment-modal')?.remove();
+  });
+
+  const content = document.createElement('div');
+  content.className = 'modal-content';
+  content.innerHTML = '<h4>Добавить комментарий</h4>';
+  content.appendChild(textarea);
+  content.appendChild(saveBtn);
+  content.appendChild(cancelBtn);
+
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+}
+
+// === Просмотр комментария ===
+function showCommentView(comment) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.id = 'comment-view-modal';
+
+  const content = document.createElement('div');
+  content.className = 'modal-content';
+  
+  const title = document.createElement('h4');
+  title.textContent = 'Комментарий к заказу';
+  title.style.textAlign = 'center';
+  title.style.marginBottom = '12px';
+
+  const commentText = document.createElement('div');
+  commentText.textContent = comment;
+  commentText.style.fontSize = '14px';
+  commentText.style.lineHeight = '1.5';
+  commentText.style.padding = '12px';
+  commentText.style.backgroundColor = '#f8f9fa';
+  commentText.style.borderRadius = '8px';
+  commentText.style.border = '1px solid #e9ecef';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = 'Закрыть';
+  closeBtn.addEventListener('click', () => {
+    document.getElementById('comment-view-modal')?.remove();
+  });
+
+  content.appendChild(title);
+  content.appendChild(commentText);
+  content.appendChild(closeBtn);
+
+  modal.appendChild(content);
+  document.body.appendChild(modal);
 }
 
 // === Добавление заказа ===
