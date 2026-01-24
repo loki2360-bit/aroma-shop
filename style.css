@@ -437,3 +437,65 @@ body {
     font-size: 14px;
   }
 }
+/* === Логотип в шапке === */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  gap: 10px;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.app-logo:hover {
+  transform: scale(1.1);
+}
+
+/* Для мобильных устройств */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .header-left {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .app-logo {
+    width: 40px;
+    height: 40px;
+  }
+}
