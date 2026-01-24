@@ -31,6 +31,9 @@ const adminControls = document.getElementById('admin-controls');
 const newStationInput = document.getElementById('new-station');
 const addStationBtn = document.getElementById('add-station');
 
+// === Кэш участков ===
+let cachedStations = null;
+
 // === Выход из системы ===
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem('userRole');
@@ -108,9 +111,15 @@ async function initApp() {
 
 // === Загрузка участков из базы ===
 async function loadStations() {
+  if (cachedStations !== null) {
+    return cachedStations;
+  }
+  
   const { data, error } = await supabaseClient.from('stations').select('name').order('name', { ascending: true });
   if (error) throw error;
-  return data ? data.map(s => s.name) : [];
+  
+  cachedStations = data ? data.map(s => s.name) : [];
+  return cachedStations;
 }
 
 // === Рендер участков ===
@@ -168,13 +177,16 @@ async function loadOrders(searchTerm = null) {
   }
 }
 
-function renderOrders(ordersList) {
+// === Отображение заказов ===
+async function renderOrders(ordersList) {
   ordersContainer.innerHTML = '';
 
   if (ordersList.length === 0) {
     ordersContainer.innerHTML = '<p style="text-align:center; color:#6c757d;">Нет задач</p>';
     return;
   }
+
+  const stations = await loadStations();
 
   ordersList.forEach(order => {
     const card = document.createElement('div');
@@ -184,9 +196,40 @@ function renderOrders(ordersList) {
     idDiv.className = 'order-id';
     idDiv.textContent = `#${order.order_id}`;
 
-    const moveBtn = document.createElement('button');
-    moveBtn.textContent = 'Переместить';
-    moveBtn.addEventListener('click', () => showMoveDialog(order.id));
+    // Выпадающий список для перемещения
+    const moveSelect = document.createElement('select');
+    moveSelect.className = 'move-select';
+    
+    stations.forEach(station => {
+      const opt = document.createElement('option');
+      opt.value = station;
+      opt.textContent = station;
+      if (station === order.station) {
+        opt.selected = true;
+      }
+      moveSelect.appendChild(opt);
+    });
+
+    moveSelect.addEventListener('change', async () => {
+      const newStation = moveSelect.value;
+      try {
+        const { error } = await supabaseClient
+          .from('orders')
+          .update({ station: newStation })
+          .eq('id', order.id);
+
+        if (error) throw error;
+
+        // Обновляем интерфейс
+        loadOrders();
+        renderStations();
+      } catch (error) {
+        console.error('Ошибка перемещения:', error);
+        alert('Ошибка при перемещении заказа.');
+        // Возвращаем старое значение
+        moveSelect.value = order.station;
+      }
+    });
 
     const closeBtn = document.createElement('button');
     closeBtn.textContent = 'Закрыть';
@@ -194,7 +237,7 @@ function renderOrders(ordersList) {
 
     const buttonsDiv = document.createElement('div');
     buttonsDiv.className = 'status-buttons';
-    buttonsDiv.appendChild(moveBtn);
+    buttonsDiv.appendChild(moveSelect);
     buttonsDiv.appendChild(closeBtn);
 
     card.appendChild(idDiv);
@@ -238,65 +281,6 @@ searchInput.addEventListener('input', (e) => {
   loadOrders(e.target.value.trim());
 });
 
-// === Переместить заказ ===
-async function showMoveDialog(orderId) {
-  const modal = document.createElement('div');
-  modal.className = 'modal-overlay';
-  modal.id = 'move-modal';
-
-  const select = document.createElement('select');
-  try {
-    const stations = await loadStations();
-    stations.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s;
-      opt.textContent = s;
-      select.appendChild(opt);
-    });
-  } catch (error) {
-    console.error('Ошибка загрузки участков для перемещения:', error);
-    select.innerHTML = '<option>Ошибка загрузки</option>';
-  }
-
-  const okBtn = document.createElement('button');
-  okBtn.textContent = 'OK';
-  okBtn.addEventListener('click', () => confirmMove(orderId, select.value));
-
-  const cancelBtn = document.createElement('button');
-  cancelBtn.textContent = 'Отмена';
-  cancelBtn.addEventListener('click', () => {
-    document.getElementById('move-modal')?.remove();
-  });
-
-  const content = document.createElement('div');
-  content.className = 'modal-content';
-  content.innerHTML = '<h4>Переместить заказ</h4>';
-  content.appendChild(select);
-  content.appendChild(okBtn);
-  content.appendChild(cancelBtn);
-
-  modal.appendChild(content);
-  document.body.appendChild(modal);
-}
-
-async function confirmMove(orderId, newStation) {
-  try {
-    const { error } = await supabaseClient
-      .from('orders')
-      .update({ station: newStation })
-      .eq('id', orderId);
-
-    if (error) throw error;
-
-    document.getElementById('move-modal')?.remove();
-    loadOrders();
-    renderStations();
-  } catch (error) {
-    console.error('Ошибка перемещения заказа:', error);
-    alert('Ошибка при перемещении заказа.');
-  }
-}
-
 // === Закрыть заказ ===
 async function closeOrder(orderId) {
   if (!confirm('Закрыть заказ?')) return;
@@ -332,6 +316,7 @@ addStationBtn.addEventListener('click', async () => {
     if (error) throw error;
     
     newStationInput.value = '';
+    cachedStations = null; // Сбрасываем кэш
     renderStations();
   } catch (error) {
     console.error('Ошибка добавления участка:', error);
@@ -358,6 +343,7 @@ stationsList.addEventListener('contextmenu', async (e) => {
       
       if (error) throw error;
       
+      cachedStations = null; // Сбрасываем кэш
       renderStations();
     } catch (error) {
       console.error('Ошибка удаления участка:', error);
