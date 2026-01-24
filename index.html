@@ -33,17 +33,21 @@
       </aside>
 
       <main class="main-content">
-        <div class="header">
-          <input type="text" id="order-input" placeholder="номер заказа" />
-          <button id="add-order">добавить</button>
-          <input type="text" id="search-input" placeholder="поиск по №" />
-        </div>
-        <div class="orders-wrapper">
-          <div id="orders-container" class="orders-container"></div>
-        </div>
-      </main>
+  <div class="header">
+    <div class="header-left">
+      <input type="text" id="order-input" placeholder="номер заказа" />
+      <button id="add-order">добавить</button>
+      <input type="text" id="search-input" placeholder="поиск по №" />
+    </div>
+    <div class="header-right">
+      <!-- Логотип -->
+      <img src="logo.png" alt="Логотип" class="app-logo" />
     </div>
   </div>
+  <div class="orders-wrapper">
+    <div id="orders-container" class="orders-container"></div>
+  </div>
+</main>
 
   <script src="main.js"></script>
 </body>
