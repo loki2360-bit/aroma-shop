@@ -8,21 +8,47 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <div class="container">
-    <aside class="sidebar">
-      <h2>Участки</h2>
-      <ul id="stations-list"></ul>
-      <button id="admin-btn">Админка</button>
-    </aside>
+  <!-- Экран входа -->
+  <div id="login-screen" class="auth-screen">
+    <div class="auth-form">
+      <h2>Вход в систему</h2>
+      <input type="password" id="login-password" placeholder="Пароль" />
+      <button id="login-btn">Войти</button>
+      <p id="login-error" style="color: red; margin-top: 8px; display: none;"></p>
+    </div>
+  </div>
 
-    <main class="main-content">
-      <div class="header">
-        <input type="text" id="order-input" placeholder="номер заказа" />
-        <button id="add-order">добавить</button>
-        <input type="text" id="search-input" placeholder="поиск по №" />
-      </div>
-      <div id="orders-container" class="orders-container"></div>
-    </main>
+  <!-- Основное приложение -->
+  <div id="app" style="display: none;">
+    <div class="container">
+      <aside class="sidebar">
+        <div class="user-role" id="user-role">Оператор</div>
+        <h2>Участки</h2>
+        <ul id="stations-list"></ul>
+        <div id="admin-controls" style="display: none;">
+          <input type="text" id="new-station" placeholder="Новый участок" />
+          <button id="add-station">Добавить</button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <div class="header">
+          <input type="text" id="order-input" placeholder="номер заказа" />
+          <select id="tag-select">
+            <option value="">Выберите тег</option>
+            <option value="наличник">Наличник</option>
+            <option value="панель">Панель</option>
+            <option value="полотно">Полотно</option>
+            <option value="фурнитура">Фурнитура</option>
+          </select>
+          <button id="add-order">добавить</button>
+          <input type="text" id="search-input" placeholder="поиск по №" />
+        </div>
+        <div class="orders-wrapper">
+          <div id="orders-container" class="orders-container"></div>
+        </div>
+      </main>
+    </div>
   </div>
 
   <script src="main.js"></script>
