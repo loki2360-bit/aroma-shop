@@ -297,7 +297,7 @@ async function renderOrders(ordersList) {
     // Проверяем, был ли заказ принят
     if (order.accepted) {
       acceptBtn.classList.add('active');
-      acceptBtn.textContent = '';
+      acceptBtn.textContent = ''; // Убираем текст
       acceptedStatus.style.display = 'inline';
       acceptBtn.disabled = true;
       acceptBtn.style.cursor = 'default';
