@@ -348,14 +348,15 @@ body {
   color: #495057;
 }
 
-.status-buttons {
+/* === Контейнер правых элементов (переключатель + выбор участка + закрыть) */
+.right-controls {
   display: flex;
-  gap: 8px;
   align-items: center;
+  gap: 8px;
 }
 
 /* === Переключатель "Принять" === */
-.accept-toggle-container {
+.accept-status-container {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -396,7 +397,7 @@ body {
   left: 22px;
 }
 
-/* === Стили для выпадающего списка перемещения === */
+/* === Стили для выпадающего списка и кнопки */
 .move-select {
   padding: 8px 12px;
   border: 1px solid #ced4da;
@@ -417,21 +418,20 @@ body {
   border-color: #dc3545;
 }
 
-.status-buttons button {
+.right-controls button {
   background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   color: white;
   border: none;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
-  margin-left: 6px;
   font-weight: 600;
   transition: all 0.2s ease;
-  min-width: 90px;
+  min-width: 80px;
 }
 
-.status-buttons button:hover {
+.right-controls button:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
 }
@@ -563,7 +563,7 @@ body {
     gap: 10px;
   }
 
-  .status-buttons {
+  .right-controls {
     justify-content: center;
     gap: 6px;
   }
@@ -573,7 +573,7 @@ body {
     width: 100%;
   }
 
-  .status-buttons button {
+  .right-controls button {
     flex: 1;
     min-width: auto;
     padding: 10px;
