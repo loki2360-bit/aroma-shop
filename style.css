@@ -92,6 +92,39 @@ body {
   font-weight: 600;
 }
 
+/* Обычный оператор - серый */
+.user-role.operator {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+/* Премиум оператор - бирюзовый с переливающимся свечением */
+.user-role.premium {
+  background: linear-gradient(135deg, #21f1a8 0%, #0fd98c 100%);
+  color: #000;
+  font-weight: bold;
+  position: relative;
+  box-shadow: 0 0 10px rgba(33, 241, 168, 0.6);
+  animation: premiumGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes premiumGlow {
+  from {
+    box-shadow: 0 0 8px rgba(33, 241, 168, 0.5),
+                0 0 16px rgba(33, 241, 168, 0.3);
+  }
+  to {
+    box-shadow: 0 0 16px rgba(33, 241, 168, 0.8),
+                0 0 32px rgba(33, 241, 168, 0.5);
+  }
+}
+
+/* Администратор - красный */
+.user-role.admin {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+}
+
 .sidebar h2 {
   margin-bottom: 12px;
   font-size: 14px;
@@ -164,94 +197,6 @@ body {
 #admin-controls button:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
-}
-
-/* === Кнопка получения кода === */
-.get-code-btn {
-  display: block;
-  width: 100%;
-  padding: 8px 12px;
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  text-align: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(108, 117, 125, 0.3);
-}
-
-.get-code-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
-  background: linear-gradient(135deg, #7a8288 0%, #687076 100%);
-}
-
-/* === Премиум-секция === */
-.premium-section {
-  display: flex;
-  gap: 6px;
-  margin-top: 12px;
-}
-
-.premium-section input {
-  flex: 1;
-  padding: 6px 10px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 12px;
-  background: rgba(255,255,255,0.1);
-  color: white;
-}
-
-.premium-section input::placeholder {
-  color: rgba(255,255,255,0.7);
-}
-
-.premium-section button {
-  padding: 6px 10px;
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.premium-section button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
-}
-
-/* === Выбор эмодзи === */
-#emoji-selector {
-  margin-top: 12px;
-}
-
-.emoji-options {
-  display: flex;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.emoji-options span {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 16px;
-}
-
-.emoji-options span:hover {
-  background: rgba(255,255,255,0.2);
-  transform: scale(1.1);
 }
 
 .main-content {
@@ -376,7 +321,7 @@ body {
 
 .status-buttons {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
@@ -418,6 +363,45 @@ body {
 .status-buttons button:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+}
+
+/* === Индикатор "Принять" — минимальный, бирюзовый === */
+.accept-btn {
+  padding: 3px 6px;
+  background: linear-gradient(135deg, #adb5bd 0%, #999 100%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: auto;
+  height: 22px;
+  line-height: 1;
+  font-weight: normal;
+}
+
+.accept-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px rgba(173, 181, 189, 0.4);
+}
+
+/* Кнопка после нажатия — бирюзовая с анимацией */
+.accept-btn.active {
+  background: linear-gradient(135deg, #21f1a8 0%, #0fd98c 100%);
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 8px rgba(33, 241, 168, 0.6);
+  animation: premiumGlow 2s ease-in-out infinite alternate;
+}
+
+/* Надпись "принято" — только после нажатия */
+.accepted-status {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 9px;
+  color: #6c757d;
+  line-height: 1;
 }
 
 /* === Модальное окно === */
@@ -563,92 +547,4 @@ body {
     padding: 10px;
     font-size: 14px;
   }
-}
-/* === Стили для ролей === */
-.user-role {
-  padding: 6px 10px;
-  border-radius: 6px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-/* Обычный оператор - серый */
-.user-role.operator {
-  background: rgba(255,255,255,0.1);
-  color: white;
-}
-
-/* Премиум оператор - бирюзовый с переливающимся свечением */
-.user-role.premium {
-  background: linear-gradient(135deg, #21f1a8 0%, #0fd98c 100%);
-  color: #000;
-  font-weight: bold;
-  position: relative;
-  box-shadow: 0 0 10px rgba(33, 241, 168, 0.6);
-  animation: premiumGlow 2s ease-in-out infinite alternate;
-}
-
-@keyframes premiumGlow {
-  from {
-    box-shadow: 0 0 8px rgba(33, 241, 168, 0.5),
-                0 0 16px rgba(33, 241, 168, 0.3);
-  }
-  to {
-    box-shadow: 0 0 16px rgba(33, 241, 168, 0.8),
-                0 0 32px rgba(33, 241, 168, 0.5);
-  }
-
-/* Администратор - красный */
-.user-role.admin {
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-  color: white;
-}
-/* === Индикатор "Принять" — компактная версия === */
-.accept-btn {
-  padding: 4px 8px;
-  background: linear-gradient(135deg, #adb5bd 0%, #999 100%);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: auto;
-  height: 24px;
-  line-height: 1;
-}
-
-.accept-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 1px 3px rgba(173, 181, 189, 0.5);
-}
-
-/* Кнопка после нажатия */
-.accept-btn.active {
-  background: linear-gradient(135deg, #21f1a8 0%, #0fd98c 100%);
-  color: #000;
-  font-weight: bold;
-  box-shadow: 0 0 8px rgba(33, 241, 168, 0.6);
-  animation: premiumGlow 2s ease-in-out infinite alternate;
-}
-
-@keyframes premiumGlow {
-  from {
-    box-shadow: 0 0 6px rgba(33, 241, 168, 0.5),
-                0 0 12px rgba(33, 241, 168, 0.3);
-  }
-  to {
-    box-shadow: 0 0 12px rgba(33, 241, 168, 0.8),
-                0 0 24px rgba(33, 241, 168, 0.5);
-  }
-}
-
-/* Надпись "принято" — компактная */
-.accepted-status {
-  display: inline-block;
-  margin-left: 4px;
-  font-size: 10px;
-  color: #6c757d;
-  line-height: 1;
 }
