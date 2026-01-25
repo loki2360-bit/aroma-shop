@@ -339,13 +339,26 @@ function showCommentView(comment) {
   title.style.marginBottom = '12px';
 
   const commentText = document.createElement('div');
-  commentText.textContent = comment;
-  commentText.style.fontSize = '14px';
-  commentText.style.lineHeight = '1.5';
-  commentText.style.padding = '12px';
-  commentText.style.backgroundColor = '#f8f9fa';
-  commentText.style.borderRadius = '8px';
-  commentText.style.border = '1px solid #e9ecef';
+  
+  // Проверяем роль пользователя
+  if (currentUserRole === 'admin' || currentUserRole === 'premium') {
+    // Полный доступ
+    commentText.textContent = comment;
+    commentText.style.fontSize = '14px';
+    commentText.style.lineHeight = '1.5';
+    commentText.style.padding = '12px';
+    commentText.style.backgroundColor = '#f8f9fa';
+    commentText.style.borderRadius = '8px';
+    commentText.style.border = '1px solid #e9ecef';
+  } else {
+    // Ограниченный доступ для обычного оператора
+    commentText.innerHTML = `
+      <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+        <div style="font-size: 16px; font-weight: bold; color: #dc3545; margin-bottom: 10px;">🔒 Доступ ограничен</div>
+        <div style="font-size: 14px; color: #6c757d;">Только для админа или премиум-пользователя</div>
+      </div>
+    `;
+  }
 
   const closeBtn = document.createElement('button');
   closeBtn.textContent = 'Закрыть';
