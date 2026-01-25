@@ -498,47 +498,55 @@ body {
 
   .main-content {
     order: 1;
-    padding: 12px;
+    padding: 10px;
   }
 
+  /* === Уменьшенная шапка === */
   .header {
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 12px;
   }
 
   .header-left {
     flex-direction: column;
-    gap: 8px;
-  }
-
-  .header-right {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .app-title {
-    font-size: 20px;
-    margin-left: 6px;
+    gap: 6px;
   }
 
   .header input,
   .header button {
     height: auto;
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 6px 10px;
+    font-size: 13px;
     min-width: auto;
+    border-radius: 6px;
   }
 
   .header button {
     flex: 1;
   }
 
+  /* === Уменьшенный логотип / название === */
+  .header-right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .app-title {
+    font-size: 18px;
+    margin-left: 4px;
+    font-weight: 600;
+  }
+
   .order-card {
-    padding: 12px;
+    padding: 10px;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
+    border-radius: 10px;
   }
 
   .right-controls {
@@ -549,12 +557,37 @@ body {
   .move-select {
     min-width: auto;
     width: 100%;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 6px;
   }
 
   .right-controls button {
     flex: 1;
     min-width: auto;
-    padding: 10px;
-    font-size: 14px;
+    padding: 8px;
+    font-size: 13px;
+    border-radius: 6px;
+  }
+
+  /* Уменьшаем переключатель */
+  .toggle-switch {
+    width: 36px;
+    height: 18px;
+  }
+
+  .toggle-switch .toggle-slider {
+    width: 14px;
+    height: 14px;
+    top: 2px;
+    left: 2px;
+  }
+
+  .toggle-switch.active .toggle-slider {
+    left: 20px;
+  }
+
+  .accept-label {
+    font-size: 11px;
   }
 }
