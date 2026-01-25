@@ -525,56 +525,66 @@ body {
 
   .main-content {
     order: 1;
-    padding: 10px;
+    padding: 8px;
   }
 
-  /* === Уменьшенная шапка === */
+  /* === Компактная шапка === */
   .header {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
     gap: 6px;
-    padding: 8px;
+    padding: 6px 8px;
     border-radius: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    min-height: auto;
   }
 
   .header-left {
-    flex-direction: column;
+    display: flex;
     gap: 6px;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: auto;
   }
 
+  /* Поля ввода и селекты */
   .header input,
   .header select {
     height: auto;
-    padding: 6px 10px;
-    font-size: 13px;
+    padding: 5px 8px;
+    font-size: 12px;
     min-width: auto;
-    border-radius: 6px;
+    border-radius: 5px;
+    flex: none;
   }
 
-  /* === Кнопка "добавить" на мобильных — с тем же свечением === */
-  .header button {
+  /* Поиск — растягивается по центру */
+  #search-input {
     flex: 1;
-    padding: 8px 12px;
-    font-size: 14px;
-    min-width: auto;
-    border-radius: 6px;
+    min-width: 80px;
+  }
+
+  /* Кнопка "добавить" — фиксированная ширина слева */
+  #add-order {
+    min-width: 70px;
+    padding: 5px 8px;
+    font-size: 12px;
+    border-radius: 5px;
     /* Сохраняем свечение */
     box-shadow: 
-      0 0 6px rgba(255, 255, 255, 0.3),
-      0 0 12px rgba(220, 53, 69, 0.25);
+      0 0 5px rgba(255, 255, 255, 0.3),
+      0 0 10px rgba(220, 53, 69, 0.25);
+  }
+
+  /* Выбор позиций — справа, фиксированная ширина */
+  #position-filter {
+    min-width: 100px;
+    max-width: 120px;
   }
 
   /* === Уменьшенный логотип / название === */
   .header-right {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .app-title {
-    font-size: 18px;
-    margin-left: 4px;
-    font-weight: 600;
+    display: none; /* Скрываем название ZyNymbo на мобильных */
   }
 
   .order-card {
