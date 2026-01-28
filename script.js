@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // --- ПРОВЕРКА ЗАГРУЗКИ ---
+  // Проверка загрузки Supabase
   if (typeof createClient !== 'function') {
-    console.error('❌ Supabase SDK не загружен! Проверьте index.html.');
-    alert('Ошибка: Supabase не подключён. Обратитесь к разработчику.');
+    console.error('❌ Supabase SDK не загружен!');
+    document.getElementById('create-btn').addEventListener('click', () => {
+      alert('Ошибка: Supabase не подключён. Проверьте index.html.');
+    });
     return;
   }
 
-  // ⚠️ ЗАМЕНИТЕ НА ВАШИ ДАННЫЕ!
+  // ⚠️ ЗАМЕНИТЕ НИЖЕ НА ВАШИ ДАННЫЕ ИЗ SUPABASE!
   const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_41ROEqZ74QbA4B6_JASt4w_DeRDGXWR';
 
@@ -17,7 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const orderInput = document.getElementById('order-number');
   const typeSelect = document.getElementById('item-type');
   const wsSelect = document.getElementById('workstation');
+  const searchInput = document.getElementById('search-input');
 
+  // Загрузка данных
   async function loadItems() {
     try {
       const { data, error } = await supabase
@@ -28,29 +32,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (error) throw error;
 
-      itemsList.innerHTML = data.length
-        ? data.map(item => `
-            <div class="item-row">
-              <div><strong>${item.order_number}</strong> • ${item.item_type}</div>
-              <select onchange="moveItem('${item.id}', this.value)">
-                ${['распил','чпу','фанеровка','шлифовка','сборка','покраска','пвх','упаковка']
-                  .map(ws => `<option value="${ws}" ${ws === item.current_workstation ? 'selected' : ''}>${ws}</option>`)
-                  .join('')}
-              </select>
-            </div>
-          `).join('')
-        : '<p>Нет записей</p>';
+      renderItems(data || []);
     } catch (err) {
-      console.error('Загрузка:', err);
+      console.error('Ошибка загрузки:', err);
       itemsList.innerHTML = `<p style="color:red;">Ошибка: ${err.message}</p>`;
     }
   }
 
-  window.moveItem = async (id, ws) => {
+  // Отображение списка
+  function renderItems(items) {
+    const term = (searchInput.value || '').toLowerCase();
+    const filtered = items.filter(item =>
+      item.order_number.toLowerCase().includes(term)
+    );
+
+    itemsList.innerHTML = filtered.length
+      ? filtered.map(item => `
+          <div class="item-row">
+            <div>
+              <strong>${escapeHtml(item.order_number)}</strong>
+              <div class="item-type">${escapeHtml(item.item_type)}</div>
+            </div>
+            <select onchange="moveItem('${item.id}', this.value)">
+              ${['распил','чпу','фанеровка','шлифовка','сборка','покраска','пвх','упаковка']
+                .map(ws => `<option value="${ws}" ${ws === item.current_workstation ? 'selected' : ''}>${ws}</option>`)
+                .join('')}
+            </select>
+          </div>
+        `).join('')
+      : '<p>Нет записей</p>';
+  }
+
+  // Защита от XSS
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Перемещение
+  window.moveItem = async (id, newWs) => {
     try {
       const { error } = await supabase
         .from('items')
-        .update({ current_workstation: ws })
+        .update({ current_workstation: newWs })
         .eq('id', id);
       if (!error) loadItems();
     } catch (err) {
@@ -58,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Создание
   createBtn.addEventListener('click', async () => {
     const order = (orderInput.value || '').trim();
     const type = typeSelect.value;
@@ -81,9 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (err) {
       console.error('Создание:', err);
-      alert('Ошибка создания');
+      alert('Ошибка создания записи');
     }
   });
 
+  // Поиск
+  searchInput.addEventListener('input', loadItems);
+
+  // Запуск
   loadItems();
 });
