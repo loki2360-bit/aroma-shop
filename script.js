@@ -1,12 +1,19 @@
-// === НАСТРОЙКИ SUPABASE ===
-// ⚠️ ЗАМЕНИТЕ НА ВАШИ ДАННЫЕ ИЗ SUPABASE!
-const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_41ROEqZ74QbA4B6_JASt4w_DeRDGXWR';
+document.addEventListener('DOMContentLoaded', function () {
+  // Проверка: если Supabase не загружен — показать ошибку
+  if (typeof createClient !== 'function') {
+    console.error('❌ Supabase SDK не загружен! Проверьте index.html');
+    document.getElementById('create-btn')?.addEventListener('click', () => {
+      alert('Ошибка: Supabase не подключён. Обратитесь к разработчику.');
+    });
+    return;
+  }
 
-// === ПОДКЛЮЧЕНИЕ ===
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // ⚠️ ЗАМЕНИТЕ НА ВАШИ ДАННЫЕ!
+  const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_41ROEqZ74QbA4B6_JASt4w_DeRDGXWR';
 
-document.addEventListener('DOMContentLoaded', async function () {
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   const createBtn = document.getElementById('create-btn');
   const itemsList = document.getElementById('items-list');
   const orderInput = document.getElementById('order-number');
@@ -14,7 +21,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   const wsSelect = document.getElementById('workstation');
   const searchInput = document.getElementById('search-input');
 
-  // === ЗАГРУЗКА ДАННЫХ ===
   async function loadItems() {
     try {
       const { data, error } = await supabase
@@ -25,58 +31,40 @@ document.addEventListener('DOMContentLoaded', async function () {
 
       if (error) throw error;
 
-      renderItems(data || []);
+      itemsList.innerHTML = data.length
+        ? data.map(item => `
+            <div class="item-row">
+              <div>
+                <strong>${item.order_number}</strong>
+                <div class="item-type">${item.item_type}</div>
+              </div>
+              <select onchange="moveItem('${item.id}', this.value)">
+                ${['распил','чпу','фанеровка','шлифовка','сборка','покраска','пвх','упаковка']
+                  .map(ws => `<option value="${ws}" ${ws === item.current_workstation ? 'selected' : ''}>${ws}</option>`)
+                  .join('')}
+              </select>
+            </div>
+          `).join('')
+        : '<p>Нет записей</p>';
     } catch (err) {
-      console.error('❌ Ошибка загрузки:', err);
-      itemsList.innerHTML = '<p style="color:red;">Ошибка подключения к базе</p>';
+      console.error('Загрузка данных:', err);
+      itemsList.innerHTML = `<p style="color:red;">Ошибка: ${err.message || 'неизвестно'}</p>`;
     }
   }
 
-  // === ОТОБРАЖЕНИЕ ===
-  function renderItems(items) {
-    const term = (searchInput.value || '').toLowerCase();
-    const filtered = items.filter(item =>
-      item.order_number.toLowerCase().includes(term)
-    );
-
-    itemsList.innerHTML = filtered.length
-      ? filtered.map(item => `
-          <div class="item-row">
-            <div>
-              <strong>${escapeHtml(item.order_number)}</strong>
-              <div class="item-type">${escapeHtml(item.item_type)}</div>
-            </div>
-            <select onchange="moveItem('${item.id}', this.value)">
-              ${['распил', 'чпу', 'фанеровка', 'шлифовка', 'сборка', 'покраска', 'пвх', 'упаковка']
-                .map(ws => `<option value="${ws}" ${ws === item.current_workstation ? 'selected' : ''}>${ws}</option>`)
-                .join('')}
-            </select>
-          </div>
-        `).join('')
-      : '<p>Нет записей</p>';
-  }
-
-  // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  window.moveItem = async (id, newWs) => {
+  window.moveItem = async (id, ws) => {
     try {
       const { error } = await supabase
         .from('items')
-        .update({ current_workstation: newWs })
+        .update({ current_workstation: ws })
         .eq('id', id);
       if (!error) loadItems();
     } catch (err) {
-      console.error('Ошибка перемещения:', err);
+      console.error('Перемещение:', err);
     }
   };
 
-  // === СОЗДАНИЕ ===
-  createBtn.addEventListener('click', async function () {
+  createBtn.addEventListener('click', async () => {
     const order = (orderInput.value || '').trim();
     const type = typeSelect.value;
     const ws = wsSelect.value;
@@ -98,14 +86,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         loadItems();
       }
     } catch (err) {
-      console.error('Ошибка создания:', err);
-      alert('Не удалось создать запись');
+      console.error('Создание:', err);
+      alert('Ошибка создания');
     }
   });
 
-  // === ПОИСК ===
   searchInput.addEventListener('input', loadItems);
 
-  // === СТАРТ ===
+  // Запуск
   loadItems();
 });
