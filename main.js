@@ -3,6 +3,7 @@ const ADMIN_PASSWORD = 'admin'; // ← замените на ваш пароль
 const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co';
 let supabase;
 let currentUser = null;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const ITEM_TYPES = [
   'наружняя панель', 'внутренняя панель', 'откосы', 'наличники',
@@ -14,56 +15,14 @@ const WORKSTATIONS = [
   'сборка', 'покраска', 'пвх', 'упаковка'
 ];
 
-// === АВТОРИЗАЦИЯ (работает сразу!) ===
-document.getElementById('login-btn').addEventListener('click', async () => {
-  const pwd = document.getElementById('login-password').value.trim();
-  const err = document.getElementById('login-error');
-  
-  if (!pwd) {
-    err.style.display = 'block';
-    err.textContent = 'Введите пароль';
-    return;
-  }
-
-  // Инициализация Supabase при первом входе
-  if (!supabase) {
-    if (typeof createClient !== 'function') {
-      alert('❌ Supabase не загружен. Проверьте index.html.');
-      return;
-    }
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-
-  currentUser = { role: pwd === ADMIN_PASSWORD ? 'admin' : 'operator' };
-  localStorage.setItem('user', JSON.stringify(currentUser));
-  
-  showApp();
-});
-
-// === ОСНОВНАЯ ЛОГИКА ===
-function showLogin() {
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-}
-
-function showApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('user-role').textContent = currentUser.role;
+// === ИНИЦИАЛИЗАЦИЯ ===
+document.addEventListener('DOMContentLoaded', () => {
   renderStations();
   renderOrders();
-  
-  // Назначаем остальные обработчики
-  document.getElementById('logout-btn').onclick = logout;
-  document.getElementById('add-order').onclick = addOrder;
-  document.getElementById('search-input').oninput = renderOrders;
-}
 
-function logout() {
-  localStorage.removeItem('user');
-  currentUser = null;
-  showLogin();
-}
+  document.getElementById('add-order').addEventListener('click', addOrder);
+  document.getElementById('search-input').addEventListener('input', renderOrders);
+});
 
 function renderStations() {
   const list = document.getElementById('stations-list');
@@ -150,7 +109,7 @@ async function renderOrders() {
     }
 
     document.querySelectorAll('.workstation-select').forEach(sel => {
-      sel.onchange = async (e) => {
+      sel.addEventListener('change', async (e) => {
         const id = e.target.dataset.id;
         const ws = e.target.value;
         await supabase
@@ -158,17 +117,9 @@ async function renderOrders() {
           .update({ current_workstation: ws })
           .eq('id', id);
         renderOrders();
-      };
+      });
     });
   } catch (err) {
     console.error('Рендер:', err);
   }
-}
-
-// === ВОССТАНОВЛЕНИЕ СЕССИИ ===
-if (localStorage.getItem('user')) {
-  currentUser = JSON.parse(localStorage.getItem('user'));
-  showApp();
-} else {
-  showLogin();
 }
