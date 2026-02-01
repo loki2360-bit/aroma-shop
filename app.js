@@ -6,11 +6,24 @@ const countEl = document.getElementById('count');
 const exportBtn = document.getElementById('exportBtn');
 const clearBtn = document.getElementById('clearBtn');
 
-// Фильтры
+// Добавляем фильтры
+const filterSection = document.createElement('div');
+filterSection.className = 'filter-section';
+filterSection.innerHTML = `
+  <div style="margin: 16px 0; display: flex; gap: 10px; flex-wrap: wrap;">
+    <select id="filterCategory">
+      <option value="">Все типы</option>
+      <option value="продажа">Продажа</option>
+      <option value="ремонт">Ремонт</option>
+    </select>
+    <input type="text" id="filterDevice" placeholder="Фильтр по устройству..." style="flex: 1; min-width: 150px; padding: 6px; border: 1px solid #ccc; border-radius: 4px;" />
+  </div>
+`;
+document.querySelector('.list-section .controls').parentNode.insertBefore(filterSection, document.querySelector('.list-section .controls'));
+
 let filterCategory = '';
 let filterDevice = '';
 
-// Рендер списка с фильтрацией
 function renderList() {
   const filtered = competitors.filter(item => {
     const catMatch = !filterCategory || item.category === filterCategory;
@@ -23,7 +36,7 @@ function renderList() {
   listEl.innerHTML = '';
 
   if (filtered.length === 0) {
-    listEl.innerHTML = '<p style="padding: 16px; color: #888;">Нет записей</p>';
+    listEl.innerHTML = '<p style="padding: 16px; color: #888;">Нет записей. Добавьте первого конкурента!</p>';
     return;
   }
 
@@ -42,16 +55,20 @@ function renderList() {
   });
 }
 
-// Сохранение
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const category = document.getElementById('category').value;
   const deviceType = document.getElementById('deviceType').value.trim();
   const avitoUrl = document.getElementById('avitoUrl').value.trim();
   const title = document.getElementById('title').value.trim();
-  const price = parseInt(document.getElementById('price').value);
+  const price = parseInt(document.getElementById('price').value) || 0;
   const city = document.getElementById('city').value.trim();
   const notes = document.getElementById('notes').value.trim();
+
+  if (!category || !title || price <= 0) {
+    alert('Заполните обязательные поля: тип, название и цену!');
+    return;
+  }
 
   competitors.push({
     category,
@@ -67,10 +84,9 @@ form.addEventListener('submit', (e) => {
   localStorage.setItem('competitors', JSON.stringify(competitors));
   renderList();
   form.reset();
-  document.getElementById('category').value = ''; // сброс select
+  document.getElementById('category').value = '';
 });
 
-// Экспорт в CSV (обновлён)
 exportBtn.addEventListener('click', () => {
   if (competitors.length === 0) {
     alert('Нет данных для экспорта');
@@ -101,7 +117,6 @@ exportBtn.addEventListener('click', () => {
   URL.revokeObjectURL(url);
 });
 
-// Очистка
 clearBtn.addEventListener('click', () => {
   if (confirm('Очистить весь список? Это нельзя отменить.')) {
     competitors = [];
@@ -110,26 +125,10 @@ clearBtn.addEventListener('click', () => {
   }
 });
 
-// === ФИЛЬТРАЦИЯ ===
-const filterSection = document.createElement('div');
-filterSection.className = 'filter-section';
-filterSection.innerHTML = `
-  <div style="margin: 16px 0; display: flex; gap: 10px; flex-wrap: wrap;">
-    <select id="filterCategory">
-      <option value="">Все типы</option>
-      <option value="продажа">Продажа</option>
-      <option value="ремонт">Ремонт</option>
-    </select>
-    <input type="text" id="filterDevice" placeholder="Фильтр по устройству..." style="flex: 1; min-width: 150px; padding: 6px; border: 1px solid #ccc; border-radius: 4px;" />
-  </div>
-`;
-document.querySelector('.list-section .controls').parentNode.insertBefore(filterSection, document.querySelector('.list-section .controls'));
-
 document.getElementById('filterCategory').addEventListener('change', (e) => {
   filterCategory = e.target.value;
   renderList();
 });
-
 document.getElementById('filterDevice').addEventListener('input', (e) => {
   filterDevice = e.target.value;
   renderList();
