@@ -3,37 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ZyNymbo — Трекер задач</title>
+  <title>Avito Seller Assistant</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="manifest" href="manifest.json" />
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
 </head>
 <body>
-  <!-- Основное приложение (без экрана входа) -->
   <div class="container">
-    <aside class="sidebar">
-      <div class="user-role">Оператор</div>
-      <h2>Участки</h2>
-      <ul id="stations-list"></ul>
-    </aside>
+    <h1>🛠️ Avito Seller Assistant</h1>
 
-    <main class="main-content">
-      <div class="header">
-        <div class="header-left">
-          <input type="text" id="order-input" placeholder="номер заказа" />
-          <button id="add-order">добавить</button>
-          <input type="text" id="search-input" placeholder="поиск по №" />
-        </div>
-        <div class="header-right">
-          <div class="app-title">ZyNymbo</div>
-        </div>
+    <section class="form-section">
+      <h2>➕ Добавить конкурента</h2>
+      <form id="competitorForm">
+        <input type="url" id="avitoUrl" placeholder="Ссылка на объявление Avito (опционально)" />
+        <input type="text" id="title" placeholder="Название (например: Ремонт iPhone 12)" required />
+        <input type="number" id="price" placeholder="Цена (₽)" required />
+        <input type="text" id="city" placeholder="Город или район" />
+        <textarea id="notes" placeholder="Ваши заметки: отзывы, скорость ответа, гарантия и т.д."></textarea>
+        <button type="submit">Сохранить</button>
+      </form>
+    </section>
+
+    <section class="list-section">
+      <div class="controls">
+        <h2>📋 Мои конкуренты (<span id="count">0</span>)</h2>
+        <button id="exportBtn">📥 Экспорт в CSV</button>
+        <button id="clearBtn" style="margin-left: 10px; background: #e74c3c;">🗑️ Очистить всё</button>
       </div>
-      <div class="orders-wrapper">
-        <div id="orders-container" class="orders-container"></div>
-      </div>
-    </main>
+      <div id="competitorsList"></div>
+    </section>
   </div>
 
-  <script src="main.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
