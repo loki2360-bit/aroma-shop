@@ -29,7 +29,9 @@ h2 {
 
 .form-section select,
 .form-section input,
-.form-section textarea {
+.form-section textarea,
+.templates-section input,
+.templates-section textarea {
   width: 100%;
   padding: 10px;
   margin: 6px 0;
@@ -37,7 +39,8 @@ h2 {
   border-radius: 6px;
 }
 
-.form-section button {
+.form-section button,
+.templates-section button {
   background: #e74c3c;
   color: white;
   border: none;
@@ -45,9 +48,11 @@ h2 {
   border-radius: 6px;
   cursor: pointer;
   margin-top: 10px;
+  font-size: 1rem;
 }
 
-.form-section button:hover {
+.form-section button:hover,
+.templates-section button:hover {
   background: #c0392b;
 }
 
@@ -57,6 +62,7 @@ h2 {
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
+  margin-bottom: 16px;
 }
 
 .controls button {
@@ -66,6 +72,11 @@ h2 {
   cursor: pointer;
   background: #2ecc71;
   color: white;
+  font-size: 0.9rem;
+}
+
+.controls button#clearBtn {
+  background: #e74c3c;
 }
 
 .competitor-card {
@@ -95,8 +106,42 @@ h2 {
   color: #666;
 }
 
+/* Шаблоны */
+.template-card {
+  background: #f1f8ff;
+  border-left: 4px solid #3498db;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.template-card h4 {
+  margin-bottom: 6px;
+  color: #2980b9;
+}
+
+.template-actions {
+  margin-top: 6px;
+}
+
+.template-actions button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-right: 6px;
+}
+
+.template-actions button:hover {
+  background: #2980b9;
+}
+
+/* Фильтры (будут добавлены JS) */
 .filter-section {
-  margin-bottom: 16px;
+  margin: 16px 0;
 }
 
 .filter-section select,
