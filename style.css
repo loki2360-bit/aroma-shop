@@ -27,6 +27,7 @@ h2 {
   font-size: 1.2rem;
 }
 
+.form-section select,
 .form-section input,
 .form-section textarea {
   width: 100%;
@@ -93,6 +94,7 @@ h2 {
   font-style: italic;
   color: #666;
 }
+
 .filter-section {
   margin-bottom: 16px;
 }
