@@ -247,6 +247,51 @@
       padding: 8px 10px;
     }
 
+    /* Детали заказа */
+    .details-section {
+      padding: 0 16px 16px;
+    }
+    .detail-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #fafafa;
+      border-radius: 8px;
+      position: relative;
+    }
+    .detail-row .remove-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: #f44336;
+      color: white;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .add-detail-btn {
+      background: #e3f2fd;
+      color: var(--accent-blue);
+      border: 1px dashed var(--accent-blue);
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 0 16px 16px;
+    }
+
     /* Orders list */
     .date-label, .preorders-label {
       font-weight: 600;
@@ -376,27 +421,13 @@
             <option value="TIME">Время — 330 ₽/ч</option>
           </select>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label>Деталь</label>
-          <input type="text" id="detail" placeholder="Название">
-        </div>
-        <div class="form-group">
-          <label>Кол-во</label>
-          <input type="number" id="qty" value="1" min="1">
-        </div>
-
-        <div class="form-group" id="lengthGroup">
-          <label>Длина (м)</label>
-          <input type="number" step="0.01" id="length" placeholder="0.00">
-        </div>
-        <div class="form-group hidden" id="widthGroup">
-          <label>Ширина (м)</label>
-          <input type="number" step="0.01" id="width" placeholder="0.00">
-        </div>
-        <div class="form-group hidden" id="hoursGroup">
-          <label>Часы</label>
-          <input type="number" step="0.1" id="hours" placeholder="0.0">
+      <!-- Детали заказа -->
+      <div class="details-section">
+        <div id="detailsContainer"></div>
+        <div class="add-detail-btn" onclick="addDetailRow('main')">
+          <i class="fas fa-plus"></i> Добавить деталь
         </div>
       </div>
 
@@ -456,27 +487,12 @@
             <option value="TIME">Время — 330 ₽/ч</option>
           </select>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label>Деталь</label>
-          <input type="text" id="preDetail" placeholder="Название">
-        </div>
-        <div class="form-group">
-          <label>Кол-во</label>
-          <input type="number" id="preQty" value="1" min="1">
-        </div>
-
-        <div class="form-group" id="preLengthGroup">
-          <label>Длина (м)</label>
-          <input type="number" step="0.01" id="preLength" placeholder="0.00">
-        </div>
-        <div class="form-group hidden" id="preWidthGroup">
-          <label>Ширина (м)</label>
-          <input type="number" step="0.01" id="preWidth" placeholder="0.00">
-        </div>
-        <div class="form-group hidden" id="preHoursGroup">
-          <label>Часы</label>
-          <input type="number" step="0.1" id="preHours" placeholder="0.0">
+      <div class="details-section">
+        <div id="preDetailsContainer"></div>
+        <div class="add-detail-btn" onclick="addDetailRow('pre')">
+          <i class="fas fa-plus"></i> Добавить деталь
         </div>
       </div>
 
@@ -529,7 +545,7 @@
       if (!AudioContext) return;
 
       const audioContext = new AudioContext();
-      const frequencies = [600, 800]; // два тона
+      const frequencies = [600, 800];
       let time = audioContext.currentTime;
 
       frequencies.forEach((freq, i) => {
@@ -597,8 +613,8 @@
     }
   }
 
-  // === Расчёт суммы ===
-  function calculateAmount(tariffKey, length, width, hours, qty) {
+  // === Расчёт суммы для одной детали ===
+  function calculateDetailAmount(tariffKey, length, width, hours, qty) {
     const tariff = TARIFFS[tariffKey];
     if (!tariff) return 0;
     let amount = 0;
@@ -612,7 +628,291 @@
     return Math.round(amount * 100) / 100;
   }
 
-  // === Обновление UI плана ===
+  // === Генерация уникального ID для строки ===
+  let detailIdCounter = 0;
+
+  // === Создание строки детали ===
+  function createDetailRow(prefix, tariffKey, data = {}) {
+    detailIdCounter++;
+    const id = `detail-${prefix}-${detailIdCounter}`;
+    const isM2 = ['RASPIL_M2', 'SKLEIKA_OB', 'SKLEIKA_NO_OB'].includes(tariffKey);
+    const isTime = tariffKey === 'TIME';
+
+    const row = document.createElement('div');
+    row.className = 'detail-row';
+    row.innerHTML = `
+      <div class="form-group">
+        <label>Деталь</label>
+        <input type="text" name="detail" value="${data.detail || ''}" placeholder="Название" required>
+      </div>
+      <div class="form-group">
+        <label>Кол-во</label>
+        <input type="number" name="qty" value="${data.qty || 1}" min="1" required>
+      </div>
+      ${!isTime ? `
+        <div class="form-group">
+          <label>Длина (м)</label>
+          <input type="number" step="0.01" name="length" value="${data.length || ''}" placeholder="0.00" required>
+        </div>
+        ${isM2 ? `
+        <div class="form-group">
+          <label>Ширина (м)</label>
+          <input type="number" step="0.01" name="width" value="${data.width || ''}" placeholder="0.00" required>
+        </div>` : ''}
+      ` : `
+        <div class="form-group">
+          <label>Часы</label>
+          <input type="number" step="0.1" name="hours" value="${data.hours || ''}" placeholder="0.0" required>
+        </div>
+        <div></div>
+      `}
+      <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+    `;
+    return row;
+  }
+
+  // === Добавление строки детали ===
+  function addDetailRow(prefix) {
+    const container = prefix === 'main' 
+      ? document.getElementById('detailsContainer') 
+      : document.getElementById('preDetailsContainer');
+    
+    const tariffSelect = prefix === 'main' 
+      ? document.getElementById('tariff') 
+      : document.getElementById('preTariff');
+    
+    const tariff = tariffSelect.value;
+    container.appendChild(createDetailRow(prefix, tariff));
+  }
+
+  // === Обновление полей при смене тарифа ===
+  function updateDetailRows(prefix) {
+    const container = prefix === 'main' 
+      ? document.getElementById('detailsContainer') 
+      : document.getElementById('preDetailsContainer');
+    
+    const tariffSelect = prefix === 'main' 
+      ? document.getElementById('tariff') 
+      : document.getElementById('preTariff');
+    
+    const tariff = tariffSelect.value;
+    const rows = container.querySelectorAll('.detail-row');
+    
+    // Сохраняем данные перед перестроением
+    const savedData = [];
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      const data = {};
+      inputs.forEach(input => {
+        data[input.name] = input.value;
+      });
+      savedData.push(data);
+    });
+
+    // Очищаем и пересоздаём
+    container.innerHTML = '';
+    savedData.forEach(data => {
+      container.appendChild(createDetailRow(prefix, tariff, data));
+    });
+  }
+
+  // === Инициализация первой строки ===
+  function initFirstDetail(prefix) {
+    const container = prefix === 'main' 
+      ? document.getElementById('detailsContainer') 
+      : document.getElementById('preDetailsContainer');
+    
+    const tariffSelect = prefix === 'main' 
+      ? document.getElementById('tariff') 
+      : document.getElementById('preTariff');
+    
+    container.innerHTML = '';
+    container.appendChild(createDetailRow(prefix, tariffSelect.value));
+  }
+
+  // === Смена тарифа ===
+  function setupTariffListeners() {
+    document.getElementById('tariff').addEventListener('change', () => {
+      updateDetailRows('main');
+    });
+    document.getElementById('preTariff').addEventListener('change', () => {
+      updateDetailRows('pre');
+    });
+  }
+
+  // === Создание основного заказа ===
+  function createMainOrder() {
+    const num = document.getElementById('orderNum').value.trim();
+    if (!num) { alert('Укажите № заказа'); return; }
+
+    const tariffKey = document.getElementById('tariff').value;
+    const shift = getCurrentShift();
+    if (!shift || !shift.active) {
+      alert('⚠️ Начните смену, чтобы создавать заказы!');
+      return;
+    }
+
+    const container = document.getElementById('detailsContainer');
+    const rows = container.querySelectorAll('.detail-row');
+    if (rows.length === 0) {
+      alert('Добавьте хотя бы одну деталь!');
+      return;
+    }
+
+    let totalAmount = 0;
+    const details = [];
+
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      const data = {};
+      inputs.forEach(input => {
+        data[input.name] = input.type === 'number' ? parseFloat(input.value) || 0 : input.value.trim();
+      });
+
+      if (!data.detail) { alert('Укажите название детали'); return; }
+      if (data.qty <= 0) { alert('Кол-во должно быть > 0'); return; }
+
+      const amount = calculateDetailAmount(
+        tariffKey,
+        data.length || 0,
+        data.width || 0,
+        data.hours || 0,
+        data.qty
+      );
+
+      totalAmount += amount;
+      details.push({
+        detail: data.detail,
+        qty: data.qty,
+        length: data.length || null,
+        width: data.width || null,
+        hours: data.hours || null,
+        amount: amount
+      });
+    });
+
+    const order = {
+      id: Date.now(),
+      orderNumber: num,
+      tariff: tariffKey,
+      details: details,
+      amount: totalAmount,
+      date: todayYMD(),
+      shiftId: shift.id,
+      timestamp: new Date().toISOString()
+    };
+
+    const orders = loadOrders();
+    orders.push(order);
+    saveOrders(orders);
+    updateUI();
+
+    // Сброс
+    document.getElementById('orderNum').value = '';
+    initFirstDetail('main');
+
+    alert(`✅ Заказ создан!\nСумма: ${totalAmount.toFixed(2)} ₽`);
+  }
+
+  // === Создание предзаказа ===
+  function createPreorder() {
+    const num = document.getElementById('preOrderNum').value.trim();
+    if (!num) { alert('Укажите № предзаказа'); return; }
+
+    const tariffKey = document.getElementById('preTariff').value;
+    const container = document.getElementById('preDetailsContainer');
+    const rows = container.querySelectorAll('.detail-row');
+    if (rows.length === 0) {
+      alert('Добавьте хотя бы одну деталь!');
+      return;
+    }
+
+    let totalAmount = 0;
+    const details = [];
+
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      const data = {};
+      inputs.forEach(input => {
+        data[input.name] = input.type === 'number' ? parseFloat(input.value) || 0 : input.value.trim();
+      });
+
+      if (!data.detail) { alert('Укажите название детали'); return; }
+      if (data.qty <= 0) { alert('Кол-во должно быть > 0'); return; }
+
+      const amount = calculateDetailAmount(
+        tariffKey,
+        data.length || 0,
+        data.width || 0,
+        data.hours || 0,
+        data.qty
+      );
+
+      totalAmount += amount;
+      details.push({
+        detail: data.detail,
+        qty: data.qty,
+        length: data.length || null,
+        width: data.width || null,
+        hours: data.hours || null,
+        amount: amount
+      });
+    });
+
+    const preorder = {
+      id: Date.now(),
+      orderNumber: num,
+      tariff: tariffKey,
+      details: details,
+      amount: totalAmount,
+      date: todayYMD(),
+      timestamp: new Date().toISOString()
+    };
+
+    const preorders = loadPreorders();
+    preorders.push(preorder);
+    savePreorders(preorders);
+    renderPreorders();
+
+    // Сброс
+    document.getElementById('preOrderNum').value = '';
+    initFirstDetail('pre');
+
+    alert(`✅ Предзаказ сохранён!\nСумма: ${totalAmount.toFixed(2)} ₽`);
+  }
+
+  // === Принятие предзаказа ===
+  function acceptPreorder(preorderId) {
+    const preorders = loadPreorders();
+    const preorderIndex = preorders.findIndex(p => p.id === preorderId);
+    if (preorderIndex === -1) return;
+
+    const preorder = preorders[preorderIndex];
+    const shift = getCurrentShift();
+
+    if (!shift || !shift.active) {
+      alert('Начните смену, чтобы принять предзаказ!');
+      return;
+    }
+
+    const order = {
+      ...preorder,
+      shiftId: shift.id
+    };
+
+    const orders = loadOrders();
+    orders.push(order);
+    saveOrders(orders);
+
+    preorders.splice(preorderIndex, 1);
+    savePreorders(preorders);
+
+    alert(`✅ Предзаказ "${preorder.orderNumber}" принят!`);
+    updateUI();
+    renderPreorders();
+  }
+
+  // === Остальные функции без изменений ===
   function updateUI() {
     const orders = loadOrders();
     const totalAll = orders.reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
@@ -645,225 +945,6 @@
     document.getElementById('shiftStatus').textContent = statusText;
   }
 
-  // === Переключение полей ===
-  function updateMainFormFields() {
-    const tariffSelect = document.getElementById('tariff');
-    if (!tariffSelect) return;
-
-    const tariff = tariffSelect.value;
-    const w = document.getElementById('widthGroup');
-    const h = document.getElementById('hoursGroup');
-    const l = document.getElementById('lengthGroup');
-
-    if (w) w.classList.add('hidden');
-    if (h) h.classList.add('hidden');
-    if (l) l.classList.remove('hidden');
-
-    if (['RASPIL_M2', 'SKLEIKA_OB', 'SKLEIKA_NO_OB'].includes(tariff)) {
-      if (w) w.classList.remove('hidden');
-    } else if (tariff === 'TIME') {
-      if (l) l.classList.add('hidden');
-      if (h) h.classList.remove('hidden');
-    }
-  }
-
-  function updatePreorderFormFields() {
-    const tariffSelect = document.getElementById('preTariff');
-    if (!tariffSelect) return;
-
-    const tariff = tariffSelect.value;
-    const w = document.getElementById('preWidthGroup');
-    const h = document.getElementById('preHoursGroup');
-    const l = document.getElementById('preLengthGroup');
-
-    if (w) w.classList.add('hidden');
-    if (h) h.classList.add('hidden');
-    if (l) l.classList.remove('hidden');
-
-    if (['RASPIL_M2', 'SKLEIKA_OB', 'SKLEIKA_NO_OB'].includes(tariff)) {
-      if (w) w.classList.remove('hidden');
-    } else if (tariff === 'TIME') {
-      if (l) l.classList.add('hidden');
-      if (h) h.classList.remove('hidden');
-    }
-  }
-
-  // === Tabs ===
-  function switchTab(tabName) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    if (tabName === 'main') {
-      document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
-      document.getElementById('main-tab').classList.remove('hidden');
-      document.getElementById('preorders-tab').classList.add('hidden');
-      updateUI();
-      setTimeout(updateMainFormFields, 50);
-    } else {
-      document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-      document.getElementById('main-tab').classList.add('hidden');
-      document.getElementById('preorders-tab').classList.remove('hidden');
-      renderPreorders();
-      setTimeout(updatePreorderFormFields, 50);
-    }
-  }
-
-  // === Смена с ОДИНАКОВЫМ звуком ===
-  function startShift() {
-    const shift = getCurrentShift();
-    if (shift && shift.active) {
-      alert('Смена уже активна!');
-      return;
-    }
-    const newShift = { id: Date.now(), startedAt: new Date().toISOString(), active: true };
-    setCurrentShift(newShift);
-    
-    playBellSound(); // 🔔 Чёткий звонок при НАЧАЛЕ
-    alert('✅ Смена начата!');
-    updateUI();
-  }
-
-  function endShift() {
-    const shift = getCurrentShift();
-    if (!shift || !shift.active) {
-      alert('Нет активной смены для завершения!');
-      return;
-    }
-    const orders = loadOrders();
-    const finalAmount = orders
-      .filter(o => o.shiftId === shift.id)
-      .reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
-    shift.active = false;
-    shift.finishedAt = new Date().toISOString();
-    shift.finalAmount = finalAmount;
-    setCurrentShift(shift);
-    
-    playBellSound(); // 🔔 Тот же звонок при ЗАВЕРШЕНИИ
-    alert(`✅ Смена завершена!\nЗаработано: ${finalAmount.toFixed(2)} ₽`);
-    updateUI();
-  }
-
-  // === Остальной код без изменений ===
-  function createMainOrder() {
-    const num = document.getElementById('orderNum').value.trim();
-    if (!num) { alert('Укажите № заказа'); return; }
-
-    const tariffKey = document.getElementById('tariff').value;
-    const detail = document.getElementById('detail').value.trim() || '—';
-    const qty = parseInt(document.getElementById('qty').value) || 1;
-    const length = parseFloat(document.getElementById('length').value) || 0;
-    const width = parseFloat(document.getElementById('width').value) || 0;
-    const hours = parseFloat(document.getElementById('hours').value) || 0;
-
-    const amount = calculateAmount(tariffKey, length, width, hours, qty);
-
-    const shift = getCurrentShift();
-    if (!shift || !shift.active) {
-      alert('⚠️ Начните смену, чтобы создавать заказы!');
-      return;
-    }
-
-    const order = {
-      id: Date.now(),
-      orderNumber: num,
-      tariff: tariffKey,
-      detail: detail,
-      qty: qty,
-      length: length || null,
-      width: width || null,
-      hours: hours || null,
-      amount: amount,
-      date: todayYMD(),
-      shiftId: shift.id,
-      timestamp: new Date().toISOString()
-    };
-
-    const orders = loadOrders();
-    orders.push(order);
-    saveOrders(orders);
-    updateUI();
-
-    document.getElementById('orderNum').value = '';
-    document.getElementById('detail').value = '';
-    document.getElementById('qty').value = '1';
-    document.getElementById('length').value = '';
-    document.getElementById('width').value = '';
-    document.getElementById('hours').value = '';
-
-    updateMainFormFields();
-  }
-
-  function createPreorder() {
-    const num = document.getElementById('preOrderNum').value.trim();
-    if (!num) { alert('Укажите № предзаказа'); return; }
-
-    const tariffKey = document.getElementById('preTariff').value;
-    const detail = document.getElementById('preDetail').value.trim() || '—';
-    const qty = parseInt(document.getElementById('preQty').value) || 1;
-    const length = parseFloat(document.getElementById('preLength').value) || 0;
-    const width = parseFloat(document.getElementById('preWidth').value) || 0;
-    const hours = parseFloat(document.getElementById('preHours').value) || 0;
-
-    const amount = calculateAmount(tariffKey, length, width, hours, qty);
-
-    const preorder = {
-      id: Date.now(),
-      orderNumber: num,
-      tariff: tariffKey,
-      detail: detail,
-      qty: qty,
-      length: length || null,
-      width: width || null,
-      hours: hours || null,
-      amount: amount,
-      date: todayYMD(),
-      timestamp: new Date().toISOString()
-    };
-
-    const preorders = loadPreorders();
-    preorders.push(preorder);
-    savePreorders(preorders);
-    alert('✅ Предзаказ сохранён!');
-    renderPreorders();
-
-    document.getElementById('preOrderNum').value = '';
-    document.getElementById('preDetail').value = '';
-    document.getElementById('preQty').value = '1';
-    document.getElementById('preLength').value = '';
-    document.getElementById('preWidth').value = '';
-    document.getElementById('preHours').value = '';
-
-    updatePreorderFormFields();
-  }
-
-  function acceptPreorder(preorderId) {
-    const preorders = loadPreorders();
-    const preorderIndex = preorders.findIndex(p => p.id === preorderId);
-    if (preorderIndex === -1) return;
-
-    const preorder = preorders[preorderIndex];
-    const shift = getCurrentShift();
-
-    if (!shift || !shift.active) {
-      alert('Начните смену, чтобы принять предзаказ!');
-      return;
-    }
-
-    const order = {
-      ...preorder,
-      shiftId: shift.id
-    };
-
-    const orders = loadOrders();
-    orders.push(order);
-    saveOrders(orders);
-
-    preorders.splice(preorderIndex, 1);
-    savePreorders(preorders);
-
-    alert(`✅ Предзаказ "${preorder.orderNumber}" принят!`);
-    updateUI();
-    renderPreorders();
-  }
-
   function renderPreorders() {
     const preorders = loadPreorders();
     const container = document.getElementById('preordersList');
@@ -878,7 +959,7 @@
         <thead>
           <tr>
             <th>№</th>
-            <th>Деталь</th>
+            <th>Детали</th>
             <th>Сумма</th>
             <th>Действия</th>
           </tr>
@@ -886,10 +967,11 @@
         <tbody>
     `;
     preorders.forEach(p => {
+      const detailsText = p.details.map(d => `${d.detail} (${d.qty} шт.)`).join(', ');
       html += `
         <tr>
           <td>${p.orderNumber}</td>
-          <td>${p.detail}</td>
+          <td>${detailsText}</td>
           <td class="amount">${p.amount.toFixed(2)} ₽</td>
           <td>
             <button class="btn-accept" onclick="acceptPreorder(${p.id})">
@@ -924,17 +1006,18 @@
           <thead>
             <tr>
               <th>№</th>
-              <th>Деталь</th>
+              <th>Детали</th>
               <th>Сумма</th>
             </tr>
           </thead>
           <tbody>
       `;
       filtered.forEach(o => {
+        const detailsText = o.details.map(d => `${d.detail} (${d.qty} шт.)`).join(', ');
         html += `
           <tr>
             <td>${o.orderNumber}</td>
-            <td>${o.detail}</td>
+            <td>${detailsText}</td>
             <td class="amount">${o.amount.toFixed(2)} ₽</td>
           </tr>
         `;
@@ -967,13 +1050,15 @@
     let totalSum = 0;
     filtered.forEach((o, idx) => {
       const tariffName = TARIFF_NAMES[o.tariff] || o.tariff;
-      content += `№${idx + 1}. ${o.orderNumber}\n`;
-      content += `   ${o.detail} (${tariffName})\n`;
-      if (o.length) content += `   Длина: ${o.length} м\n`;
-      if (o.width) content += `   Ширина: ${o.width} м\n`;
-      if (o.hours) content += `   Часы: ${o.hours} ч\n`;
-      content += `   Кол-во: ${o.qty}\n`;
-      content += `   Сумма: ${o.amount.toFixed(2)} ₽\n---\n`;
+      content += `№${idx + 1}. ${o.orderNumber} (${tariffName})\n`;
+      o.details.forEach((d, di) => {
+        content += `   • ${d.detail} (x${d.qty})\n`;
+        if (d.length) content += `     Длина: ${d.length} м\n`;
+        if (d.width) content += `     Ширина: ${d.width} м\n`;
+        if (d.hours) content += `     Часы: ${d.hours} ч\n`;
+        content += `     Сумма: ${d.amount.toFixed(2)} ₽\n`;
+      });
+      content += `---\n`;
       totalSum += o.amount;
     });
 
@@ -1038,18 +1123,8 @@
           id: Date.now() + Math.random(),
           orderNumber: item.orderNumber || 'ИМП-' + (preorders.length + 1),
           tariff: item.tariff || 'RASPIL_M2',
-          detail: item.detail || '—',
-          qty: item.qty || 1,
-          length: item.length || null,
-          width: item.width || null,
-          hours: item.hours || null,
-          amount: typeof item.amount === 'number' ? item.amount : calculateAmount(
-            item.tariff || 'RASPIL_M2',
-            item.length || 0,
-            item.width || 0,
-            item.hours || 0,
-            item.qty || 1
-          ),
+          details: item.details || [{ detail: '—', qty: 1, amount: 0 }],
+          amount: typeof item.amount === 'number' ? item.amount : (item.details?.reduce((s,d)=>s+(d.amount||0),0) || 0),
           date: todayYMD(),
           timestamp: new Date().toISOString()
         }));
@@ -1067,22 +1142,59 @@
     reader.readAsText(file);
   });
 
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    if (tabName === 'main') {
+      document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+      document.getElementById('main-tab').classList.remove('hidden');
+      document.getElementById('preorders-tab').classList.add('hidden');
+      updateUI();
+    } else {
+      document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+      document.getElementById('main-tab').classList.add('hidden');
+      document.getElementById('preorders-tab').classList.remove('hidden');
+      renderPreorders();
+    }
+  }
+
+  function startShift() {
+    const shift = getCurrentShift();
+    if (shift && shift.active) {
+      alert('Смена уже активна!');
+      return;
+    }
+    const newShift = { id: Date.now(), startedAt: new Date().toISOString(), active: true };
+    setCurrentShift(newShift);
+    playBellSound();
+    alert('✅ Смена начата!');
+    updateUI();
+  }
+
+  function endShift() {
+    const shift = getCurrentShift();
+    if (!shift || !shift.active) {
+      alert('Нет активной смены для завершения!');
+      return;
+    }
+    const orders = loadOrders();
+    const finalAmount = orders
+      .filter(o => o.shiftId === shift.id)
+      .reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
+    shift.active = false;
+    shift.finishedAt = new Date().toISOString();
+    shift.finalAmount = finalAmount;
+    setCurrentShift(shift);
+    playBellSound();
+    alert(`✅ Смена завершена!\nЗаработано: ${finalAmount.toFixed(2)} ₽`);
+    updateUI();
+  }
+
+  // === Инициализация ===
   document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('viewDate').value = todayYMD();
-
-    const mainSelect = document.getElementById('tariff');
-    const preSelect = document.getElementById('preTariff');
-
-    if (mainSelect) {
-      mainSelect.addEventListener('change', updateMainFormFields);
-      updateMainFormFields();
-    }
-
-    if (preSelect) {
-      preSelect.addEventListener('change', updatePreorderFormFields);
-      updatePreorderFormFields();
-    }
-
+    initFirstDetail('main');
+    initFirstDetail('pre');
+    setupTariffListeners();
     updateUI();
     renderPreorders();
   });
