@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Арома-Бонус | Программа лояльности</title>
+    <title>БОНУС+ПРОМО</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         :root {
-            --primary-yellow: #FFD700;
-            --primary-black: #1a1a1a;
-            --primary-gray: #f5f5f5;
-            --primary-red: #e74c3c;
-            --primary-green: #2ecc71;
-            --primary-purple: #9b59b6;
-            --primary-blue: #3498db;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --glow: 0 0 15px rgba(255, 215, 0, 0.5);
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
+            --bg-color: #f0f2f5;
+            --card-color: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --border-color: #e2e8f0;
+            --shadow-light: 8px 8px 16px rgba(160, 174, 192, 0.3);
+            --shadow-dark: -8px -8px 16px rgba(255, 255, 255, 0.8);
+            --inset-shadow: inset 4px 4px 8px rgba(160, 174, 192, 0.3), inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+            --primary-accent: #4a5568;
+            --success-color: #38a169;
+            --error-color: #e53e3e;
+            --warning-color: #dd6b20;
+            --info-color: #3182ce;
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -28,11 +32,12 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-color);
             min-height: 100vh;
             padding: 20px;
-            color: var(--primary-black);
+            color: var(--text-primary);
+            line-height: 1.6;
         }
 
         .container {
@@ -47,50 +52,55 @@
         }
 
         .logo {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: var(--primary-yellow);
-            text-shadow: var(--glow);
+            font-size: 2.8em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-accent), #718096);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
             margin-bottom: 10px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            font-family: 'Arial Black', Arial, sans-serif;
         }
 
         .subtitle {
-            font-size: 1.2em;
-            color: white;
+            font-size: 1.1em;
+            color: var(--text-secondary);
             margin-top: 10px;
+            font-weight: 500;
         }
 
         .tabs {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 25px;
             flex-wrap: wrap;
         }
 
         .tab-btn {
-            padding: 12px 25px;
-            background: rgba(255,255,255,0.2);
+            padding: 12px 24px;
+            background: var(--card-color);
             border: none;
-            border-radius: 30px;
-            color: white;
-            font-weight: bold;
+            border-radius: var(--border-radius);
+            color: var(--text-secondary);
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
+            box-shadow: var(--shadow-light), var(--shadow-dark);
             font-size: 0.95em;
+            min-width: 120px;
         }
 
-        .tab-btn:hover, .tab-btn.active {
-            background: var(--primary-yellow);
-            color: var(--primary-black);
+        .tab-btn:hover {
             transform: translateY(-2px);
-            box-shadow: var(--glow);
+            box-shadow: 12px 12px 24px rgba(160, 174, 192, 0.25), -12px -12px 24px rgba(255, 255, 255, 0.8);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-accent);
+            background: var(--card-color);
+            box-shadow: var(--inset-shadow);
         }
 
         .admin-tab {
@@ -101,53 +111,51 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid var(--primary-yellow);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
+            background: var(--card-color);
+            border: none;
+            border-radius: 50px;
+            color: var(--text-secondary);
+            padding: 8px 20px;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 0.9em;
+            font-size: 0.85em;
+            font-weight: 600;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .admin-access:hover {
-            background: var(--primary-yellow);
-            color: var(--primary-black);
+            transform: translateY(-2px);
+            box-shadow: 8px 8px 16px rgba(160, 174, 192, 0.25), -8px -8px 16px rgba(255, 255, 255, 0.8);
+            color: var(--primary-accent);
         }
 
         .main-content {
-            background: white;
+            background: var(--card-color);
             border-radius: var(--border-radius);
-            padding: 30px;
-            box-shadow: var(--shadow);
+            padding: 32px;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
             transition: var(--transition);
             position: relative;
         }
 
-        .main-content:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
         .section-title {
-            color: var(--primary-black);
-            margin-bottom: 25px;
-            font-size: 2em;
+            color: var(--text-primary);
+            margin-bottom: 28px;
+            font-size: 1.8em;
             text-align: center;
+            font-weight: 700;
             position: relative;
-            padding-bottom: 10px;
         }
 
         .section-title::after {
             content: '';
             position: absolute;
-            bottom: 0;
+            bottom: -8px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: var(--primary-yellow);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary-accent), #718096);
             border-radius: 2px;
         }
 
@@ -155,220 +163,229 @@
         .registration-form {
             max-width: 500px;
             margin: 0 auto;
-            background: var(--primary-gray);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--primary-black);
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95em;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            padding: 16px 20px;
+            background: var(--card-color);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
             font-size: 1em;
             transition: var(--transition);
-            color: var(--primary-black);
+            color: var(--text-primary);
+            box-shadow: var(--inset-shadow);
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: var(--primary-yellow);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            border-color: var(--primary-accent);
+            box-shadow: inset 4px 4px 8px rgba(160, 174, 192, 0.4), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
         }
 
         .form-group input::placeholder {
-            color: #999;
+            color: var(--text-secondary);
         }
 
         .submit-btn {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--primary-yellow), #ffd700);
+            padding: 16px;
+            background: var(--card-color);
             border: none;
             border-radius: var(--border-radius);
             font-size: 1.1em;
-            font-weight: bold;
-            color: var(--primary-black);
+            font-weight: 700;
+            color: var(--primary-accent);
             cursor: pointer;
             transition: var(--transition);
             margin-top: 10px;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
+            box-shadow: 12px 12px 24px rgba(160, 174, 192, 0.25), -12px -12px 24px rgba(255, 255, 255, 0.8);
+        }
+
+        .submit-btn:active {
+            box-shadow: var(--inset-shadow);
         }
 
         /* Личный кабинет */
         .profile-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--card-color);
             border-radius: var(--border-radius);
-            padding: 30px;
-            color: white;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
             text-align: center;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .profile-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            0%, 100% { transform: translateX(-100%); }
-            50% { transform: translateX(100%); }
         }
 
         .user-info {
-            margin-bottom: 25px;
+            margin-bottom: 28px;
         }
 
         .user-name {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
         }
 
         .user-email {
-            font-size: 0.95em;
-            opacity: 0.9;
-            margin-bottom: 15px;
+            font-size: 1em;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
         }
 
         .points-display {
-            background: rgba(255,255,255,0.2);
-            padding: 15px 30px;
-            border-radius: 30px;
+            background: var(--card-color);
+            padding: 20px 40px;
+            border-radius: var(--border-radius);
             display: inline-block;
-            margin: 20px 0;
-            font-size: 1.8em;
-            font-weight: bold;
-            animation: pulse 2s infinite;
+            margin: 24px 0;
+            font-size: 2.2em;
+            font-weight: 800;
+            color: var(--primary-accent);
+            box-shadow: var(--shadow-light), var(--shadow-dark);
+            min-width: 120px;
         }
 
         .points-label {
             display: block;
-            font-size: 0.9em;
-            margin-top: 5px;
-            opacity: 0.8;
+            font-size: 0.95em;
+            margin-top: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         .qr-section {
-            background: white;
-            padding: 25px;
+            background: var(--card-color);
+            padding: 28px;
             border-radius: var(--border-radius);
             display: inline-block;
             margin: 0 auto;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-light), var(--shadow-dark);
+            text-align: center;
         }
 
         .qr-title {
-            color: var(--primary-black);
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            font-size: 1.2em;
         }
 
         #qrCodeContainer {
             display: inline-block;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 24px;
+            background: var(--card-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .qr-instructions {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            font-size: 0.9em;
-            line-height: 1.6;
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--card-color);
+            border-radius: var(--border-radius);
+            font-size: 0.95em;
+            line-height: 1.7;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
+        }
+
+        .qr-instructions p {
+            margin-bottom: 8px;
+        }
+
+        .qr-instructions p:last-child {
+            margin-bottom: 0;
         }
 
         /* Промокоды в профиле */
         .promo-codes-section {
-            margin-top: 30px;
-            background: white;
-            padding: 25px;
+            margin-top: 36px;
+            background: var(--card-color);
+            padding: 28px;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .promo-title {
-            color: var(--primary-black);
-            margin-bottom: 20px;
-            font-size: 1.5em;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            font-size: 1.4em;
             text-align: center;
+            font-weight: 700;
         }
 
         .promo-code-item {
-            background: linear-gradient(135deg, var(--primary-green), #27ae60);
-            color: white;
-            padding: 20px;
+            background: var(--card-color);
+            color: var(--text-primary);
+            padding: 24px;
             border-radius: var(--border-radius);
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            animation: slideIn 0.3s ease;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
+            transition: var(--transition);
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .promo-code-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 24px rgba(160, 174, 192, 0.25), -12px -12px 24px rgba(255, 255, 255, 0.8);
+        }
+
+        .promo-code-item.promo-expired {
+            opacity: 0.6;
+            background: #f7fafc;
         }
 
         .promo-code-text {
             font-size: 1.3em;
-            font-weight: bold;
-            font-family: monospace;
+            font-weight: 800;
+            font-family: 'Courier New', monospace;
             letter-spacing: 2px;
             cursor: pointer;
             transition: var(--transition);
+            color: var(--primary-accent);
         }
 
         .promo-code-text:hover {
             transform: scale(1.05);
+            color: var(--success-color);
         }
 
         .promo-expiry {
-            background: rgba(255,255,255,0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
+            background: var(--card-color);
+            padding: 10px 20px;
+            border-radius: 50px;
             font-size: 0.9em;
-            font-weight: bold;
+            font-weight: 700;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
-        .promo-expired {
-            background: linear-gradient(135deg, #95a5a6, #7f8c8d) !important;
-            opacity: 0.7;
+        .promo-expiry.expired {
+            color: var(--error-color);
+            background: #fee;
         }
 
-        .promo-expired .promo-expiry {
-            background: rgba(0,0,0,0.2) !important;
+        .promo-expiry.active {
+            color: var(--success-color);
+            background: #f0fff4;
         }
 
         /* Админ панель */
@@ -377,41 +394,44 @@
         }
 
         .admin-header {
-            background: linear-gradient(135deg, var(--primary-purple), #8e44ad);
-            color: white;
-            padding: 20px;
+            background: var(--card-color);
+            padding: 24px;
             border-radius: var(--border-radius);
-            margin-bottom: 25px;
+            margin-bottom: 28px;
             text-align: center;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .scan-container {
-            background: var(--primary-gray);
-            padding: 30px;
+            background: var(--card-color);
+            padding: 32px;
             border-radius: var(--border-radius);
-            margin-bottom: 25px;
+            margin-bottom: 28px;
             text-align: center;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .scan-title {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: var(--primary-black);
+            font-size: 1.4em;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            font-weight: 700;
         }
 
         .camera-container {
             position: relative;
             max-width: 400px;
-            margin: 0 auto 20px;
-            border: 3px solid var(--primary-blue);
-            border-radius: 12px;
+            margin: 0 auto 24px;
+            border-radius: var(--border-radius);
             overflow: hidden;
             background: #000;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         #videoElement {
             width: 100%;
             display: block;
+            background: #000;
         }
 
         .scan-overlay {
@@ -420,13 +440,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.7);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2em;
-            font-weight: bold;
+            font-size: 1.1em;
+            font-weight: 600;
+            z-index: 2;
         }
 
         .scan-indicator {
@@ -434,248 +455,284 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            border: 3px solid var(--primary-yellow);
-            border-radius: 10px;
-            box-shadow: 0 0 20px var(--primary-yellow);
+            width: 220px;
+            height: 220px;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
             animation: pulseScan 2s infinite;
+            z-index: 1;
         }
 
         @keyframes pulseScan {
-            0%, 100% { box-shadow: 0 0 20px var(--primary-yellow); }
-            50% { box-shadow: 0 0 40px var(--primary-yellow); }
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); 
+                border-color: rgba(255, 255, 255, 0.8);
+            }
+            50% { 
+                box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); 
+                border-color: rgba(255, 255, 255, 0.4);
+            }
         }
 
         .manual-input {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid var(--border-color);
         }
 
         .manual-input-title {
-            color: var(--primary-black);
-            margin-bottom: 15px;
-            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+            font-weight: 600;
+            font-size: 1.1em;
         }
 
         .scan-input-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             max-width: 400px;
             margin: 0 auto;
         }
 
         .scan-input {
             flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            padding: 16px 20px;
+            background: var(--card-color);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
             font-size: 1em;
-            color: var(--primary-black);
+            color: var(--text-primary);
+            box-shadow: var(--inset-shadow);
         }
 
         .scan-input:focus {
             outline: none;
-            border-color: var(--primary-blue);
+            border-color: var(--primary-accent);
+            box-shadow: inset 4px 4px 8px rgba(160, 174, 192, 0.4), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
         }
 
         .scan-btn {
-            padding: 12px 20px;
-            background: linear-gradient(135deg, var(--primary-blue), #2980b9);
+            padding: 16px 24px;
+            background: var(--card-color);
             border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
+            border-radius: var(--border-radius);
+            color: var(--primary-accent);
+            font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
+            box-shadow: var(--shadow-light), var(--shadow-dark);
+            white-space: nowrap;
         }
 
         .scan-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            box-shadow: 12px 12px 24px rgba(160, 174, 192, 0.25), -12px -12px 24px rgba(255, 255, 255, 0.8);
+        }
+
+        .scan-btn:active {
+            box-shadow: var(--inset-shadow);
         }
 
         .scan-btn:disabled {
-            background: #95a5a6;
+            opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .scan-result {
-            margin-top: 20px;
+            margin-top: 24px;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             display: none;
+            font-weight: 600;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .scan-success {
-            background: rgba(46, 204, 113, 0.1);
-            border: 2px solid var(--primary-green);
-            color: var(--primary-green);
+            background: #f0fff4;
+            color: var(--success-color);
+            border: 2px solid var(--success-color);
         }
 
         .scan-error {
-            background: rgba(231, 76, 60, 0.1);
-            border: 2px solid var(--primary-red);
-            color: var(--primary-red);
+            background: #fff5f5;
+            color: var(--error-color);
+            border: 2px solid var(--error-color);
         }
 
         .user-info-display {
-            background: white;
-            padding: 25px;
+            background: var(--card-color);
+            padding: 28px;
             border-radius: var(--border-radius);
-            margin-top: 25px;
-            box-shadow: var(--shadow);
+            margin-top: 28px;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
             display: none;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .info-row:last-child td,
         .info-row:last-child {
             border-bottom: none;
         }
 
         .info-label {
-            font-weight: bold;
-            color: var(--primary-black);
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
         .info-value {
-            color: var(--primary-gray);
-            font-weight: bold;
+            color: var(--text-secondary);
+            font-weight: 600;
         }
 
         .redeem-section {
-            background: linear-gradient(135deg, var(--primary-green), #27ae60);
-            padding: 25px;
+            background: var(--card-color);
+            padding: 28px;
             border-radius: var(--border-radius);
-            margin-top: 25px;
-            color: white;
+            margin-top: 28px;
             text-align: center;
             display: none;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
+            border: 2px solid var(--success-color);
         }
 
         .redeem-title {
-            font-size: 1.5em;
-            margin-bottom: 15px;
+            font-size: 1.4em;
+            margin-bottom: 18px;
+            color: var(--success-color);
+            font-weight: 700;
         }
 
         .redeem-code {
-            background: rgba(255,255,255,0.2);
-            padding: 15px 30px;
-            border-radius: 30px;
+            background: var(--card-color);
+            padding: 20px 32px;
+            border-radius: var(--border-radius);
             font-size: 1.8em;
-            font-weight: bold;
+            font-weight: 800;
             letter-spacing: 3px;
-            margin: 15px 0;
-            font-family: monospace;
+            margin: 18px 0;
+            font-family: 'Courier New', monospace;
             cursor: pointer;
             transition: var(--transition);
+            box-shadow: var(--shadow-light), var(--shadow-dark);
+            color: var(--success-color);
         }
 
         .redeem-code:hover {
-            background: rgba(255,255,255,0.3);
             transform: scale(1.05);
+            box-shadow: 12px 12px 24px rgba(160, 174, 192, 0.25), -12px -12px 24px rgba(255, 255, 255, 0.8);
         }
 
         .redeem-btn {
-            padding: 12px 30px;
-            background: white;
-            border: none;
-            border-radius: 30px;
-            font-weight: bold;
-            color: var(--primary-green);
+            padding: 14px 32px;
+            background: var(--card-color);
+            border: 2px solid var(--success-color);
+            border-radius: var(--border-radius);
+            font-weight: 700;
+            color: var(--success-color);
             cursor: pointer;
             transition: var(--transition);
-            margin-top: 10px;
+            margin-top: 14px;
+            font-size: 1.1em;
         }
 
         .redeem-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+            box-shadow: 8px 8px 16px rgba(160, 174, 192, 0.25), -8px -8px 16px rgba(255, 255, 255, 0.8);
+            background: var(--success-color);
+            color: white;
+        }
+
+        .redeem-btn:active {
+            box-shadow: var(--inset-shadow);
+            background: var(--success-color);
+            color: white;
         }
 
         .users-list {
-            margin-top: 30px;
+            margin-top: 36px;
         }
 
         .users-table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
+            background: var(--card-color);
             border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .users-table th {
-            background: linear-gradient(135deg, var(--primary-yellow), #ffd700);
-            color: var(--primary-black);
-            padding: 15px;
+            background: var(--card-color);
+            color: var(--text-primary);
+            padding: 18px 15px;
             text-align: left;
-            font-weight: bold;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border-color);
         }
 
         .users-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-            color: var(--primary-black);
+            padding: 16px 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .users-table tr:last-child td {
+            border-bottom: none;
         }
 
         .users-table tr:hover {
-            background: var(--primary-gray);
+            background: #f8f9fa;
         }
 
         .points-badge {
-            background: linear-gradient(135deg, var(--primary-yellow), #ffd700);
-            color: var(--primary-black);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
+            background: var(--card-color);
+            color: var(--primary-accent);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 700;
             display: inline-block;
+            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .status-badge {
-            padding: 5px 12px;
-            border-radius: 15px;
+            padding: 6px 16px;
+            border-radius: 50px;
             font-size: 0.85em;
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .status-active {
-            background: var(--primary-green);
-            color: white;
+            background: #f0fff4;
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
         }
 
         .status-inactive {
-            background: #95a5a6;
-            color: white;
+            background: #f7fafc;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
         }
 
         /* Уведомления */
         .notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
+            top: 24px;
+            right: 24px;
+            padding: 18px 28px;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-light), var(--shadow-dark);
             transform: translateX(400px);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
-            font-weight: bold;
-            animation: slideIn 0.3s ease forwards;
-        }
-
-        @keyframes slideIn {
-            to { transform: translateX(0); }
+            font-weight: 600;
+            max-width: 320px;
         }
 
         .notification.show {
@@ -683,58 +740,29 @@
         }
 
         .notification.success {
-            background: var(--primary-green);
-            color: white;
+            background: #f0fff4;
+            color: var(--success-color);
+            border: 2px solid var(--success-color);
         }
 
         .notification.error {
-            background: var(--primary-red);
-            color: white;
+            background: #fff5f5;
+            color: var(--error-color);
+            border: 2px solid var(--error-color);
         }
 
         .notification.info {
-            background: var(--primary-blue);
-            color: white;
-        }
-
-        /* Dark theme */
-        body.dark-theme {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-        }
-
-        body.dark-theme .main-content,
-        body.dark-theme .registration-form,
-        body.dark-theme .qr-section,
-        body.dark-theme .scan-container,
-        body.dark-theme .user-info-display,
-        body.dark-theme .users-table,
-        body.dark-theme .promo-codes-section {
-            background: #2c3e50;
-            color: white;
-        }
-
-        body.dark-theme .form-group label,
-        body.dark-theme .form-group input,
-        body.dark-theme .scan-input,
-        body.dark-theme .info-label,
-        body.dark-theme .info-value,
-        body.dark-theme .users-table th,
-        body.dark-theme .users-table td {
-            color: white;
-        }
-
-        body.dark-theme .points-badge {
-            background: linear-gradient(135deg, var(--primary-yellow), #ffd700);
-            color: var(--primary-black);
+            background: #ebf8ff;
+            color: var(--info-color);
+            border: 2px solid var(--info-color);
         }
 
         footer {
             text-align: center;
-            margin-top: 30px;
-            color: white;
-            font-size: 0.9em;
-            opacity: 0.8;
+            margin-top: 36px;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            padding: 20px;
         }
 
         @media (max-width: 768px) {
@@ -743,17 +771,41 @@
             }
             
             .tab-btn {
-                padding: 8px 15px;
+                padding: 10px 16px;
                 font-size: 0.85em;
+                min-width: auto;
             }
             
             .points-display {
-                font-size: 1.5em;
-                padding: 10px 20px;
+                font-size: 1.8em;
+                padding: 16px 28px;
+                min-width: 100px;
             }
             
             .camera-container {
                 max-width: 100%;
+            }
+            
+            .main-content {
+                padding: 24px;
+            }
+            
+            .profile-card, .qr-section, .promo-codes-section {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2.2em;
+            }
+            
+            .section-title {
+                font-size: 1.5em;
+            }
+            
+            .points-display {
+                font-size: 1.6em;
             }
         }
     </style>
@@ -761,20 +813,20 @@
 <body>
     <div class="container">
         <header>
-            <div class="logo">✨ Арома-Бонус ✨</div>
-            <div class="subtitle">Собирайте баллы и получайте скидки на косметику и эфирные масла!</div>
-            <button class="admin-access" id="adminAccessBtn">🔑 Админ вход</button>
+            <div class="logo">БОНУС+ПРОМО</div>
+            <div class="subtitle">Программа лояльности для ценителей натуральной косметики</div>
+            <button class="admin-access" id="adminAccessBtn">Админка</button>
             <div class="tabs">
-                <button class="tab-btn active" data-tab="register">📝 Регистрация</button>
-                <button class="tab-btn" data-tab="profile">👤 Мой профиль</button>
-                <button class="tab-btn admin-tab" data-tab="admin">⚙️ Админ панель</button>
+                <button class="tab-btn active" data-tab="register">Регистрация</button>
+                <button class="tab-btn" data-tab="profile">Мой профиль</button>
+                <button class="tab-btn admin-tab" data-tab="admin">Админ панель</button>
             </div>
         </header>
 
         <div class="main-content">
             <!-- Страница регистрации -->
             <div id="registerSection" class="tab-content active">
-                <h2 class="section-title">Регистрация в программе лояльности</h2>
+                <h2 class="section-title">Регистрация в программе</h2>
                 <form class="registration-form" id="registrationForm">
                     <div class="form-group">
                         <label for="name">Ваше имя *</label>
@@ -788,7 +840,7 @@
                         <label for="phone">Телефон *</label>
                         <input type="tel" id="phone" placeholder="+7 (XXX) XXX-XX-XX" required>
                     </div>
-                    <button type="submit" class="submit-btn">Зарегистрироваться и получить карту</button>
+                    <button type="submit" class="submit-btn">Получить карту лояльности</button>
                 </form>
             </div>
 
@@ -805,7 +857,7 @@
                         <div class="points-label">баллов</div>
                     </div>
                     <div class="progress-info">
-                        <p style="opacity: 0.9; font-size: 0.95em;">
+                        <p style="color: var(--text-secondary); font-size: 0.95em; line-height: 1.6;">
                             За каждую покупку начисляется 10 баллов.<br>
                             При накоплении 100 баллов вы получите промокод на скидку 10%!
                         </p>
@@ -816,7 +868,7 @@
                     <div class="qr-title">Ваша карта лояльности</div>
                     <div id="qrCodeContainer"></div>
                     <div class="qr-instructions">
-                        <p><strong>💡 Как использовать:</strong></p>
+                        <p><strong>Как использовать:</strong></p>
                         <p>Покажите этот QR-код сотруднику магазина при каждой покупке для начисления баллов.</p>
                         <p>QR-код уникален и привязан только к вашему аккаунту.</p>
                     </div>
@@ -825,7 +877,7 @@
                 <div class="promo-codes-section">
                     <h3 class="promo-title">Ваши промокоды</h3>
                     <div id="promoCodesList">
-                        <p style="text-align: center; color: var(--primary-gray);">У вас пока нет активных промокодов</p>
+                        <p style="text-align: center; color: var(--text-secondary);">У вас пока нет активных промокодов</p>
                     </div>
                 </div>
             </div>
@@ -833,8 +885,8 @@
             <!-- Админ панель -->
             <div id="adminSection" class="tab-content admin-section">
                 <div class="admin-header">
-                    <h2 class="section-title" style="color: white; margin-bottom: 0;">Админ панель</h2>
-                    <p style="opacity: 0.9; margin-top: 10px;">Сканируйте QR-коды клиентов для начисления баллов</p>
+                    <h2 class="section-title">Админ панель</h2>
+                    <p style="color: var(--text-secondary); margin-top: 12px;">Сканируйте QR-коды клиентов для начисления баллов</p>
                 </div>
 
                 <div class="scan-container">
@@ -857,7 +909,7 @@
                 </div>
 
                 <div class="user-info-display" id="userInfoDisplay">
-                    <h3 style="margin-bottom: 20px; color: var(--primary-black);">Информация о клиенте</h3>
+                    <h3 style="margin-bottom: 20px; color: var(--text-primary); font-weight: 700;">Информация о клиенте</h3>
                     <div class="info-row">
                         <span class="info-label">Имя:</span>
                         <span class="info-value" id="userInfoName">-</span>
@@ -883,15 +935,15 @@
                 </div>
 
                 <div class="redeem-section" id="redeemSection">
-                    <div class="redeem-title">🎉 Доступна скидка 10%!</div>
+                    <div class="redeem-title">Доступна скидка 10%!</div>
                     <p>Клиент накопил 100 баллов. Вы можете списать баллы и выдать промокод.</p>
-                    <div class="redeem-code" id="promoCode">AROMA10</div>
-                    <p style="opacity: 0.9; margin-bottom: 15px;">Промокод действует 2 дня</p>
+                    <div class="redeem-code" id="promoCode">PROMO10</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.95em;">Промокод действует 2 дня</p>
                     <button class="redeem-btn" id="redeemBtn">Выдать промокод и списать 100 баллов</button>
                 </div>
 
                 <div class="users-list">
-                    <h3 style="margin-bottom: 20px; color: var(--primary-black);">Список всех клиентов</h3>
+                    <h3 style="margin-bottom: 20px; color: var(--text-primary); font-weight: 700;">Список всех клиентов</h3>
                     <table class="users-table">
                         <thead>
                             <tr>
@@ -911,8 +963,8 @@
         </div>
 
         <footer>
-            <p>Арома-Бонус © 2026 | Программа лояльности для любителей натуральной косметики</p>
-            <p style="margin-top: 5px; font-size: 0.8em;">Покажите ваш QR-код при покупке для начисления баллов</p>
+            <p>БОНУС+ПРОМО © 2026 | Программа лояльности</p>
+            <p style="margin-top: 8px; font-size: 0.9em;">Покажите ваш QR-код при покупке для начисления баллов</p>
         </footer>
     </div>
 
@@ -1041,7 +1093,7 @@
                 })
                 .catch(function(err) {
                     console.error('Ошибка доступа к камере:', err);
-                    document.getElementById('scanOverlay').textContent = 'Ошибка камеры: ' + err.message;
+                    document.getElementById('scanOverlay').textContent = 'Ошибка камеры';
                 });
         }
 
@@ -1175,7 +1227,7 @@
         // Генерация динамического промокода
         function generateDynamicPromoCode() {
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = 'AROMA10_';
+            let result = 'PROMO10_';
             
             for (let i = 0; i < 8; i++) {
                 result += characters.charAt(Math.floor(Math.random() * characters.length));
@@ -1195,7 +1247,7 @@
             const userId = 'USER_' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 5).toUpperCase();
             
             // Генерация уникального QR кода
-            const qrCode = 'AROMA_' + userId;
+            const qrCode = 'BONUS_' + userId;
 
             currentUser = {
                 id: userId,
@@ -1253,20 +1305,20 @@
                 qr.addData(data);
                 qr.make();
                 
-                const qrHtml = qr.createImgTag(5, 10);
+                const qrHtml = qr.createImgTag(4, 8);
                 document.getElementById('qrCodeContainer').innerHTML = qrHtml;
                 
                 // Добавляем подпись под QR кодом
                 const caption = document.createElement('div');
-                caption.style.marginTop = '10px';
-                caption.style.fontWeight = 'bold';
-                caption.style.color = '#333';
-                caption.style.fontSize = '0.9em';
+                caption.style.marginTop = '12px';
+                caption.style.fontWeight = '600';
+                caption.style.color = var(--text-secondary);
+                caption.style.fontSize = '0.85em';
                 caption.textContent = data;
                 document.getElementById('qrCodeContainer').appendChild(caption);
             } catch (e) {
                 console.error('Error generating QR code:', e);
-                document.getElementById('qrCodeContainer').innerHTML = '<p>Ошибка генерации QR кода</p>';
+                document.getElementById('qrCodeContainer').innerHTML = '<p style="color: var(--error-color);">Ошибка генерации QR кода</p>';
             }
         }
 
@@ -1333,7 +1385,7 @@
         // Обновление отображения промокодов в профиле
         function updatePromoCodesDisplay() {
             if (!currentUser) {
-                document.getElementById('promoCodesList').innerHTML = '<p style="text-align: center; color: var(--primary-gray);">У вас пока нет активных промокодов</p>';
+                document.getElementById('promoCodesList').innerHTML = '<p style="text-align: center; color: var(--text-secondary);">У вас пока нет активных промокодов</p>';
                 return;
             }
             
@@ -1349,7 +1401,7 @@
             }
             
             if (activePromoCodes.length === 0) {
-                document.getElementById('promoCodesList').innerHTML = '<p style="text-align: center; color: var(--primary-gray);">У вас пока нет активных промокодов</p>';
+                document.getElementById('promoCodesList').innerHTML = '<p style="text-align: center; color: var(--text-secondary);">У вас пока нет активных промокодов</p>';
                 return;
             }
             
@@ -1362,7 +1414,7 @@
                 promoHtml += `
                     <div class="promo-code-item ${isExpired ? 'promo-expired' : ''}">
                         <div class="promo-code-text" onclick="copyPromoCode('${promo.code}')">${promo.code}</div>
-                        <div class="promo-expiry">${isExpired ? 'Истёк' : `Действует ${daysLeft} дн.`}</div>
+                        <div class="promo-expiry ${isExpired ? 'expired' : 'active'}">${isExpired ? 'Истёк' : `Действует ${daysLeft} дн.`}</div>
                     </div>
                 `;
             });
