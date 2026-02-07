@@ -33,12 +33,14 @@
       font-size: 14px;
       padding: 8px;
     }
-    button.send-btn {
-      background: #0088cc;
+    button.send-btn, button.print-btn, button.reset-btn {
       font-size: 14px;
       padding: 8px;
       margin-top: 10px;
     }
+    button.send-btn { background: #0088cc; }
+    button.print-btn { background: #4CAF50; }
+    button.reset-btn { background: #f44336; }
     .section { background: white; padding: 16px; border-radius: 12px; margin-top: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
     .hidden { display: none !important; }
     .promo-alert {
@@ -53,16 +55,32 @@
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .level-20 { background: #e3f2fd; color: #0d47a1; }
-    .level-25 { background: #fff8e1; color: #e65100; }
+    .level-5 { background: #e3f2fd; color: #0d47a1; }
+    .level-20 { background: #fff8e1; color: #e65100; }
     .level-30 { background: #e8f5e8; color: #1b5e20; }
-    .footer-note { text-align: center; font-size: 12px; color: #888; margin-top: 20px; }
     .pin-display {
       text-align: center;
       font-size: 24px;
       font-weight: bold;
       margin: 10px 0;
       color: #2196F3;
+    }
+    .footer-note { text-align: center; font-size: 12px; color: #888; margin-top: 20px; }
+
+    /* Стили для печати */
+    @media print {
+      body { background: white; padding: 0; }
+      .container { max-width: 100%; margin: 0; }
+      .no-print { display: none !important; }
+      #print-area {
+        text-align: center;
+        padding: 20px;
+      }
+      #print-area img {
+        max-width: 300px;
+        margin: 0 auto;
+      }
+      h1 { font-size: 24px; }
     }
   </style>
 </head>
@@ -72,15 +90,15 @@
 
     <!-- НОВЫЙ КЛИЕНТ -->
     <div class="section">
-      <h2>➕ Новый клиент</h2>
+      <h2>➕ Новая карта</h2>
       <input type="text" id="contact-link" placeholder="Telegram (@user) или VK (https://vk.com/user)" />
-      <button onclick="generateNewUser()">Выдать QR с 100 баллами</button>
+      <button onclick="generateNewUser()">Выдать карту с 5 баллами</button>
       <div id="new-qr-display" class="hidden">
         <div class="pin-display">PIN: <span id="new-pin"></span></div>
         <h3>QR для клиента:</h3>
         <div id="new-qr-img"></div>
-        <button class="send-btn" onclick="sendToClient('new')">📤 Отправить клиенту</button>
-        <p style="font-size:12px;color:#666;margin-top:8px;">Сообщите клиенту его 5-значный PIN.</p>
+        <button class="send-btn" onclick="sendToClient('new')">📤 Отправить</button>
+        <button class="print-btn no-print" onclick="printQR('new')">🖨️ Печать чека</button>
       </div>
     </div>
 
@@ -90,24 +108,33 @@
       <p>Введите 5-значный PIN клиента:</p>
       <input type="text" id="input-pin" placeholder="Например: 48291" maxlength="5" />
       <button onclick="addPointsByPin()">Добавить 5 баллов</button>
+      <button class="reset-btn no-print" onclick="resetPoints()">🔄 Обнулить баллы</button>
 
       <div id="promo-notification" class="hidden"></div>
 
       <div id="result-qr-display" class="hidden">
         <h3>Обновлённый QR:</h3>
         <div id="result-qr-img"></div>
-        <button class="send-btn" onclick="sendToClient('result')">📤 Отправить клиенту</button>
+        <button class="send-btn" onclick="sendToClient('result')">📤 Отправить</button>
+        <button class="print-btn no-print" onclick="printQR('result')">🖨️ Печать чека</button>
       </div>
     </div>
 
     <!-- ЭКСПОРТ -->
-    <div style="text-align:center; margin-top:20px;">
+    <div style="text-align:center; margin-top:20px;" class="no-print">
       <button class="export-btn" onclick="exportHistory()">📤 Экспорт истории</button>
     </div>
 
-    <div class="footer-note">
+    <div class="footer-note no-print">
       Все данные хранятся только на этом устройстве.
     </div>
+  </div>
+
+  <!-- Область для печати (скрыта на экране) -->
+  <div id="print-area" class="hidden">
+    <h1>Ваша карта лояльности</h1>
+    <div id="print-qr-container"></div>
+    <p style="margin-top:20px; font-size:14px;">Предъявите QR-код при оплате.</p>
   </div>
 
   <!-- QR Generator -->
@@ -118,16 +145,14 @@
     let currentContactLink = null;
     let currentPin = null;
 
-    // Генерация уникального 5-значного PIN
     function generateUniquePin() {
       let pin;
       do {
-        pin = Math.floor(10000 + Math.random() * 90000).toString(); // 10000–99999
+        pin = Math.floor(10000 + Math.random() * 90000).toString();
       } while (history.some(h => h.pin === pin));
       return pin;
     }
 
-    // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
     function makeHash(id, points) {
       return btoa(`${id}|${points}|${SECRET}`).replace(/[^a-zA-Z0-9]/g, '').substring(0, 12).toUpperCase();
     }
@@ -208,7 +233,6 @@
     function sendToClient(type) {
       const imgElement = document.querySelector(`#${type}-qr-img img`);
       if (!imgElement) return alert("QR не найден");
-
       saveQRAsFile(imgElement);
 
       if (currentContactLink) {
@@ -228,7 +252,24 @@
       }, 300);
     }
 
-    // === ГЕНЕРАЦИЯ НОВОГО КЛИЕНТА ===
+    // === ПЕЧАТЬ ===
+    function printQR(type) {
+      const imgElement = document.querySelector(`#${type}-qr-img img`);
+      if (!imgElement) return alert("QR не найден");
+
+      const printContainer = document.getElementById('print-qr-container');
+      printContainer.innerHTML = ''; // очистить
+      const clone = imgElement.cloneNode(true);
+      printContainer.appendChild(clone);
+      document.getElementById('print-area').classList.remove('hidden');
+
+      setTimeout(() => {
+        window.print();
+        document.getElementById('print-area').classList.add('hidden');
+      }, 300);
+    }
+
+    // === НОВАЯ КАРТА (5 баллов) ===
     function generateNewUser() {
       const contact = document.getElementById('contact-link').value.trim();
       if (!contact) return alert("Укажите контакт");
@@ -236,7 +277,7 @@
       currentContactLink = contact;
       const id = Math.random().toString(36).substring(2, 10) + Date.now().toString(36).slice(-4);
       const pin = generateUniquePin();
-      const points = 100;
+      const points = 5; // ← изменено с 100 на 5
       const qrStr = encodeToQRString(id, points);
 
       document.getElementById('new-pin').innerText = pin;
@@ -261,28 +302,61 @@
       currentContactLink = entry.contact;
       currentPin = entry.pin;
 
-      const newPoints = entry.newPoints + 5; // всегда берём последний баланс
+      let newPoints = entry.newPoints + 5;
+
+      // Проверка порогов и сброс
+      let promoLevel = null, discount = 0;
+      if (newPoints >= 30) {
+        promoLevel = '30'; discount = 30;
+        newPoints = 0; // сброс после 30
+      } else if (newPoints >= 25) {
+        promoLevel = '20'; discount = 20;
+      } else if (newPoints >= 15) {
+        promoLevel = '5'; discount = 5;
+      }
+
       addToHistory(entry.id, entry.newPoints, newPoints, entry.contact, entry.pin);
 
       const newQrStr = encodeToQRString(entry.id, newPoints);
       document.getElementById('result-qr-img').innerHTML = generateQRImage(newQrStr);
       document.getElementById('result-qr-display').classList.remove('hidden');
 
-      // Уведомление о промокоде
+      // Уведомление
       const promoDiv = document.getElementById('promo-notification');
       promoDiv.className = 'promo-alert hidden';
-      let level = null, discount = 0;
-      if (newPoints >= 100) { level = '30'; discount = 30; }
-      else if (newPoints >= 75) { level = '25'; discount = 25; }
-      else if (newPoints >= 50) { level = '20'; discount = 20; }
-
-      if (level) {
+      if (promoLevel) {
         promoDiv.innerText = `🎁 Доступен промокод на ${discount}% скидку!`;
-        promoDiv.classList.add(`level-${level}`);
+        promoDiv.classList.add(`level-${promoLevel}`);
         promoDiv.classList.remove('hidden');
         playSound();
       }
 
+      document.getElementById('input-pin').value = '';
+    }
+
+    // === ОБНУЛЕНИЕ БАЛЛОВ ===
+    function resetPoints() {
+      const pinInput = document.getElementById('input-pin').value.trim();
+      if (!/^\d{5}$/.test(pinInput)) {
+        return alert("Введите 5-значный PIN для обнуления");
+      }
+
+      const entry = history.find(h => h.pin === pinInput);
+      if (!entry) {
+        return alert("Клиент не найден");
+      }
+
+      currentContactLink = entry.contact;
+      currentPin = entry.pin;
+
+      // Обнуляем баллы
+      addToHistory(entry.id, entry.newPoints, 0, entry.contact, entry.pin);
+
+      const newQrStr = encodeToQRString(entry.id, 0);
+      document.getElementById('result-qr-img').innerHTML = generateQRImage(newQrStr);
+      document.getElementById('result-qr-display').classList.remove('hidden');
+
+      alert("✅ Баллы обнулены!");
       document.getElementById('input-pin').value = '';
     }
   </script>
