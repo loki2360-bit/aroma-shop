@@ -32,7 +32,7 @@
         }
 
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-color);
             min-height: 100vh;
             padding: 20px;
@@ -60,7 +60,7 @@
             background-clip: text;
             letter-spacing: -1px;
             margin-bottom: 10px;
-            font-family: 'Arial Black', Arial, sans-serif;
+            font-family: Arial, sans-serif;
         }
 
         .subtitle {
@@ -135,7 +135,6 @@
             padding: 32px;
             box-shadow: var(--shadow-light), var(--shadow-dark);
             transition: var(--transition);
-            position: relative;
         }
 
         .section-title {
@@ -306,15 +305,7 @@
             box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
-        .qr-instructions p {
-            margin-bottom: 8px;
-        }
-
-        .qr-instructions p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Промокоды в профиле */
+        /* Промокоды */
         .promo-codes-section {
             margin-top: 36px;
             background: var(--card-color);
@@ -349,15 +340,10 @@
             box-shadow: 12px 12px 24px rgba(160, 174, 192, 0.25), -12px -12px 24px rgba(255, 255, 255, 0.8);
         }
 
-        .promo-code-item.promo-expired {
-            opacity: 0.6;
-            background: #f7fafc;
-        }
-
         .promo-code-text {
             font-size: 1.3em;
             font-weight: 800;
-            font-family: 'Courier New', monospace;
+            font-family: monospace;
             letter-spacing: 2px;
             cursor: pointer;
             transition: var(--transition);
@@ -388,7 +374,7 @@
             background: #f0fff4;
         }
 
-        /* Админ панель */
+        /* Админ */
         .admin-section {
             display: none;
         }
@@ -521,23 +507,11 @@
             cursor: pointer;
             transition: var(--transition);
             box-shadow: var(--shadow-light), var(--shadow-dark);
-            white-space: nowrap;
         }
 
         .scan-btn:hover {
             transform: translateY(-2px);
             box-shadow: 12px 12px 24px rgba(160, 174, 192, 0.25), -12px -12px 24px rgba(255, 255, 255, 0.8);
-        }
-
-        .scan-btn:active {
-            box-shadow: var(--inset-shadow);
-        }
-
-        .scan-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: var(--shadow-light), var(--shadow-dark);
         }
 
         .scan-result {
@@ -617,7 +591,7 @@
             font-weight: 800;
             letter-spacing: 3px;
             margin: 18px 0;
-            font-family: 'Courier New', monospace;
+            font-family: monospace;
             cursor: pointer;
             transition: var(--transition);
             box-shadow: var(--shadow-light), var(--shadow-dark);
@@ -645,12 +619,6 @@
         .redeem-btn:hover {
             transform: translateY(-2px);
             box-shadow: 8px 8px 16px rgba(160, 174, 192, 0.25), -8px -8px 16px rgba(255, 255, 255, 0.8);
-            background: var(--success-color);
-            color: white;
-        }
-
-        .redeem-btn:active {
-            box-shadow: var(--inset-shadow);
             background: var(--success-color);
             color: white;
         }
@@ -683,14 +651,6 @@
             color: var(--text-primary);
         }
 
-        .users-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .users-table tr:hover {
-            background: #f8f9fa;
-        }
-
         .points-badge {
             background: var(--card-color);
             color: var(--primary-accent);
@@ -720,7 +680,6 @@
             border: 1px solid var(--border-color);
         }
 
-        /* Уведомления */
         .notification {
             position: fixed;
             top: 24px;
@@ -751,12 +710,6 @@
             border: 2px solid var(--error-color);
         }
 
-        .notification.info {
-            background: #ebf8ff;
-            color: var(--info-color);
-            border: 2px solid var(--info-color);
-        }
-
         footer {
             text-align: center;
             margin-top: 36px;
@@ -769,43 +722,15 @@
             .scan-input-group {
                 flex-direction: column;
             }
-            
             .tab-btn {
                 padding: 10px 16px;
                 font-size: 0.85em;
                 min-width: auto;
             }
-            
             .points-display {
                 font-size: 1.8em;
                 padding: 16px 28px;
                 min-width: 100px;
-            }
-            
-            .camera-container {
-                max-width: 100%;
-            }
-            
-            .main-content {
-                padding: 24px;
-            }
-            
-            .profile-card, .qr-section, .promo-codes-section {
-                padding: 24px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .logo {
-                font-size: 2.2em;
-            }
-            
-            .section-title {
-                font-size: 1.5em;
-            }
-            
-            .points-display {
-                font-size: 1.6em;
             }
         }
     </style>
@@ -824,7 +749,7 @@
         </header>
 
         <div class="main-content">
-            <!-- Страница регистрации -->
+            <!-- Регистрация -->
             <div id="registerSection" class="tab-content active">
                 <h2 class="section-title">Регистрация в программе</h2>
                 <form class="registration-form" id="registrationForm">
@@ -844,7 +769,7 @@
                 </form>
             </div>
 
-            <!-- Личный кабинет -->
+            <!-- Профиль -->
             <div id="profileSection" class="tab-content" style="display: none;">
                 <h2 class="section-title">Мой профиль</h2>
                 <div class="profile-card">
@@ -856,12 +781,10 @@
                         <span id="profilePoints">0</span>
                         <div class="points-label">баллов</div>
                     </div>
-                    <div class="progress-info">
-                        <p style="color: var(--text-secondary); font-size: 0.95em; line-height: 1.6;">
-                            За каждую покупку начисляется 10 баллов.<br>
-                            При накоплении 100 баллов вы получите промокод на скидку 10%!
-                        </p>
-                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95em; line-height: 1.6;">
+                        За каждую покупку начисляется 10 баллов.<br>
+                        При накоплении 100 баллов вы получите промокод на скидку 10%!
+                    </p>
                 </div>
 
                 <div class="qr-section">
@@ -882,8 +805,8 @@
                 </div>
             </div>
 
-            <!-- Админ панель -->
-            <div id="adminSection" class="tab-content admin-section">
+            <!-- Админ -->
+            <div id="adminSection" class="tab-content admin-section" style="display: none;">
                 <div class="admin-header">
                     <h2 class="section-title">Админ панель</h2>
                     <p style="color: var(--text-secondary); margin-top: 12px;">Сканируйте QR-коды клиентов для начисления баллов</p>
@@ -908,8 +831,8 @@
                     <div class="scan-result" id="scanResult"></div>
                 </div>
 
-                <div class="user-info-display" id="userInfoDisplay">
-                    <h3 style="margin-bottom: 20px; color: var(--text-primary); font-weight: 700;">Информация о клиенте</h3>
+                <div class="user-info-display" id="userInfoDisplay" style="display: none;">
+                    <h3 style="margin-bottom: 20px; color: var(--text-primary); font-weight: 700;">Информация клиенте</h3>
                     <div class="info-row">
                         <span class="info-label">Имя:</span>
                         <span class="info-value" id="userInfoName">-</span>
@@ -934,7 +857,7 @@
                     </div>
                 </div>
 
-                <div class="redeem-section" id="redeemSection">
+                <div class="redeem-section" id="redeemSection" style="display: none;">
                     <div class="redeem-title">Доступна скидка 10%!</div>
                     <p>Клиент накопил 100 баллов. Вы можете списать баллы и выдать промокод.</p>
                     <div class="redeem-code" id="promoCode">PROMO10</div>
@@ -955,7 +878,7 @@
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
-                            <!-- Заполняется динамически -->
+                            <!-- заполнится JS -->
                         </tbody>
                     </table>
                 </div>
@@ -971,74 +894,86 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        // Глобальные переменные
-        let currentUser = null;
-        let isAdminMode = false;
-        let adminPassword = 'admin123';
-        let videoElement = null;
-        let canvasElement = null;
-        let scanning = false;
-        let currentScannedUser = null;
+        // Глобальные переменные (объявлены в глобальной области)
+        var currentUser = null;
+        var isAdminMode = false;
+        var adminPassword = 'admin123';
+        var videoElement = null;
+        var canvasElement = null;
+        var scanning = false;
+        var currentScannedUser = null;
 
-        // Инициализация приложения
+        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             loadUserData();
             setupEventListeners();
             updateUsersTable();
             updatePromoCodesDisplay();
-            
-            // Проверяем, есть ли сохраненный пользователь
+
             if (currentUser) {
                 showProfile();
             }
-            
-            // Инициализируем камеру для админки
+
+            // Попробуем инициализировать камеру (если поддерживается)
             initCamera();
         });
 
-        // Загрузка данных пользователя
         function loadUserData() {
-            const savedUser = localStorage.getItem('loyaltyUser');
-            const savedUsers = localStorage.getItem('loyaltyUsers');
-            
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-            }
-            
-            if (savedUsers) {
-                window.loyaltyUsers = JSON.parse(savedUsers);
-            } else {
+            try {
+                var savedUser = localStorage.getItem('loyaltyUser');
+                var savedUsers = localStorage.getItem('loyaltyUsers');
+
+                if (savedUser) {
+                    currentUser = JSON.parse(savedUser);
+                }
+
+                if (savedUsers) {
+                    window.loyaltyUsers = JSON.parse(savedUsers);
+                } else {
+                    window.loyaltyUsers = [];
+                }
+            } catch (e) {
+                console.error('Ошибка загрузки данных:', e);
                 window.loyaltyUsers = [];
             }
         }
 
-        // Сохранение данных
         function saveUserData() {
-            if (currentUser) {
-                localStorage.setItem('loyaltyUser', JSON.stringify(currentUser));
+            try {
+                if (currentUser) {
+                    localStorage.setItem('loyaltyUser', JSON.stringify(currentUser));
+                }
+                localStorage.setItem('loyaltyUsers', JSON.stringify(window.loyaltyUsers));
+            } catch (e) {
+                console.error('Ошибка сохранения данных:', e);
             }
-            localStorage.setItem('loyaltyUsers', JSON.stringify(window.loyaltyUsers));
         }
 
-        // Настройка обработчиков событий
         function setupEventListeners() {
-            // Переключение табов
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-                    
+            // Табы
+            var tabButtons = document.querySelectorAll('.tab-btn');
+            for (var i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].addEventListener('click', function() {
+                    for (var j = 0; j < tabButtons.length; j++) {
+                        tabButtons[j].classList.remove('active');
+                    }
                     this.classList.add('active');
-                    document.getElementById(this.dataset.tab + 'Section').style.display = 'block';
-                    
-                    // Обновляем промокоды при переключении на профиль
-                    if (this.dataset.tab === 'profile') {
+
+                    var sections = document.querySelectorAll('.tab-content');
+                    for (var k = 0; k < sections.length; k++) {
+                        sections[k].style.display = 'none';
+                    }
+
+                    var targetId = this.getAttribute('data-tab') + 'Section';
+                    document.getElementById(targetId).style.display = 'block';
+
+                    if (this.getAttribute('data-tab') === 'profile') {
                         updatePromoCodesDisplay();
                     }
                 });
-            });
+            }
 
-            // Форма регистрации
+            // Регистрация
             document.getElementById('registrationForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 registerUser();
@@ -1046,7 +981,7 @@
 
             // Админ доступ
             document.getElementById('adminAccessBtn').addEventListener('click', function() {
-                const password = prompt('Введите пароль администратора:');
+                var password = prompt('Введите пароль администратора:');
                 if (password === adminPassword) {
                     isAdminMode = true;
                     document.querySelector('.admin-tab').style.display = 'block';
@@ -1069,152 +1004,131 @@
 
             // Копирование промокода
             document.getElementById('promoCode').addEventListener('click', function() {
-                navigator.clipboard.writeText(this.textContent);
-                showNotification('Промокод скопирован в буфер обмена!', 'info');
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(this.textContent).then(function() {
+                        showNotification('Промокод скопирован в буфер обмена!', 'info');
+                    }).catch(function() {
+                        showNotification('Не удалось скопировать', 'error');
+                    });
+                } else {
+                    showNotification('Копирование недоступно в этом браузере', 'warning');
+                }
             });
         }
 
-        // Инициализация камеры
         function initCamera() {
             videoElement = document.getElementById('videoElement');
             canvasElement = document.createElement('canvas');
-            
-            // Проверяем поддержку getUserMedia
+
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 document.getElementById('scanOverlay').textContent = 'Камера не поддерживается';
                 return;
             }
-            
-            // Запрашиваем доступ к камере
+
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
                 .then(function(stream) {
                     videoElement.srcObject = stream;
                     startScanning();
                 })
                 .catch(function(err) {
-                    console.error('Ошибка доступа к камере:', err);
-                    document.getElementById('scanOverlay').textContent = 'Ошибка камеры';
+                    console.warn('Камера недоступна:', err);
+                    document.getElementById('scanOverlay').textContent = 'Камера недоступна';
                 });
         }
 
-        // Начало сканирования
         function startScanning() {
             if (scanning) return;
-            
             scanning = true;
             scanFrame();
         }
 
-        // Сканирование одного кадра
         function scanFrame() {
             if (!scanning) return;
-            
-            const context = canvasElement.getContext('2d');
+
+            if (!videoElement.videoWidth) {
+                setTimeout(scanFrame, 500);
+                return;
+            }
+
+            var context = canvasElement.getContext('2d');
             canvasElement.width = videoElement.videoWidth;
             canvasElement.height = videoElement.videoHeight;
-            
             context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-            
-            const imageData = context.getImageData(0, 0, canvasElement.width, canvasElement.height);
-            
-            // Используем jsQR для распознавания QR кода
-            const code = jsQR(imageData.data, imageData.width, imageData.height);
-            
+
+            var imageData = context.getImageData(0, 0, canvasElement.width, canvasElement.height);
+            var code = jsQR(imageData.data, imageData.width, imageData.height);
+
             if (code) {
-                // Найден QR код
                 stopScanning();
                 handleScannedCode(code.data);
                 return;
             }
-            
-            // Продолжаем сканирование
+
             requestAnimationFrame(scanFrame);
         }
 
-        // Остановка сканирования
         function stopScanning() {
             scanning = false;
         }
 
-        // Обработка отсканированного кода
         function handleScannedCode(qrData) {
             document.getElementById('scanOverlay').textContent = '✅ Код найден!';
-            
-            setTimeout(() => {
+            setTimeout(function() {
                 document.getElementById('scanOverlay').textContent = 'Наведите камеру на QR-код';
                 processScannedCode(qrData);
             }, 2000);
-            
-            // Возобновляем сканирование
             setTimeout(startScanning, 3000);
         }
 
-        // Ручное сканирование
-        function manualScan() {
-            const qrInput = document.getElementById('qrInput').value.trim();
-            
-            if (!qrInput) {
-                showNotification('Введите код из QR-кода', 'error');
-                return;
-            }
-            
-            processScannedCode(qrInput);
-            document.getElementById('qrInput').value = '';
-        }
-
-        // Обработка кода (общая функция)
         function processScannedCode(qrData) {
-            // Ищем пользователя по QR коду
-            const user = window.loyaltyUsers.find(u => u.qrCode === qrData);
-            
-            const scanResult = document.getElementById('scanResult');
+            var user = null;
+            for (var i = 0; i < window.loyaltyUsers.length; i++) {
+                if (window.loyaltyUsers[i].qrCode === qrData) {
+                    user = window.loyaltyUsers[i];
+                    break;
+                }
+            }
+
+            var scanResult = document.getElementById('scanResult');
             scanResult.style.display = 'block';
-            
+
             if (!user) {
                 scanResult.className = 'scan-result scan-error';
-                scanResult.textContent = '❌ Пользователь не найден. Проверьте правильность кода.';
+                scanResult.textContent = '❌ Пользователь не найден.';
                 document.getElementById('userInfoDisplay').style.display = 'none';
                 document.getElementById('redeemSection').style.display = 'none';
                 return;
             }
 
-            // Начисляем 10 баллов
             user.points += 10;
             user.lastScan = new Date().toISOString();
-            
-            // Сохраняем данные
+
             if (currentUser && currentUser.id === user.id) {
                 currentUser.points = user.points;
             }
             saveUserData();
-            
-            // Обновляем информацию о пользователе
+
             currentScannedUser = user;
             updateUserInfoDisplay(user);
-            
-            // Проверяем, можно ли выдать промокод
+
             if (user.points >= 100) {
                 document.getElementById('redeemSection').style.display = 'block';
-                generateDynamicPromoCode(); // Генерируем новый промокод
+                generateDynamicPromoCode();
                 scanResult.className = 'scan-result scan-success';
-                scanResult.innerHTML = `✅ Успешно! +10 баллов начислено.<br>🎉 Клиент накопил ${user.points} баллов! Доступна скидка 10%.`;
+                scanResult.innerHTML = '✅ +10 баллов<br>🎉 Доступна скидка 10%!';
             } else {
                 document.getElementById('redeemSection').style.display = 'none';
                 scanResult.className = 'scan-result scan-success';
-                scanResult.innerHTML = `✅ Успешно! +10 баллов начислено.<br>Текущий баланс: ${user.points} баллов<br>До скидки 10%: ${100 - user.points} баллов`;
+                scanResult.innerHTML = '✅ +10 баллов<br>Баланс: ' + user.points + '/100';
             }
-            
-            // Обновляем таблицу пользователей
+
             updateUsersTable();
-            
-            // Обновляем профиль если это текущий пользователь
             if (currentUser && currentUser.id === user.id) {
                 document.getElementById('profilePoints').textContent = user.points;
                 updatePromoCodesDisplay();
             }
         }
 
-        // Обновление информации о пользователе в админке
         function updateUserInfoDisplay(user) {
             document.getElementById('userInfoName').textContent = user.name;
             document.getElementById('userInfoEmail').textContent = user.email;
@@ -1224,30 +1138,28 @@
             document.getElementById('userInfoDisplay').style.display = 'block';
         }
 
-        // Генерация динамического промокода
         function generateDynamicPromoCode() {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = 'PROMO10_';
-            
-            for (let i = 0; i < 8; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            var result = 'PROMO10_';
+            for (var i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
-            
             document.getElementById('promoCode').textContent = result;
             return result;
         }
 
-        // Регистрация пользователя
         function registerUser() {
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim();
+            var name = document.getElementById('name').value.trim();
+            var email = document.getElementById('email').value.trim();
+            var phone = document.getElementById('phone').value.trim();
 
-            // Генерация уникального ID
-            const userId = 'USER_' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 5).toUpperCase();
-            
-            // Генерация уникального QR кода
-            const qrCode = 'BONUS_' + userId;
+            if (!name || !email || !phone) {
+                showNotification('Заполните все поля', 'error');
+                return;
+            }
+
+            var userId = 'USER_' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 5).toUpperCase();
+            var qrCode = 'BONUS_' + userId;
 
             currentUser = {
                 id: userId,
@@ -1261,213 +1173,161 @@
                 promoCodes: []
             };
 
-            // Добавляем в список всех пользователей
             window.loyaltyUsers.push(currentUser);
-            
-            // Сохраняем данные
             saveUserData();
-            
-            // Генерируем и показываем QR код
             generateQRCode(qrCode);
-            
-            // Показываем профиль
             showProfile();
-            
-            showNotification('Регистрация успешна! Ваша карта лояльности готова.', 'success');
+            showNotification('Регистрация успешна!', 'success');
         }
 
-        // Показать профиль
         function showProfile() {
             if (!currentUser) return;
-            
+
             document.getElementById('profileName').textContent = currentUser.name;
             document.getElementById('profileEmail').textContent = currentUser.email;
             document.getElementById('profilePoints').textContent = currentUser.points;
-            
-            // Генерируем QR код
-            generateQRCode(currentUser.qrCode);
-            
-            // Переключаем на вкладку профиля
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-            
-            document.querySelector('.tab-btn[data-tab="profile"]').classList.add('active');
-            document.getElementById('profileSection').style.display = 'block';
-            
-            // Обновляем промокоды
+            document.querySelectorAll('.tab-btn')[1].click(); // переключаем на профиль
             updatePromoCodesDisplay();
         }
 
-        // Генерация QR кода
         function generateQRCode(data) {
             try {
-                const qr = qrcode(0, 'M');
+                var qr = qrcode(0, 'M');
                 qr.addData(data);
                 qr.make();
-                
-                const qrHtml = qr.createImgTag(4, 8);
-                document.getElementById('qrCodeContainer').innerHTML = qrHtml;
-                
-                // Добавляем подпись под QR кодом
-                const caption = document.createElement('div');
-                caption.style.marginTop = '12px';
-                caption.style.fontWeight = '600';
-                caption.style.color = var(--text-secondary);
-                caption.style.fontSize = '0.85em';
-                caption.textContent = data;
-                document.getElementById('qrCodeContainer').appendChild(caption);
+                var qrHtml = qr.createImgTag(4, 8);
+                document.getElementById('qrCodeContainer').innerHTML = qrHtml + '<div style="margin-top:12px;font-weight:600;color:' + getComputedStyle(document.documentElement).getPropertyValue('--text-secondary') + ';font-size:0.85em;">' + data + '</div>';
             } catch (e) {
-                console.error('Error generating QR code:', e);
-                document.getElementById('qrCodeContainer').innerHTML = '<p style="color: var(--error-color);">Ошибка генерации QR кода</p>';
+                console.error('QR error:', e);
+                document.getElementById('qrCodeContainer').innerHTML = '<p style="color:red;">Ошибка генерации QR</p>';
             }
         }
 
-        // Выдача промокода
         function redeemPromoCode() {
             if (!currentScannedUser || currentScannedUser.points < 100) {
-                showNotification('Невозможно выдать промокод', 'error');
+                showNotification('Недостаточно баллов', 'error');
                 return;
             }
 
-            const promoCode = document.getElementById('promoCode').textContent;
-            
-            // Списываем 100 баллов
+            var promoCode = document.getElementById('promoCode').textContent;
             currentScannedUser.points -= 100;
-            
-            // Создаем промокод со сроком действия 2 дня
-            const now = new Date();
-            const expiryDate = new Date(now.getTime() + (2 * 24 * 60 * 60 * 1000)); // 2 дня
-            
-            const newPromoCode = {
+
+            var now = new Date();
+            var expiry = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000); // 2 дня
+
+            var newPromo = {
                 code: promoCode,
                 issuedAt: now.toISOString(),
-                expiresAt: expiryDate.toISOString(),
+                expiresAt: expiry.toISOString(),
                 used: false
             };
-            
-            // Добавляем промокод в историю пользователя
+
             if (!currentScannedUser.promoCodes) currentScannedUser.promoCodes = [];
-            currentScannedUser.promoCodes.push(newPromoCode);
-            
-            // Обновляем текущего пользователя если это он
+            currentScannedUser.promoCodes.push(newPromo);
+
             if (currentUser && currentUser.id === currentScannedUser.id) {
                 currentUser.points = currentScannedUser.points;
                 currentUser.promoCodes = currentScannedUser.promoCodes;
             }
-            
-            // Сохраняем данные
+
             saveUserData();
-            
-            // Обновляем интерфейс
             document.getElementById('userInfoPoints').textContent = currentScannedUser.points;
             document.getElementById('redeemSection').style.display = 'none';
-            
+
             if (currentUser && currentUser.id === currentScannedUser.id) {
                 document.getElementById('profilePoints').textContent = currentScannedUser.points;
                 updatePromoCodesDisplay();
             }
-            
-            // Обновляем таблицу
+
             updateUsersTable();
-            
-            // Показываем уведомление
-            showNotification(`Промокод ${promoCode} успешно выдан!`, 'success');
-            
-            // Копируем промокод в буфер обмена
-            navigator.clipboard.writeText(promoCode).then(() => {
-                showNotification('Промокод скопирован в буфер обмена!', 'info');
-            });
-            
-            // Генерируем новый промокод для следующего раза
+            showNotification('Промокод ' + promoCode + ' выдан!', 'success');
+
+            // Копируем в буфер
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(promoCode).catch(function() {});
+            }
+
             generateDynamicPromoCode();
         }
 
-        // Обновление отображения промокодов в профиле
         function updatePromoCodesDisplay() {
             if (!currentUser) {
                 document.getElementById('promoCodesList').innerHTML = '<p style="text-align: center; color: var(--text-secondary);">У вас пока нет активных промокодов</p>';
                 return;
             }
-            
-            const now = new Date();
-            let activePromoCodes = [];
-            
+
+            var now = new Date();
+            var active = [];
             if (currentUser.promoCodes && currentUser.promoCodes.length > 0) {
-                // Фильтруем активные промокоды (не просроченные)
-                activePromoCodes = currentUser.promoCodes.filter(promo => {
-                    const expiryDate = new Date(promo.expiresAt);
-                    return expiryDate > now && !promo.used;
-                });
+                for (var i = 0; i < currentUser.promoCodes.length; i++) {
+                    var p = currentUser.promoCodes[i];
+                    var expiry = new Date(p.expiresAt);
+                    if (expiry > now && !p.used) {
+                        active.push(p);
+                    }
+                }
             }
-            
-            if (activePromoCodes.length === 0) {
+
+            if (active.length === 0) {
                 document.getElementById('promoCodesList').innerHTML = '<p style="text-align: center; color: var(--text-secondary);">У вас пока нет активных промокодов</p>';
                 return;
             }
-            
-            let promoHtml = '';
-            activePromoCodes.forEach(promo => {
-                const expiryDate = new Date(promo.expiresAt);
-                const isExpired = expiryDate <= now;
-                const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-                
-                promoHtml += `
-                    <div class="promo-code-item ${isExpired ? 'promo-expired' : ''}">
-                        <div class="promo-code-text" onclick="copyPromoCode('${promo.code}')">${promo.code}</div>
-                        <div class="promo-expiry ${isExpired ? 'expired' : 'active'}">${isExpired ? 'Истёк' : `Действует ${daysLeft} дн.`}</div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('promoCodesList').innerHTML = promoHtml;
+
+            var html = '';
+            for (var i = 0; i < active.length; i++) {
+                var p = active[i];
+                var expiry = new Date(p.expiresAt);
+                var daysLeft = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+                var cls = expiry <= now ? 'promo-expired' : '';
+                var expCls = expiry <= now ? 'expired' : 'active';
+                html += '<div class="promo-code-item ' + cls + '">' +
+                    '<div class="promo-code-text" onclick="copyPromoCode(\'' + p.code + '\')">' + p.code + '</div>' +
+                    '<div class="promo-expiry ' + expCls + '">' + (expiry <= now ? 'Истёк' : 'Действует ' + daysLeft + ' дн.') + '</div>' +
+                    '</div>';
+            }
+            document.getElementById('promoCodesList').innerHTML = html;
         }
 
-        // Копирование промокода из профиля
         window.copyPromoCode = function(code) {
-            navigator.clipboard.writeText(code).then(() => {
-                showNotification('Промокод скопирован в буфер обмена!', 'info');
-            });
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(function() {
+                    showNotification('Скопировано!', 'info');
+                });
+            }
         };
 
-        // Обновление таблицы пользователей
         function updateUsersTable() {
-            const tbody = document.getElementById('usersTableBody');
+            var tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
-            
-            window.loyaltyUsers.forEach(user => {
-                const row = document.createElement('tr');
-                
-                row.innerHTML = `
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                    <td>${user.phone}</td>
-                    <td><span class="points-badge">${user.points}</span></td>
-                    <td><span class="status-badge status-${user.points > 0 ? 'active' : 'inactive'}">
-                        ${user.points > 0 ? 'Активен' : 'Новый'}
-                    </span></td>
-                `;
-                
-                tbody.appendChild(row);
-            });
+            for (var i = 0; i < window.loyaltyUsers.length; i++) {
+                var u = window.loyaltyUsers[i];
+                var row = '<tr>' +
+                    '<td>' + u.name + '</td>' +
+                    '<td>' + u.email + '</td>' +
+                    '<td>' + u.phone + '</td>' +
+                    '<td><span class="points-badge">' + u.points + '</span></td>' +
+                    '<td><span class="status-badge status-' + (u.points > 0 ? 'active' : 'inactive') + '">' +
+                    (u.points > 0 ? 'Активен' : 'Новый') + '</span></td>' +
+                    '</tr>';
+                tbody.innerHTML += row;
+            }
         }
 
-        // Показать уведомление
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type} show`;
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
+        function showNotification(message, type) {
+            var n = document.getElementById('notification');
+            n.textContent = message;
+            n.className = 'notification ' + (type || 'info') + ' show';
+            setTimeout(function() {
+                n.classList.remove('show');
             }, 3000);
         }
 
-        // Периодическая проверка истечения промокодов
-        setInterval(() => {
+        // Периодическая проверка (раз в минуту)
+        setInterval(function() {
             if (currentUser) {
                 updatePromoCodesDisplay();
             }
-        }, 60000); // Проверяем каждую минуту
+        }, 60000);
     </script>
 </body>
 </html>
