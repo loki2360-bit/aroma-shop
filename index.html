@@ -33,6 +33,12 @@
       font-size: 14px;
       padding: 8px;
     }
+    button.send-btn {
+      background: #0088cc;
+      font-size: 14px;
+      padding: 8px;
+      margin-top: 10px;
+    }
     .section { background: white; padding: 16px; border-radius: 12px; margin-top: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
     .hidden { display: none !important; }
     .promo-alert {
@@ -60,10 +66,12 @@
     <!-- НОВЫЙ КЛИЕНТ -->
     <div class="section">
       <h2>➕ Новый клиент</h2>
+      <input type="text" id="contact-link" placeholder="Ссылка на Telegram (@user) или VK (https://vk.com/user)" />
       <button onclick="generateNewUser()">Выдать QR с 100 баллами</button>
       <div id="new-qr-display" class="hidden">
         <h3>QR для клиента:</h3>
         <div id="new-qr-img"></div>
+        <button class="send-btn" onclick="sendToClient('new')">📤 Отправить клиенту</button>
       </div>
     </div>
 
@@ -73,17 +81,16 @@
       <input type="text" id="input-qr-full" placeholder="Вставьте строку из QR-кода" />
       <button onclick="addPointsAutomatically()">Добавить 5 баллов</button>
 
-      <!-- УВЕДОМЛЕНИЕ О ПРОМОКОДЕ -->
       <div id="promo-notification" class="hidden"></div>
 
-      <!-- ОБНОВЛЁННЫЙ QR -->
       <div id="result-qr-display" class="hidden">
         <h3>Обновлённый QR:</h3>
         <div id="result-qr-img"></div>
+        <button class="send-btn" onclick="sendToClient('result')">📤 Отправить клиенту</button>
       </div>
     </div>
 
-    <!-- ЭКСПОРТ ИСТОРИИ (МИНИМАЛЬНО) -->
+    <!-- ЭКСПОРТ -->
     <div style="text-align:center; margin-top:20px;">
       <button class="export-btn" onclick="exportHistory()">📤 Экспорт истории</button>
     </div>
@@ -96,11 +103,9 @@
   <!-- QR Generator -->
   <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
   <script>
-    // === КОНФИГУРАЦИЯ ===
-    const SECRET = "loyalty-secret-2026"; // ← ЗАМЕНИТЕ НА СВОЙ!
-
-    // История
+    const SECRET = "loyalty-secret-2026";
     let history = JSON.parse(localStorage.getItem('loyalty_history') || '[]');
+    let currentContactLink = null; // хранится временно для отправки
 
     // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
     function makeHash(id, points) {
@@ -131,7 +136,6 @@
       return qr.createImgTag(6);
     }
 
-    // === ЗВУК ===
     function playSound() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -139,57 +143,101 @@
         const gainNode = ctx.createGain();
         oscillator.connect(gainNode);
         gainNode.connect(ctx.destination);
-        oscillator.frequency.value = 800; // частота
+        oscillator.frequency.value = 800;
         gainNode.gain.value = 0.2;
         oscillator.type = 'sine';
         oscillator.start();
-        setTimeout(() => {
-          oscillator.stop();
-        }, 200);
-      } catch (e) {
-        console.warn("Звук недоступен", e);
-      }
+        setTimeout(() => oscillator.stop(), 200);
+      } catch (e) {}
     }
 
-    // === ИСТОРИЯ ===
-    function addToHistory(id, oldPoints, newPoints) {
-      history.unshift({
-        time: new Date().toISOString(),
-        id,
-        oldPoints,
-        newPoints
-      });
+    function addToHistory(id, oldPoints, newPoints, contact = '') {
+      history.unshift({ time: new Date().toISOString(), id, oldPoints, newPoints, contact });
       if (history.length > 500) history = history.slice(0, 500);
       localStorage.setItem('loyalty_history', JSON.stringify(history));
     }
 
     function exportHistory() {
-      let txt = "История начисления баллов\n=========================\n\n";
+      let txt = "История\n=======\n\n";
       history.forEach(item => {
         const date = new Date(item.time).toLocaleString('ru-RU');
-        txt += `${date} | ID: ${item.id} | ${item.oldPoints} → ${item.newPoints}\n`;
+        txt += `${date} | ${item.contact || '—'} | ID: ${item.id} | ${item.oldPoints} → ${item.newPoints}\n`;
       });
       const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `loyalty_history_${new Date().toISOString().slice(0,10)}.txt`;
+      a.download = `loyalty_${new Date().toISOString().slice(0,10)}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
 
-    // === ОСНОВНЫЕ ФУНКЦИИ ===
+    // === ОТПРАВКА КЛИЕНТУ ===
+    function sendToClient(type) {
+      if (!currentContactLink) {
+        alert("Сначала укажите контакт при создании клиента!");
+        return;
+      }
+
+      // Получаем изображение QR
+      const img = document.querySelector(`#${type}-qr-img img`);
+      if (!img) return;
+
+      // Создаём Blob из Data URL
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(blob => {
+        const qrUrl = URL.createObjectURL(blob);
+        const message = `Ваш обновлённый QR-код:\n${qrUrl}\n\nСохраните изображение!`;
+
+        let url = '';
+        if (currentContactLink.startsWith('@')) {
+          // Telegram username
+          const username = currentContactLink.replace(/^@/, '');
+          url = `https://t.me/${username}?start=qr`;
+          // Telegram не позволяет предзаполнять сообщение через URL, поэтому просто откроем чат
+          url = `https://t.me/${username}`;
+        } else if (currentContactLink.includes('vk.com')) {
+          // VK: откроем диалог
+          const vkId = currentContactLink.split('/').pop();
+          url = `https://vk.com/im?sel=${vkId}`;
+        } else {
+          alert("Поддерживаются только @username (Telegram) или https://vk.com/...");
+          return;
+        }
+
+        // Открываем чат
+        window.open(url, '_blank');
+
+        // Показываем инструкцию
+        setTimeout(() => {
+          alert("QR-код готов к отправке!\n\n1. Открыт чат с клиентом.\n2. Скопируйте эту ссылку и отправьте:\n\n" + qrUrl);
+        }, 1000);
+      });
+    }
+
+    // === ГЕНЕРАЦИЯ НОВОГО КЛИЕНТА ===
     function generateNewUser() {
+      const contact = document.getElementById('contact-link').value.trim();
+      if (!contact) return alert("Укажите контакт (Telegram или VK)");
+
+      currentContactLink = contact;
+
       const id = Math.random().toString(36).substring(2, 10) + Date.now().toString(36).slice(-4);
       const points = 100;
       const qrStr = encodeToQRString(id, points);
       document.getElementById('new-qr-img').innerHTML = generateQRImage(qrStr);
       document.getElementById('new-qr-display').classList.remove('hidden');
-      addToHistory(id, 0, points);
+
+      addToHistory(id, 0, points, contact);
     }
 
+    // === НАЧИСЛЕНИЕ БАЛЛОВ ===
     function addPointsAutomatically() {
       const fullStr = document.getElementById('input-qr-full').value.trim();
       if (!fullStr) return alert("Вставьте строку из QR-кода");
@@ -203,38 +251,32 @@
         return alert("❌ Поддельный QR!");
       }
 
-      const added = 5;
-      const newPoints = data.points + added;
+      // Найти контакт из истории
+      const histEntry = history.find(h => h.id === data.id);
+      currentContactLink = histEntry ? histEntry.contact : null;
 
-      // Сохраняем в историю
-      addToHistory(data.id, data.points, newPoints);
+      const newPoints = data.points + 5;
+      addToHistory(data.id, data.points, newPoints, currentContactLink);
 
-      // Генерация нового QR
       const newQrStr = encodeToQRString(data.id, newPoints);
       document.getElementById('result-qr-img').innerHTML = generateQRImage(newQrStr);
       document.getElementById('result-qr-display').classList.remove('hidden');
 
-      // Уведомление о промокоде
+      // Уведомление
       const promoDiv = document.getElementById('promo-notification');
       promoDiv.className = 'promo-alert hidden';
-
       let level = null, discount = 0;
-      if (newPoints >= 100) {
-        level = '30'; discount = 30;
-      } else if (newPoints >= 75) {
-        level = '25'; discount = 25;
-      } else if (newPoints >= 50) {
-        level = '20'; discount = 20;
-      }
+      if (newPoints >= 100) { level = '30'; discount = 30; }
+      else if (newPoints >= 75) { level = '25'; discount = 25; }
+      else if (newPoints >= 50) { level = '20'; discount = 20; }
 
       if (level) {
         promoDiv.innerText = `🎁 Доступен промокод на ${discount}% скидку!`;
         promoDiv.classList.add(`level-${level}`);
         promoDiv.classList.remove('hidden');
-        playSound(); // 🔊 звук!
+        playSound();
       }
 
-      // Очистка
       document.getElementById('input-qr-full').value = '';
     }
   </script>
