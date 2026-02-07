@@ -52,12 +52,11 @@
       display: none;
     }
 
-    /* Стили для списка карт */
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #eee; font-size: 14px; }
     th { color: #666; font-weight: 600; }
     tbody tr:hover { background: #f9f9f9; cursor: pointer; }
-    .pin-cell { font-weight: bold; color: #2196F3; }
+    .id-cell { font-weight: bold; color: #2196F3; }
   </style>
 </head>
 <body>
@@ -67,14 +66,16 @@
     <!-- НОВЫЙ КЛИЕНТ -->
     <div class="section">
       <h2>➕ Новый клиент</h2>
+      <p>Оставьте пустым для автоматического PIN.<br>Или введите <strong>4 последние цифры телефона</strong> (например: 7890):</p>
+      <input type="text" id="custom-id" placeholder="4 цифры или оставьте пустым" maxlength="4" />
       <button onclick="createClient()">Создать карту</button>
-      <div id="new-pin" class="pin-display hidden"></div>
+      <div id="new-id" class="pin-display hidden"></div>
     </div>
 
     <!-- ОПЕРАЦИЯ -->
     <div class="section">
       <h2>🔄 Добавить покупку</h2>
-      <input type="text" id="pin-input" placeholder="Введите 5-значный PIN" maxlength="5" />
+      <input type="text" id="id-input" placeholder="PIN или 4 цифры телефона" maxlength="5" />
       <button onclick="addPurchase()">Добавить покупку</button>
       
       <div id="client-info" class="hidden" style="margin-top:15px; padding:15px; background:#f9f9f9; border-radius:8px;">
@@ -100,7 +101,7 @@
         <table id="client-table">
           <thead>
             <tr>
-              <th>PIN</th>
+              <th>ID</th>
               <th>Покупок</th>
               <th>Скидка</th>
               <th>Создана</th>
@@ -123,6 +124,10 @@
       return pin;
     }
 
+    function isPhoneId(id) {
+      return /^\d{4}$/.test(id);
+    }
+
     function getDiscount(purchases) {
       if (purchases >= 30) return 20;
       if (purchases >= 10) return 5;
@@ -139,28 +144,74 @@
     }
 
     function createClient() {
-      const pin = generateUniquePin();
+      const customInput = document.getElementById('custom-id').value.trim();
+      let id;
+
+      if (customInput && isPhoneId(customInput)) {
+        id = customInput;
+        if (clients[id]) {
+          alert("Клиент с такими 4 цифрами уже существует!");
+          return;
+        }
+      } else if (customInput) {
+        alert("Введите ровно 4 цифры или оставьте поле пустым");
+        return;
+      } else {
+        id = generateUniquePin();
+      }
+
       const now = new Date().toISOString();
-      clients[pin] = {
+      clients[id] = {
         purchases: 0,
         discount: 0,
         createdAt: now,
-        history: []
+        history: [],
+        isPhone: isPhoneId(id)
       };
-      addToHistory(clients[pin], "Карта создана");
+      addToHistory(clients[id], "Карта создана");
       localStorage.setItem('loyalty_clients', JSON.stringify(clients));
       
-      document.getElementById('new-pin').innerText = `PIN: ${pin}`;
-      document.getElementById('new-pin').classList.remove('hidden');
-      renderClientList(); // обновляем список
+      const displayId = id.length === 4 ? `••••${id}` : `PIN: ${id}`;
+      document.getElementById('new-id').innerText = `ID: ${displayId}`;
+      document.getElementById('new-id').classList.remove('hidden');
+      document.getElementById('custom-id').value = '';
+      renderClientList();
+    }
+
+    function findClientById(input) {
+      input = input.trim();
+      // Сначала ищем точное совпадение
+      if (clients[input]) return { id: input, data: clients[input] };
+      
+      // Если введено 4 цифры — ищем среди телефонов
+      if (/^\d{4}$/.test(input)) {
+        for (let id in clients) {
+          if (id === input && clients[id].isPhone) {
+            return { id, data: clients[id] };
+          }
+        }
+      }
+      
+      // Если введено 5 цифр — ищем PIN
+      if (/^\d{5}$/.test(input)) {
+        for (let id in clients) {
+          if (id === input && !clients[id].isPhone) {
+            return { id, data: clients[id] };
+          }
+        }
+      }
+      
+      return null;
     }
 
     function addPurchase() {
-      const pin = document.getElementById('pin-input').value.trim();
-      if (!/^\d{5}$/.test(pin)) return alert("Введите 5-значный PIN");
-      if (!clients[pin]) return alert("Клиент не найден");
+      const input = document.getElementById('id-input').value.trim();
+      if (!input) return alert("Введите ID");
 
-      let client = clients[pin];
+      const result = findClientById(input);
+      if (!result) return alert("Клиент не найден");
+
+      const { id, data: client } = result;
       let newPurchases = client.purchases + 1;
       let reset = false;
 
@@ -189,16 +240,19 @@
       ).join('');
 
       document.getElementById('client-info').classList.remove('hidden');
-      renderClientList(); // обновляем список
+      renderClientList();
     }
 
     function prepareMessage() {
-      const pin = document.getElementById('pin-input').value.trim();
-      if (!/^\d{5}$/.test(pin) || !clients[pin]) {
-        return alert("Сначала добавьте покупку или укажите корректный PIN");
+      const input = document.getElementById('id-input').value.trim();
+      const result = findClientById(input);
+      if (!result) {
+        return alert("Сначала добавьте покупку или укажите корректный ID");
       }
 
-      const client = clients[pin];
+      const { id, data: client } = result;
+      const displayId = client.isPhone ? `••••${id}` : `PIN: ${id}`;
+
       const historyLines = client.history
         .slice(-10)
         .map(h => `${new Date(h.time).toLocaleDateString()} — ${h.action}`)
@@ -207,7 +261,7 @@
       const message = 
 `🎉 Ваша карта лояльности обновлена!
 
-🔢 PIN: ${pin}
+🆔 ${displayId}
 🛒 Покупок: ${client.purchases}
 🎁 Текущая скидка: ${client.discount}%
 
@@ -228,12 +282,10 @@ ${historyLines.length ? historyLines.join('\n') : '—'}`;
       alert("✅ Сообщение скопировано! Отправьте его клиенту.");
     }
 
-    // === РЕНДЕР СПИСКА КАРТ ===
     function renderClientList() {
       const list = document.getElementById('client-list');
       list.innerHTML = '';
 
-      // Сортируем по дате создания (новые сверху)
       const sorted = Object.entries(clients)
         .sort((a, b) => new Date(b[1].createdAt) - new Date(a[1].createdAt));
 
@@ -242,23 +294,23 @@ ${historyLines.length ? historyLines.join('\n') : '—'}`;
         return;
       }
 
-      sorted.forEach(([pin, data]) => {
-        const row = document.createElement('tr');
+      sorted.forEach(([id, data]) => {
+        const displayId = data.isPhone ? `••••${id}` : `PIN: ${id}`;
         const createdAt = new Date(data.createdAt).toLocaleDateString();
+        const row = document.createElement('tr');
         row.innerHTML = `
-          <td class="pin-cell">${pin}</td>
+          <td class="id-cell">${displayId}</td>
           <td>${data.purchases}</td>
           <td>${data.discount}%</td>
           <td>${createdAt}</td>
         `;
         row.onclick = () => {
-          document.getElementById('pin-input').value = pin;
+          document.getElementById('id-input').value = id;
         };
         list.appendChild(row);
       });
     }
 
-    // Инициализация
     document.addEventListener('DOMContentLoaded', () => {
       renderClientList();
     });
