@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Арома-Бонус | Программа лояльности</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         :root {
             --primary-yellow: #FFD700;
@@ -121,6 +122,7 @@
             padding: 30px;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            position: relative;
         }
 
         .main-content:hover {
@@ -306,6 +308,69 @@
             line-height: 1.6;
         }
 
+        /* Промокоды в профиле */
+        .promo-codes-section {
+            margin-top: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .promo-title {
+            color: var(--primary-black);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .promo-code-item {
+            background: linear-gradient(135deg, var(--primary-green), #27ae60);
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .promo-code-text {
+            font-size: 1.3em;
+            font-weight: bold;
+            font-family: monospace;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .promo-code-text:hover {
+            transform: scale(1.05);
+        }
+
+        .promo-expiry {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .promo-expired {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d) !important;
+            opacity: 0.7;
+        }
+
+        .promo-expired .promo-expiry {
+            background: rgba(0,0,0,0.2) !important;
+        }
+
         /* Админ панель */
         .admin-section {
             display: none;
@@ -334,19 +399,79 @@
             color: var(--primary-black);
         }
 
+        .camera-container {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto 20px;
+            border: 3px solid var(--primary-blue);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #videoElement {
+            width: 100%;
+            display: block;
+        }
+
+        .scan-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .scan-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--primary-yellow);
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--primary-yellow);
+            animation: pulseScan 2s infinite;
+        }
+
+        @keyframes pulseScan {
+            0%, 100% { box-shadow: 0 0 20px var(--primary-yellow); }
+            50% { box-shadow: 0 0 40px var(--primary-yellow); }
+        }
+
+        .manual-input {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .manual-input-title {
+            color: var(--primary-black);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
         .scan-input-group {
             display: flex;
             gap: 10px;
-            max-width: 600px;
-            margin: 0 auto 20px;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         .scan-input {
             flex: 1;
-            padding: 15px;
+            padding: 12px 15px;
             border: 2px solid #ddd;
             border-radius: 8px;
-            font-size: 1.1em;
+            font-size: 1em;
             color: var(--primary-black);
         }
 
@@ -356,7 +481,7 @@
         }
 
         .scan-btn {
-            padding: 15px 30px;
+            padding: 12px 20px;
             background: linear-gradient(135deg, var(--primary-blue), #2980b9);
             border: none;
             border-radius: 8px;
@@ -402,6 +527,7 @@
             border-radius: var(--border-radius);
             margin-top: 25px;
             box-shadow: var(--shadow);
+            display: none;
         }
 
         .info-row {
@@ -411,6 +537,7 @@
             border-bottom: 1px solid #eee;
         }
 
+        .info-row:last-child td,
         .info-row:last-child {
             border-bottom: none;
         }
@@ -506,10 +633,6 @@
             background: var(--primary-gray);
         }
 
-        .users-table tr:last-child td {
-            border-bottom: none;
-        }
-
         .points-badge {
             background: linear-gradient(135deg, var(--primary-yellow), #ffd700);
             color: var(--primary-black);
@@ -585,7 +708,8 @@
         body.dark-theme .qr-section,
         body.dark-theme .scan-container,
         body.dark-theme .user-info-display,
-        body.dark-theme .users-table {
+        body.dark-theme .users-table,
+        body.dark-theme .promo-codes-section {
             background: #2c3e50;
             color: white;
         }
@@ -626,6 +750,10 @@
             .points-display {
                 font-size: 1.5em;
                 padding: 10px 20px;
+            }
+            
+            .camera-container {
+                max-width: 100%;
             }
         }
     </style>
@@ -693,6 +821,13 @@
                         <p>QR-код уникален и привязан только к вашему аккаунту.</p>
                     </div>
                 </div>
+
+                <div class="promo-codes-section">
+                    <h3 class="promo-title">Ваши промокоды</h3>
+                    <div id="promoCodesList">
+                        <p style="text-align: center; color: var(--primary-gray);">У вас пока нет активных промокодов</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Админ панель -->
@@ -703,15 +838,25 @@
                 </div>
 
                 <div class="scan-container">
-                    <div class="scan-title">Сканирование QR-кода</div>
-                    <div class="scan-input-group">
-                        <input type="text" class="scan-input" id="qrInput" placeholder="Введите или вставьте код из QR-кода..." autocomplete="off">
-                        <button class="scan-btn" id="scanBtn">Начислить 10 баллов</button>
+                    <div class="scan-title">Автоматическое сканирование через камеру</div>
+                    <div class="camera-container">
+                        <video id="videoElement" autoplay playsinline></video>
+                        <div class="scan-overlay" id="scanOverlay">Наведите камеру на QR-код</div>
+                        <div class="scan-indicator"></div>
                     </div>
+                    
+                    <div class="manual-input">
+                        <div class="manual-input-title">Или введите код вручную:</div>
+                        <div class="scan-input-group">
+                            <input type="text" class="scan-input" id="qrInput" placeholder="Введите код из QR-кода..." autocomplete="off">
+                            <button class="scan-btn" id="manualScanBtn">Начислить</button>
+                        </div>
+                    </div>
+                    
                     <div class="scan-result" id="scanResult"></div>
                 </div>
 
-                <div class="user-info-display" id="userInfoDisplay" style="display: none;">
+                <div class="user-info-display" id="userInfoDisplay">
                     <h3 style="margin-bottom: 20px; color: var(--primary-black);">Информация о клиенте</h3>
                     <div class="info-row">
                         <span class="info-label">Имя:</span>
@@ -737,11 +882,11 @@
                     </div>
                 </div>
 
-                <div class="redeem-section" id="redeemSection" style="display: none;">
+                <div class="redeem-section" id="redeemSection">
                     <div class="redeem-title">🎉 Доступна скидка 10%!</div>
                     <p>Клиент накопил 100 баллов. Вы можете списать баллы и выдать промокод.</p>
                     <div class="redeem-code" id="promoCode">AROMA10</div>
-                    <p style="opacity: 0.9; margin-bottom: 15px;">Промокод действует на следующую покупку</p>
+                    <p style="opacity: 0.9; margin-bottom: 15px;">Промокод действует 2 дня</p>
                     <button class="redeem-btn" id="redeemBtn">Выдать промокод и списать 100 баллов</button>
                 </div>
 
@@ -777,18 +922,26 @@
         // Глобальные переменные
         let currentUser = null;
         let isAdminMode = false;
-        let adminPassword = 'admin123'; // Пароль для входа в админку
+        let adminPassword = 'admin123';
+        let videoElement = null;
+        let canvasElement = null;
+        let scanning = false;
+        let currentScannedUser = null;
 
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
             loadUserData();
             setupEventListeners();
             updateUsersTable();
+            updatePromoCodesDisplay();
             
             // Проверяем, есть ли сохраненный пользователь
             if (currentUser) {
                 showProfile();
             }
+            
+            // Инициализируем камеру для админки
+            initCamera();
         });
 
         // Загрузка данных пользователя
@@ -825,6 +978,11 @@
                     
                     this.classList.add('active');
                     document.getElementById(this.dataset.tab + 'Section').style.display = 'block';
+                    
+                    // Обновляем промокоды при переключении на профиль
+                    if (this.dataset.tab === 'profile') {
+                        updatePromoCodesDisplay();
+                    }
                 });
             });
 
@@ -846,11 +1004,11 @@
                 }
             });
 
-            // Сканирование QR кода
-            document.getElementById('scanBtn').addEventListener('click', scanQRCode);
+            // Ручное сканирование
+            document.getElementById('manualScanBtn').addEventListener('click', manualScan);
             document.getElementById('qrInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    scanQRCode();
+                    manualScan();
                 }
             });
 
@@ -862,6 +1020,169 @@
                 navigator.clipboard.writeText(this.textContent);
                 showNotification('Промокод скопирован в буфер обмена!', 'info');
             });
+        }
+
+        // Инициализация камеры
+        function initCamera() {
+            videoElement = document.getElementById('videoElement');
+            canvasElement = document.createElement('canvas');
+            
+            // Проверяем поддержку getUserMedia
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                document.getElementById('scanOverlay').textContent = 'Камера не поддерживается';
+                return;
+            }
+            
+            // Запрашиваем доступ к камере
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(function(stream) {
+                    videoElement.srcObject = stream;
+                    startScanning();
+                })
+                .catch(function(err) {
+                    console.error('Ошибка доступа к камере:', err);
+                    document.getElementById('scanOverlay').textContent = 'Ошибка камеры: ' + err.message;
+                });
+        }
+
+        // Начало сканирования
+        function startScanning() {
+            if (scanning) return;
+            
+            scanning = true;
+            scanFrame();
+        }
+
+        // Сканирование одного кадра
+        function scanFrame() {
+            if (!scanning) return;
+            
+            const context = canvasElement.getContext('2d');
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+            
+            context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            
+            const imageData = context.getImageData(0, 0, canvasElement.width, canvasElement.height);
+            
+            // Используем jsQR для распознавания QR кода
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+            
+            if (code) {
+                // Найден QR код
+                stopScanning();
+                handleScannedCode(code.data);
+                return;
+            }
+            
+            // Продолжаем сканирование
+            requestAnimationFrame(scanFrame);
+        }
+
+        // Остановка сканирования
+        function stopScanning() {
+            scanning = false;
+        }
+
+        // Обработка отсканированного кода
+        function handleScannedCode(qrData) {
+            document.getElementById('scanOverlay').textContent = '✅ Код найден!';
+            
+            setTimeout(() => {
+                document.getElementById('scanOverlay').textContent = 'Наведите камеру на QR-код';
+                processScannedCode(qrData);
+            }, 2000);
+            
+            // Возобновляем сканирование
+            setTimeout(startScanning, 3000);
+        }
+
+        // Ручное сканирование
+        function manualScan() {
+            const qrInput = document.getElementById('qrInput').value.trim();
+            
+            if (!qrInput) {
+                showNotification('Введите код из QR-кода', 'error');
+                return;
+            }
+            
+            processScannedCode(qrInput);
+            document.getElementById('qrInput').value = '';
+        }
+
+        // Обработка кода (общая функция)
+        function processScannedCode(qrData) {
+            // Ищем пользователя по QR коду
+            const user = window.loyaltyUsers.find(u => u.qrCode === qrData);
+            
+            const scanResult = document.getElementById('scanResult');
+            scanResult.style.display = 'block';
+            
+            if (!user) {
+                scanResult.className = 'scan-result scan-error';
+                scanResult.textContent = '❌ Пользователь не найден. Проверьте правильность кода.';
+                document.getElementById('userInfoDisplay').style.display = 'none';
+                document.getElementById('redeemSection').style.display = 'none';
+                return;
+            }
+
+            // Начисляем 10 баллов
+            user.points += 10;
+            user.lastScan = new Date().toISOString();
+            
+            // Сохраняем данные
+            if (currentUser && currentUser.id === user.id) {
+                currentUser.points = user.points;
+            }
+            saveUserData();
+            
+            // Обновляем информацию о пользователе
+            currentScannedUser = user;
+            updateUserInfoDisplay(user);
+            
+            // Проверяем, можно ли выдать промокод
+            if (user.points >= 100) {
+                document.getElementById('redeemSection').style.display = 'block';
+                generateDynamicPromoCode(); // Генерируем новый промокод
+                scanResult.className = 'scan-result scan-success';
+                scanResult.innerHTML = `✅ Успешно! +10 баллов начислено.<br>🎉 Клиент накопил ${user.points} баллов! Доступна скидка 10%.`;
+            } else {
+                document.getElementById('redeemSection').style.display = 'none';
+                scanResult.className = 'scan-result scan-success';
+                scanResult.innerHTML = `✅ Успешно! +10 баллов начислено.<br>Текущий баланс: ${user.points} баллов<br>До скидки 10%: ${100 - user.points} баллов`;
+            }
+            
+            // Обновляем таблицу пользователей
+            updateUsersTable();
+            
+            // Обновляем профиль если это текущий пользователь
+            if (currentUser && currentUser.id === user.id) {
+                document.getElementById('profilePoints').textContent = user.points;
+                updatePromoCodesDisplay();
+            }
+        }
+
+        // Обновление информации о пользователе в админке
+        function updateUserInfoDisplay(user) {
+            document.getElementById('userInfoName').textContent = user.name;
+            document.getElementById('userInfoEmail').textContent = user.email;
+            document.getElementById('userInfoPhone').textContent = user.phone;
+            document.getElementById('userInfoPoints').textContent = user.points;
+            document.getElementById('userInfoStatus').textContent = 'Активен';
+            document.getElementById('userInfoDisplay').style.display = 'block';
+        }
+
+        // Генерация динамического промокода
+        function generateDynamicPromoCode() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = 'AROMA10_';
+            
+            for (let i = 0; i < 8; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            
+            document.getElementById('promoCode').textContent = result;
+            return result;
         }
 
         // Регистрация пользователя
@@ -920,6 +1241,9 @@
             
             document.querySelector('.tab-btn[data-tab="profile"]').classList.add('active');
             document.getElementById('profileSection').style.display = 'block';
+            
+            // Обновляем промокоды
+            updatePromoCodesDisplay();
         }
 
         // Генерация QR кода
@@ -946,110 +1270,49 @@
             }
         }
 
-        // Сканирование QR кода (админ)
-        function scanQRCode() {
-            const qrInput = document.getElementById('qrInput').value.trim();
-            
-            if (!qrInput) {
-                showNotification('Введите код из QR-кода', 'error');
-                return;
-            }
-
-            // Ищем пользователя по QR коду
-            const user = window.loyaltyUsers.find(u => u.qrCode === qrInput);
-            
-            const scanResult = document.getElementById('scanResult');
-            scanResult.style.display = 'block';
-            
-            if (!user) {
-                scanResult.className = 'scan-result scan-error';
-                scanResult.textContent = '❌ Пользователь не найден. Проверьте правильность кода.';
-                document.getElementById('userInfoDisplay').style.display = 'none';
-                document.getElementById('redeemSection').style.display = 'none';
-                return;
-            }
-
-            // Начисляем 10 баллов
-            user.points += 10;
-            user.lastScan = new Date().toISOString();
-            
-            // Сохраняем данные
-            if (currentUser && currentUser.id === user.id) {
-                currentUser.points = user.points;
-            }
-            saveUserData();
-            
-            // Показываем информацию о пользователе
-            document.getElementById('userInfoName').textContent = user.name;
-            document.getElementById('userInfoEmail').textContent = user.email;
-            document.getElementById('userInfoPhone').textContent = user.phone;
-            document.getElementById('userInfoPoints').textContent = user.points;
-            document.getElementById('userInfoStatus').textContent = 'Активен';
-            
-            document.getElementById('userInfoDisplay').style.display = 'block';
-            
-            // Проверяем, можно ли выдать промокод
-            if (user.points >= 100) {
-                document.getElementById('redeemSection').style.display = 'block';
-                scanResult.className = 'scan-result scan-success';
-                scanResult.innerHTML = `✅ Успешно! +10 баллов начислено.<br>🎉 Клиент накопил ${user.points} баллов! Доступна скидка 10%.`;
-            } else {
-                document.getElementById('redeemSection').style.display = 'none';
-                scanResult.className = 'scan-result scan-success';
-                scanResult.innerHTML = `✅ Успешно! +10 баллов начислено.<br>Текущий баланс: ${user.points} баллов<br>До скидки 10%: ${100 - user.points} баллов`;
-            }
-            
-            // Очищаем поле ввода
-            document.getElementById('qrInput').value = '';
-            
-            // Обновляем таблицу пользователей
-            updateUsersTable();
-            
-            // Обновляем профиль если это текущий пользователь
-            if (currentUser && currentUser.id === user.id) {
-                document.getElementById('profilePoints').textContent = user.points;
-            }
-        }
-
         // Выдача промокода
         function redeemPromoCode() {
-            const qrInput = document.getElementById('qrInput').value.trim() || document.getElementById('userInfoEmail').textContent;
-            const user = window.loyaltyUsers.find(u => u.qrCode === qrInput || u.email === document.getElementById('userInfoEmail').textContent);
-            
-            if (!user || user.points < 100) {
+            if (!currentScannedUser || currentScannedUser.points < 100) {
                 showNotification('Невозможно выдать промокод', 'error');
                 return;
             }
 
-            // Генерируем уникальный промокод
-            const promoCode = 'AROMA10_' + user.id.substr(0, 8);
+            const promoCode = document.getElementById('promoCode').textContent;
             
             // Списываем 100 баллов
-            user.points -= 100;
+            currentScannedUser.points -= 100;
             
-            // Добавляем промокод в историю
-            if (!user.promoCodes) user.promoCodes = [];
-            user.promoCodes.push({
+            // Создаем промокод со сроком действия 2 дня
+            const now = new Date();
+            const expiryDate = new Date(now.getTime() + (2 * 24 * 60 * 60 * 1000)); // 2 дня
+            
+            const newPromoCode = {
                 code: promoCode,
-                issuedAt: new Date().toISOString(),
+                issuedAt: now.toISOString(),
+                expiresAt: expiryDate.toISOString(),
                 used: false
-            });
+            };
+            
+            // Добавляем промокод в историю пользователя
+            if (!currentScannedUser.promoCodes) currentScannedUser.promoCodes = [];
+            currentScannedUser.promoCodes.push(newPromoCode);
             
             // Обновляем текущего пользователя если это он
-            if (currentUser && currentUser.id === user.id) {
-                currentUser.points = user.points;
-                currentUser.promoCodes = user.promoCodes;
+            if (currentUser && currentUser.id === currentScannedUser.id) {
+                currentUser.points = currentScannedUser.points;
+                currentUser.promoCodes = currentScannedUser.promoCodes;
             }
             
             // Сохраняем данные
             saveUserData();
             
             // Обновляем интерфейс
-            document.getElementById('userInfoPoints').textContent = user.points;
+            document.getElementById('userInfoPoints').textContent = currentScannedUser.points;
             document.getElementById('redeemSection').style.display = 'none';
             
-            if (currentUser && currentUser.id === user.id) {
-                document.getElementById('profilePoints').textContent = user.points;
+            if (currentUser && currentUser.id === currentScannedUser.id) {
+                document.getElementById('profilePoints').textContent = currentScannedUser.points;
+                updatePromoCodesDisplay();
             }
             
             // Обновляем таблицу
@@ -1062,7 +1325,57 @@
             navigator.clipboard.writeText(promoCode).then(() => {
                 showNotification('Промокод скопирован в буфер обмена!', 'info');
             });
+            
+            // Генерируем новый промокод для следующего раза
+            generateDynamicPromoCode();
         }
+
+        // Обновление отображения промокодов в профиле
+        function updatePromoCodesDisplay() {
+            if (!currentUser) {
+                document.getElementById('promoCodesList').innerHTML = '<p style="text-align: center; color: var(--primary-gray);">У вас пока нет активных промокодов</p>';
+                return;
+            }
+            
+            const now = new Date();
+            let activePromoCodes = [];
+            
+            if (currentUser.promoCodes && currentUser.promoCodes.length > 0) {
+                // Фильтруем активные промокоды (не просроченные)
+                activePromoCodes = currentUser.promoCodes.filter(promo => {
+                    const expiryDate = new Date(promo.expiresAt);
+                    return expiryDate > now && !promo.used;
+                });
+            }
+            
+            if (activePromoCodes.length === 0) {
+                document.getElementById('promoCodesList').innerHTML = '<p style="text-align: center; color: var(--primary-gray);">У вас пока нет активных промокодов</p>';
+                return;
+            }
+            
+            let promoHtml = '';
+            activePromoCodes.forEach(promo => {
+                const expiryDate = new Date(promo.expiresAt);
+                const isExpired = expiryDate <= now;
+                const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+                
+                promoHtml += `
+                    <div class="promo-code-item ${isExpired ? 'promo-expired' : ''}">
+                        <div class="promo-code-text" onclick="copyPromoCode('${promo.code}')">${promo.code}</div>
+                        <div class="promo-expiry">${isExpired ? 'Истёк' : `Действует ${daysLeft} дн.`}</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('promoCodesList').innerHTML = promoHtml;
+        }
+
+        // Копирование промокода из профиля
+        window.copyPromoCode = function(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification('Промокод скопирован в буфер обмена!', 'info');
+            });
+        };
 
         // Обновление таблицы пользователей
         function updateUsersTable() {
@@ -1096,6 +1409,13 @@
                 notification.classList.remove('show');
             }, 3000);
         }
+
+        // Периодическая проверка истечения промокодов
+        setInterval(() => {
+            if (currentUser) {
+                updatePromoCodesDisplay();
+            }
+        }, 60000); // Проверяем каждую минуту
     </script>
 </body>
 </html>
