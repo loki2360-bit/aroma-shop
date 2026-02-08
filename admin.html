@@ -42,7 +42,7 @@
       margin: 15px 0;
       color: #2196F3;
     }
-    #client-message {
+    #client-message, #balance-qr {
       background: #e8f5e8;
       padding: 15px;
       border-radius: 8px;
@@ -51,6 +51,8 @@
       font-family: monospace;
       display: none;
     }
+    #balance-qr { text-align: center; }
+    #balance-qr img { max-width: 200px; }
 
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #eee; font-size: 14px; }
@@ -94,8 +96,11 @@
         </div>
       </div>
 
-      <button onclick="prepareMessage()" style="margin-top:15px;">📤 Подготовить сообщение для клиента</button>
+      <button onclick="prepareMessage()" style="margin-top:15px;">📤 Подготовить сообщение</button>
+      <button onclick="generateBalanceQR()" style="margin-top:10px; background:#0088cc;">📱 Создать QR баланса</button>
+      
       <div id="client-message"></div>
+      <div id="balance-qr"></div>
     </div>
 
     <!-- СПИСОК КАРТ -->
@@ -128,6 +133,7 @@
     </div>
   </div>
 
+  <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
   <script>
     let clients = JSON.parse(localStorage.getItem('loyalty_clients') || '{}');
 
@@ -199,7 +205,7 @@
     function findClientById(input) {
       input = input.trim();
       if (clients[input]) {
-        return { id: input, data: clients[input] };
+        return { id: input,  clients[input] };
       }
       return null;
     }
@@ -211,7 +217,7 @@
       const result = findClientById(input);
       if (!result) return alert("Клиент не найден");
 
-      const { id, data: client } = result;
+      const { id,  client } = result;
       let newPurchases = client.purchases + 1;
       let reset = false;
 
@@ -250,7 +256,7 @@
         return alert("Сначала добавьте покупку или укажите корректный ID");
       }
 
-      const { id, data: client } = result;
+      const { id,  client } = result;
 
       const displayId = client.isPhone ? `••••${id}` : `PIN: ${id}`;
 
@@ -285,6 +291,23 @@ ${historyLines.length ? historyLines.join('\n') : '—'}`;
       window.getSelection().removeAllRanges();
 
       alert("✅ Сообщение скопировано! Отправьте его клиенту.");
+    }
+
+    function generateBalanceQR() {
+      const input = document.getElementById('id-input').value.trim();
+      const result = findClientById(input);
+      if (!result) return alert("Клиент не найден");
+
+      const { id,  client } = result;
+      const qrData = `${id}|${client.purchases}|${client.discount}`;
+      // Замените URL на ваш реальный адрес!
+      const balanceUrl = `https://ваш-логин.github.io/loyalty/balance.html?data=${encodeURIComponent(qrData)}`;
+
+      const qr = qrcode(0, 'M');
+      qr.addData(balanceUrl);
+      qr.make();
+      document.getElementById('balance-qr').innerHTML = qr.createImgTag(5);
+      document.getElementById('balance-qr').style.display = 'block';
     }
 
     function renderClientList() {
