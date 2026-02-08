@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Утюг 'Радуга'",
+    "price": 300,
+    "photo": "https://example.com/utyug.jpg",
+    "category": "электроника",
+    "available": true
+  },
+  {
+    "name": "Чайник фарфоровый",
+    "price": 400,
+    "photo": "https://example.com/chaynik.jpg",
+    "category": "посуда",
+    "available": true
+  },
+  {
+    "name": "Стул деревянный",
+    "price": 800,
+    "photo": "https://example.com/stul.jpg",
+    "category": "мебель",
+    "available": false
+  }
+]
