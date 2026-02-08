@@ -3,268 +3,204 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Быстрый заказ: Двери</title>
+  <title>Неликвиды</title>
   <style>
-    /* Весь CSS внутри */
+    :root {
+      --bg: #f9f9f9;
+      --card-bg: #ffffff;
+      --text: #333;
+      --border: #e0e0e0;
+      --shadow: rgba(0,0,0,0.06);
+      --accent: #555;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --card-bg: #252525;
+        --text: #eee;
+        --border: #444;
+        --shadow: rgba(0,0,0,0.2);
+        --accent: #ddd;
+      }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     body {
-      font-family: system-ui, sans-serif;
-      padding: 20px;
-      background: #f9f9f9;
-      color: #333;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      line-height: 1.5;
     }
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
+    h1 {
+      text-align: center;
+      margin: 16px 0 20px;
+      font-weight: 600;
+      font-size: 1.4rem;
     }
-    .form-group {
-      margin: 15px 0;
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+      justify-content: center;
     }
-    label {
-      display: block;
-      margin-bottom: 4px;
-      font-weight: bold;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      background: #ffcc00;
-      border: none;
-      padding: 10px 20px;
-      margin: 10px 5px;
-      border-radius: 6px;
+    .filter-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.9rem;
       cursor: pointer;
-      font-weight: bold;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px var(--shadow);
     }
-    button:hover { opacity: 0.9; }
-    .preview {
-      margin-top: 30px;
-      border: 1px solid #ddd;
-      padding: 15px;
-      background: white;
-      border-radius: 8px;
+    .filter-btn.active {
+      background: var(--accent);
+      color: white;
     }
-    svg {
-      background: white;
-      border: 1px solid #eee;
-      margin-top: 10px;
+    #search {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card-bg);
+      color: var(--text);
+      margin-bottom: 16px;
+      font-size: 1rem;
+      box-shadow: inset 0 1px 3px var(--shadow);
     }
-    .orders-list {
-      margin-top: 30px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
     }
-    .order-item {
+    .item {
+      background: var(--card-bg);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px var(--shadow);
+      transition: transform 0.2s;
+    }
+    .item:hover {
+      transform: translateY(-2px);
+    }
+    .item img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
+    .item-info {
       padding: 10px;
-      border-bottom: 1px solid #eee;
+    }
+    .item-name {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item-price {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #d35400;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>퀵 Заказ: Дверь</h1>
 
-    <!-- Форма -->
-    <div id="orderForm">
-      <div class="form-group">
-        <label>Ширина (мм)</label>
-        <input type="number" id="width" value="800" min="100" max="3000">
-      </div>
-      <div class="form-group">
-        <label>Высота (мм)</label>
-        <input type="number" id="height" value="2000" min="100" max="3000">
-      </div>
-      <div class="form-group">
-        <label>Наличники</label>
-        <select id="casing">
-          <option value="none">Нет</option>
-          <option value="straight">Прямые</option>
-          <option value="miter">Под 45°</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Импосты (размеры через запятую, мм)</label>
-        <input type="text" id="imposts" placeholder="100, 200, 300">
-      </div>
-      <button onclick="createOrder()">Создать заказ</button>
-    </div>
+  <h1>Неликвиды</h1>
 
-    <!-- Просмотр текущего чертежа -->
-    <div class="preview">
-      <h3>Предпросмотр</h3>
-      <div id="svgContainer"></div>
-    </div>
+  <input type="text" id="search" placeholder="Поиск по названию..." />
 
-    <!-- Список сохранённых заказов -->
-    <div class="orders-list">
-      <h3>Сохранённые заказы</h3>
-      <div id="ordersList"></div>
-      <button onclick="exportAllOrders()">Экспорт в TXT</button>
-    </div>
+  <div class="controls" id="category-buttons">
+    <!-- Кнопки категорий будут сюда -->
+  </div>
+
+  <div class="grid" id="items-container">
+    <!-- Товары будут сюда -->
   </div>
 
   <script>
-    // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
-    let currentOrderId = null;
+    // Загрузка данных
+    fetch('items.json')
+      .then(res => res.json())
+      .then(items => {
+        const container = document.getElementById('items-container');
+        const btnContainer = document.getElementById('category-buttons');
+        const searchInput = document.getElementById('search');
 
-    // === ОБНОВЛЕНИЕ ЧЕРТЕЖА ===
-    function updatePreview() {
-      const width = parseInt(document.getElementById('width').value) || 800;
-      const height = parseInt(document.getElementById('height').value) || 2000;
-      const casing = document.getElementById('casing').value;
-      const impostInput = document.getElementById('imposts').value;
-      const impostSizes = impostInput
-        ? impostInput.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n))
-        : [];
+        // Только доступные
+        const availableItems = items.filter(item => item.available !== false);
 
-      const scale = Math.min(600 / (width + 40), 400 / (height + 40), 1);
-      const viewW = (width + 40) * scale;
-      const viewH = (height + 40) * scale;
+        // Уникальные категории
+        const categories = [...new Set(availableItems.map(i => i.category || 'без категории'))].sort();
+        const allCategories = ['все', ...categories];
 
-      let svg = `<svg width="${viewW}" height="${viewH}" viewBox="0 0 ${width + 40} ${height + 40}" style="max-width:100%">`;
+        // Создаём кнопки
+        allCategories.forEach(cat => {
+          const btn = document.createElement('button');
+          btn.className = 'filter-btn';
+          btn.textContent = cat === 'все' ? 'все' : cat;
+          btn.dataset.category = cat;
+          btn.addEventListener('click', () => filterItems(cat));
+          btnContainer.appendChild(btn);
+        });
 
-      // Полотно
-      svg += `<rect x="20" y="20" width="${width}" height="${height}" fill="#f0f0f0" stroke="#333" stroke-width="2"/>`;
+        // Активируем первую кнопку ("все")
+        let currentCategory = 'все';
+        btnContainer.querySelector('[data-category="все"]').classList.add('active');
 
-      // Наличники
-      if (casing !== 'none') {
-        // Боковые
-        svg += `<rect x="10" y="20" width="10" height="${height}" fill="#d0d0d0"/>`;
-        svg += `<rect x="${20 + width}" y="20" width="10" height="${height}" fill="#d0d0d0"/>`;
-        // Верхний
-        if (casing === 'straight') {
-          svg += `<rect x="20" y="10" width="${width}" height="10" fill="#d0d0d0"/>`;
-        } else if (casing === 'miter') {
-          // Скошенные углы — упрощённо
-          svg += `<polygon points="10,20 20,10 ${20 + width},10 ${30 + width},20" fill="#d0d0d0"/>`;
+        // Рендер всех карточек
+        function renderItems(itemsToShow) {
+          container.innerHTML = '';
+          itemsToShow.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.dataset.category = item.category || 'без категории';
+            div.innerHTML = `
+              <img src="${item.photo || 'https://via.placeholder.com/140?text=Нет+фото'}" onerror="this.src='https://via.placeholder.com/140?text=Нет+фото'">
+              <div class="item-info">
+                <div class="item-name">${item.name || 'Без названия'}</div>
+                <div class="item-price">${item.price || '?'} ₽</div>
+              </div>
+            `;
+            container.appendChild(div);
+          });
         }
-      }
 
-      // Импосты
-      impostSizes.forEach(pos => {
-        if (pos > 0 && pos < width) {
-          svg += `<line x1="${20 + pos}" y1="20" x2="${20 + pos}" y2="${20 + height}" stroke="red" stroke-width="2"/>`;
+        // Фильтрация
+        function filterItems(category) {
+          // Обновляем активную кнопку
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          document.querySelector(`[data-category="${category}"]`).classList.add('active');
+          currentCategory = category;
+
+          let filtered = availableItems;
+          if (category !== 'все') {
+            filtered = availableItems.filter(i => (i.category || 'без категории') === category);
+          }
+
+          const query = searchInput.value.trim().toLowerCase();
+          if (query) {
+            filtered = filtered.filter(i => (i.name || '').toLowerCase().includes(query));
+          }
+
+          renderItems(filtered);
         }
+
+        // Поиск в реальном времени
+        searchInput.addEventListener('input', () => filterItems(currentCategory));
+
+        // Первый рендер
+        renderItems(availableItems);
+      })
+      .catch(err => {
+        document.getElementById('items-container').innerHTML = '<p>Ошибка загрузки товаров. Проверьте файл items.json.</p>';
+        console.error(err);
       });
-
-      svg += `</svg>`;
-      document.getElementById('svgContainer').innerHTML = svg;
-    }
-
-    // === СОЗДАНИЕ ЗАКАЗА ===
-    function createOrder() {
-      const width = parseInt(document.getElementById('width').value);
-      const height = parseInt(document.getElementById('height').value);
-      const casing = document.getElementById('casing').value;
-      const impostInput = document.getElementById('imposts').value;
-
-      if (!width || !height) {
-        alert('Укажите ширину и высоту');
-        return;
-      }
-
-      const now = new Date();
-      const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
-      const allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const todayOrders = allOrders.filter(o => o.id.startsWith(`DOOR-${dateStr}`));
-      const nextNum = String(todayOrders.length + 1).padStart(3, '0');
-      const id = `DOOR-${dateStr}-${nextNum}`;
-
-      const order = {
-        id,
-        width,
-        height,
-        casing,
-        impostSizes: impostInput
-          ? impostInput.split(',').map(s => s.trim()).filter(Boolean)
-          : [],
-        createdAt: now.toISOString()
-      };
-
-      allOrders.push(order);
-      localStorage.setItem('orders', JSON.stringify(allOrders));
-
-      alert(`Заказ создан: ${id}`);
-      renderOrdersList();
-    }
-
-    // === ОТОБРАЖЕНИЕ СПИСКА ЗАКАЗОВ ===
-    function renderOrdersList() {
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]').reverse();
-      const listEl = document.getElementById('ordersList');
-      listEl.innerHTML = '';
-
-      orders.forEach(order => {
-        const div = document.createElement('div');
-        div.className = 'order-item';
-        div.innerHTML = `
-          <strong>${order.id}</strong> — ${order.width}×${order.height} мм
-          ${order.casing !== 'none' ? ' | наличники: ' + order.casing : ''}
-          ${order.impostSizes.length ? ' | импосты: ' + order.impostSizes.join(', ') : ''}
-          <button onclick="viewOrder('${order.id}')">Показать</button>
-          <button onclick="deleteOrder('${order.id}')">Удалить</button>
-        `;
-        listEl.appendChild(div);
-      });
-    }
-
-    // === ЭКСПОРТ ВСЕХ ЗАКАЗОВ В TXT ===
-    function exportAllOrders() {
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      let txt = 'ЗАКАЗЫ\n====================\n\n';
-      orders.forEach(o => {
-        txt += `${o.id}\n`;
-        txt += `Размеры: ${o.width}×${o.height} мм\n`;
-        txt += `Наличники: ${o.casing === 'none' ? 'нет' : o.casing}\n`;
-        txt += `Импосты: ${o.impostSizes.length ? o.impostSizes.join(', ') : 'нет'}\n`;
-        txt += `Дата: ${new Date(o.createdAt).toLocaleString('ru-RU')}\n`;
-        txt += '--------------------\n\n';
-      });
-
-      const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `заказы_${new Date().toISOString().slice(0,10)}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    // === УДАЛЕНИЕ ЗАКАЗА ===
-    function deleteOrder(id) {
-      if (!confirm(`Удалить заказ ${id}?`)) return;
-      let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      orders = orders.filter(o => o.id !== id);
-      localStorage.setItem('orders', JSON.stringify(orders));
-      renderOrdersList();
-    }
-
-    // === ПРОСМОТР ЗАКАЗА (опционально — можно обновить форму) ===
-    function viewOrder(id) {
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const order = orders.find(o => o.id === id);
-      if (!order) return;
-
-      document.getElementById('width').value = order.width;
-      document.getElementById('height').value = order.height;
-      document.getElementById('casing').value = order.casing;
-      document.getElementById('imposts').value = order.impostSizes.join(', ');
-      updatePreview();
-    }
-
-    // === ИНИЦИАЛИЗАЦИЯ ===
-    document.addEventListener('DOMContentLoaded', () => {
-      updatePreview();
-      renderOrdersList();
-
-      // Обновляем чертёж при изменении полей
-      ['width', 'height', 'casing', 'imposts'].forEach(id => {
-        document.getElementById(id).addEventListener('input', updatePreview);
-      });
-    });
   </script>
 </body>
 </html>
