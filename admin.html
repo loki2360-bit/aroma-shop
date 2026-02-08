@@ -301,7 +301,7 @@ ${historyLines.length ? historyLines.join('\n') : '—'}`;
       const { id,  client } = result;
       const qrData = `${id}|${client.purchases}|${client.discount}`;
       // Замените URL на ваш реальный адрес!
-      const balanceUrl = `https://ваш-логин.github.io/loyalty/balance.html?data=${encodeURIComponent(qrData)}`;
+      const balanceUrl = `https://loki2360-bit.github.io/avito-seller-assistant/?data=${encodeURIComponent(qrData)}`;
 
       const qr = qrcode(0, 'M');
       qr.addData(balanceUrl);
