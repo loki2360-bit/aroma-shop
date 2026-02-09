@@ -6,40 +6,43 @@
   <title>Кабинет оператора</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ (как в макете) === */
+/* === MODERN DESIGN SYSTEM — С НУЛЯ === */
 :root {
-  --bg-primary: #2c3e50;
-  --bg-card: #34495e;
-  --bg-header: #293a4a;
-  --text-light: #ecf0f1;
-  --text-muted: #bdc3c7;
-  --accent-yellow: #f39c12;
-  --accent-yellow-dark: #d35400;
-  --accent-red: #e74c3c;
-  --accent-red-dark: #c0392b;
-  --accent-green: #2ecc71;
-  --accent-green-dark: #27ae60;
-  --border: #4a6572;
-  --shadow: rgba(0, 0, 0, 0.3);
+  --bg-light: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-surface: #f1f5f9;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --primary: #4361ee;
+  --primary-hover: #3a55d6;
+  --accent: #4cc9f0;
+  --accent-hover: #3abaf4;
+  --success: #4ade80;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --border: #e5e7eb;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
   --radius: 16px;
-  --btn-height: 48px;
-  --gap: 16px;
-  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --radius-sm: 12px;
+  --radius-pill: 9999px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: var(--font-main);
+  font-family: var(--font);
 }
 
 body {
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-card) 100%);
-  color: var(--text-light);
+  background: var(--bg-light);
+  color: var(--text-primary);
   padding: 16px;
   min-height: 100vh;
-  line-height: 1.4;
+  line-height: 1.5;
   font-size: 15px;
 }
 
@@ -48,113 +51,69 @@ body {
   margin: 0 auto;
   background: var(--bg-card);
   border-radius: var(--radius);
-  box-shadow: 0 8px 24px var(--shadow);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
-/* === ТАБЫ === */
+/* === PILL TABS === */
 .tabs {
   display: flex;
   gap: 8px;
-  padding: 12px var(--gap);
-  background: var(--bg-header);
+  padding: 16px 20px;
+  background: var(--bg-surface);
   border-bottom: 1px solid var(--border);
 }
 
 .tab-btn {
-  flex: 1;
-  padding: 12px 8px;
-  background: transparent;
+  padding: 8px 20px;
+  background: var(--bg-surface);
   border: none;
-  font-weight: 600;
-  color: var(--text-muted);
+  border-radius: var(--radius-pill);
+  font-weight: 500;
+  color: var(--text-secondary);
   cursor: pointer;
-  border-radius: 10px;
   transition: all 0.25s ease;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .tab-btn.active {
-  color: var(--accent-yellow);
-  background: rgba(243, 156, 17, 0.15);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  background: var(--primary);
+  color: white;
 }
 
 .tab-btn:hover:not(.active) {
-  background: rgba(255,255,255,0.05);
+  background: #eef2f7;
 }
 
-/* === ХЕДЕР (имя + аватар) === */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: var(--bg-header);
-  border-bottom: 1px solid var(--border);
-}
-
-.avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: #000;
-  font-size: 18px;
-  flex-shrink: 0;
-  box-shadow: 0 0 12px rgba(243, 156, 17, 0.4);
-}
-
-.info h2 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.info p {
-  font-size: 1rem;
-  color: var(--text-muted);
-}
-
-/* === ПЛАН (круговой прогресс) === */
-.plan-box {
-  padding: 18px var(--gap);
-  background: linear-gradient(135deg, var(--bg-header), var(--bg-primary));
-  margin: var(--gap);
+/* === CIRCULAR PROGRESS (PLAN) === */
+.plan-card {
+  padding: 24px 20px;
+  background: var(--bg-surface);
+  margin: 0 20px;
   border-radius: var(--radius);
+  text-align: center;
   position: relative;
-  border: 1px solid var(--border);
 }
 
-.plan-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--accent-yellow);
-}
-
-.progress-container {
-  height: 80px;
+.progress-wrapper {
+  width: 100%;
+  max-width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
   position: relative;
-  margin: 16px 0;
 }
 
 .progress-circle {
   position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
 }
 
 .progress-circle svg {
   transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
 }
 
 .progress-circle circle {
@@ -164,10 +123,10 @@ body {
 }
 
 .progress-circle .progress-fill {
-  stroke: var(--accent-yellow);
+  stroke: var(--accent);
   stroke-width: 8;
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.6s ease;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .progress-value {
@@ -175,43 +134,47 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: var(--accent-yellow);
+  color: var(--primary);
+}
+
+.progress-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
 }
 
 .progress-text {
   display: flex;
   justify-content: space-between;
   font-size: 0.9rem;
-  font-weight: 500;
-  margin-top: 12px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
+  margin-top: 16px;
 }
 
 .shift-status {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
   margin-top: 8px;
   font-style: italic;
 }
 
-/* === КНОПКИ СМЕНЫ === */
+/* === SHIFT BUTTONS === */
 .btn-row {
   display: flex;
   gap: 12px;
-  padding: 0 var(--gap) 16px;
+  padding: 0 20px 24px;
 }
 
-button {
+.btn {
   flex: 1;
   min-width: 0;
   border: none;
-  border-radius: 10px;
-  padding: 0;
-  height: var(--btn-height);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
@@ -220,47 +183,48 @@ button {
   gap: 8px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.btn-start {
-  background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark));
-  color: #000;
-}
-
-.btn-start:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(243, 156, 17, 0.4), 0 0 12px rgba(243, 156, 17, 0.2);
-}
-
-.btn-end {
-  background: linear-gradient(135deg, var(--accent-red), var(--accent-red-dark));
+  box-shadow: var(--shadow-sm);
   color: white;
 }
 
-.btn-end:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4), 0 0 12px rgba(231, 76, 60, 0.2);
+.btn-start {
+  background: var(--accent);
 }
 
-/* === ЗАГОЛОВОК СЕКЦИИ === */
+.btn-start:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(76, 201, 240, 0.3);
+}
+
+.btn-end {
+  background: var(--danger);
+}
+
+.btn-end:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* === SECTION TITLE === */
 .section-title {
   font-size: 1.2rem;
   font-weight: 600;
-  margin: 20px 0 12px;
-  padding: 0 var(--gap);
+  margin: 28px 0 16px;
+  padding: 0 20px;
+  color: var(--primary);
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--accent-yellow);
 }
 
-/* === ФОРМА ЗАКАЗА (адаптивная) === */
+/* === FORM GRID === */
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
-  padding: 0 var(--gap) 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  padding: 0 20px 24px;
 }
 
 .form-group {
@@ -269,113 +233,113 @@ button {
 
 label {
   display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
+  margin-bottom: 8px;
+  font-weight: 500;
   font-size: 0.9rem;
-  color: var(--text-light);
+  color: var(--text-primary);
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   font-size: 15px;
-  background: var(--bg-header);
-  color: var(--text-light);
+  background: var(--bg-light);
+  color: var(--text-primary);
   transition: all 0.2s;
 }
 
-input:focus, select:focus {
+input:focus,
+select:focus {
   outline: none;
-  border-color: var(--accent-yellow);
-  box-shadow: 0 0 0 2px rgba(243, 156, 17, 0.3);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
 }
 
-/* === КНОПКА СОЗДАТЬ ЗАКАЗ === */
+/* === CREATE BUTTON === */
 .btn-create {
-  background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark));
-  color: #000;
+  background: var(--primary);
+  color: white;
   font-size: 15px;
   padding: 14px;
-  box-shadow: 0 4px 12px rgba(243, 156, 17, 0.3);
-  margin-top: 8px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
   width: 100%;
+  margin-top: 8px;
 }
 
 .btn-create:hover {
-  box-shadow: 0 6px 16px rgba(243, 156, 17, 0.4), 0 0 12px rgba(243, 156, 17, 0.2);
+  background: var(--primary-hover);
   transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
 }
 
-/* === ЗАКАЗЫ ПО ДАТЕ === */
+/* === ORDERS LIST === */
 .date-label,
 .preorders-label {
   font-weight: 600;
-  color: var(--accent-yellow);
-  margin: 16px 0 12px;
-  padding: 0 var(--gap);
-  display: block;
+  color: var(--primary);
+  margin: 24px 0 16px;
+  padding: 0 20px;
+  font-size: 1.1rem;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
-  margin: 0 var(--gap) 16px;
+  margin: 0 20px 24px;
 }
 
 th {
-  background: var(--bg-header);
-  padding: 12px 8px;
+  padding: 12px 16px;
   text-align: left;
   font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
   border-bottom: 1px solid var(--border);
-  color: var(--accent-yellow);
 }
 
 td {
-  padding: 12px 8px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border);
-  color: var(--text-light);
+  color: var(--text-primary);
 }
 
 .amount {
   font-weight: 600;
-  color: var(--accent-green);
+  color: var(--success);
 }
 
 .empty-msg {
   text-align: center;
   color: var(--text-muted);
-  padding: 24px var(--gap);
+  padding: 32px 20px;
   font-style: italic;
   font-size: 14px;
 }
 
 .hint {
   text-align: center;
-  margin: 20px var(--gap);
-  padding: 14px;
+  margin: 24px 20px;
+  padding: 16px;
   color: var(--text-muted);
   font-size: 13px;
-  border: 1px dashed var(--border);
-  border-radius: 10px;
-  background: var(--bg-header);
+  background: var(--bg-surface);
+  border-radius: var(--radius-sm);
 }
 
-/* === МОДАЛЬНЫЕ ОКНА === */
+/* === MODALS === */
 .modal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
   z-index: 1000;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   padding: 16px;
 }
 
@@ -385,31 +349,64 @@ td {
 
 .modal-content {
   background: var(--bg-card);
-  padding: 24px;
   border-radius: var(--radius);
-  max-width: 90%;
   width: 100%;
-  box-shadow: 0 -10px 30px rgba(0,0,0,0.4);
-  border: 1px solid var(--border);
+  max-width: 500px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
 
 .modal-title {
   font-size: 1.3rem;
   font-weight: 600;
-  margin-bottom: 16px;
-  color: var(--accent-yellow);
+  padding: 20px 24px 16px;
+  color: var(--primary);
+  border-bottom: 1px solid var(--border);
 }
 
-.modal-row {
-  margin-bottom: 16px;
+.modal-body {
+  padding: 20px 24px;
 }
 
 .modal-buttons {
   display: flex;
-  gap: 10px;
-  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  justify-content: flex-end;
 }
 
+.modal-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.modal-btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.modal-btn-outline:hover {
+  background: var(--bg-surface);
+  color: var(--primary);
+}
+
+.modal-btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.modal-btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+/* === DETAILS MODAL === */
 .details-item {
   display: flex;
   justify-content: space-between;
@@ -418,64 +415,47 @@ td {
 }
 
 .details-label {
-  font-weight: 600;
-  color: var(--text-light);
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .details-value {
-  color: var(--accent-yellow);
+  font-weight: 600;
+  color: var(--primary);
 }
 
-/* === АДАПТИВНОСТЬ (одинаковый стиль на ПК и мобильных) === */
-@media (min-width: 768px) {
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
   .container {
-    max-width: 960px;
+    border-radius: var(--radius);
   }
 
-  .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
+  .plan-card,
+  .form-grid,
   .btn-row {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  .plan-box,
-  .header,
-  .tabs {
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .section-title,
   .date-label,
   .preorders-label {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-}
-
-/* Для очень маленьких экранов (iPhone SE) — чуть меньше отступов */
-@media (max-width: 375px) {
-  .form-grid {
-    grid-template-columns: 1fr;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
-  .btn-row {
-    padding: 0 8px 16px;
-  }
-
-  .plan-box,
-  .header,
   .tabs {
-    padding: 12px 8px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
-  .section-title,
-  .date-label,
-  .preorders-label {
-    padding: 0 8px;
+  .progress-wrapper {
+    max-width: 100px;
+    height: 100px;
+  }
+
+  .progress-value {
+    font-size: 1.2rem;
   }
 }
 </style>
