@@ -47,7 +47,7 @@ body {
   position: relative;
 }
 
-/* Tabs — компактнее на мобильных */
+/* Tabs — компактные, без переполнения */
 .tabs {
   display: flex;
   background: #333333;
@@ -73,7 +73,7 @@ body {
   border-bottom: 3px solid var(--accent-yellow);
 }
 
-/* Header */
+/* Header — компактнее */
 .header {
   display: flex;
   align-items: center;
@@ -106,13 +106,14 @@ body {
   color: var(--text-muted);
 }
 
-/* Plan Box */
+/* Plan Box — как на скрине: компактно, с круглым прогрессом */
 .plan-box {
   padding: 16px;
   background: linear-gradient(135deg, #333333, #2d2d2d);
   margin: 14px;
   border-radius: 12px;
   border: 1px solid var(--border);
+  position: relative;
 }
 .plan-title {
   font-size: 1.05rem;
@@ -150,7 +151,7 @@ body {
   font-style: italic;
 }
 
-/* Section title */
+/* Section title — как на скрине: маленький отступ, иконка слева */
 .section-title {
   font-size: 1.15rem;
   font-weight: 600;
@@ -162,11 +163,11 @@ body {
   color: var(--accent-yellow);
 }
 
-/* Form — компактная сетка */
+/* Форма — компактная, как на скрине: поля в 1–2 строки */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 10px;
   padding: 0 14px 14px;
 }
 @media (min-width: 600px) {
@@ -186,9 +187,9 @@ label {
 }
 input, select {
   width: 100%;
-  padding: 9px 10px;
+  padding: 8px 10px;
   border: 1px solid var(--border);
-  border-radius: 7px;
+  border-radius: 6px;
   font-size: 13px;
   background: #333333;
   color: var(--text-light);
@@ -200,7 +201,7 @@ input:focus, select:focus {
   box-shadow: 0 0 0 2px rgba(255, 235, 59, 0.3);
 }
 
-/* Кнопки — компактнее, но с акцентом */
+/* Кнопки — как на скрине: жёлтая с неоновым бордюром, без агрессивного свечения */
 .btn-row {
   display: flex;
   gap: 8px;
@@ -211,20 +212,20 @@ button {
   flex: 1;
   min-width: 100px;
   border: none;
-  border-radius: 7px;
-  padding: 10px 12px;
+  border-radius: 6px;
+  padding: 9px 10px;
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
   position: relative;
   overflow: hidden;
 }
-/* Стиль для кнопки "Создать заказ" — как вы просили: неоновый бордюр, без агрессивного свечения */
+/* Кнопка "Создать заказ" — как вы просили: неоновый бордюр, без свечения при наведении */
 .btn-create {
   background: linear-gradient(135deg, #ffeb3b, #fbc02d);
   color: #000;
@@ -237,53 +238,53 @@ button {
   transform: translateY(-1px);
 }
 
-/* Остальные кнопки — как раньше, но чуть компактнее */
+/* Остальные кнопки — компактные, без излишней тени */
 .btn-start {
   background: linear-gradient(135deg, #00e676, #00c853);
   color: #000;
-  box-shadow: 0 3px 12px rgba(0, 230, 118, 0.3);
+  box-shadow: 0 3px 10px rgba(0, 230, 118, 0.3);
 }
 .btn-end {
   background: linear-gradient(135deg, #ff5252, #ff1744);
   color: white;
-  box-shadow: 0 3px 12px rgba(255, 82, 82, 0.3);
+  box-shadow: 0 3px 10px rgba(255, 82, 82, 0.3);
 }
 .btn-blue {
   background: linear-gradient(135deg, #2979ff, #2962ff);
   color: white;
-  box-shadow: 0 3px 12px rgba(41, 121, 255, 0.3);
+  box-shadow: 0 3px 10px rgba(41, 121, 255, 0.3);
 }
 .btn-outline {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-light);
-  box-shadow: 0 3px 12px rgba(100, 100, 100, 0.2);
+  box-shadow: 0 3px 10px rgba(100, 100, 100, 0.2);
 }
 .btn-accept {
   background: linear-gradient(135deg, #00e676, #00c853);
   color: #000;
   font-size: 12px;
-  padding: 7px 9px;
-  box-shadow: 0 3px 12px rgba(0, 230, 118, 0.3);
+  padding: 6px 8px;
+  box-shadow: 0 3px 10px rgba(0, 230, 118, 0.3);
 }
 .btn-delete {
   background: linear-gradient(135deg, #ff5252, #ff1744);
   color: white;
   font-size: 12px;
-  padding: 7px 9px;
+  padding: 6px 8px;
   min-width: auto;
-  box-shadow: 0 3px 12px rgba(255, 82, 82, 0.3);
+  box-shadow: 0 3px 10px rgba(255, 82, 82, 0.3);
 }
 .btn-view {
   background: linear-gradient(135deg, #ffeb3b, #fbc02d);
   color: #000;
   font-size: 12px;
-  padding: 7px 9px;
+  padding: 6px 8px;
   min-width: auto;
-  box-shadow: 0 3px 12px rgba(255, 235, 59, 0.3);
+  box-shadow: 0 3px 10px rgba(255, 235, 59, 0.3);
 }
 
-/* Orders list */
+/* Заказы по дате — компактно */
 .date-label, .preorders-label {
   font-weight: 600;
   color: var(--accent-yellow);
@@ -303,7 +304,7 @@ table {
   -webkit-overflow-scrolling: touch;
 }
 th, td {
-  padding: 8px 10px;
+  padding: 7px 9px;
   border-bottom: 1px solid #444444;
 }
 th {
@@ -336,7 +337,7 @@ td {
   color: var(--text-muted);
   font-size: 12px;
   border: 1px dashed var(--border);
-  border-radius: 7px;
+  border-radius: 6px;
   background: #333333;
 }
 
@@ -349,7 +350,7 @@ td {
 }
 .hidden { display: none; }
 
-/* Modal styles */
+/* Modal styles — компактные */
 .modal {
   display: none;
   position: fixed;
@@ -382,7 +383,7 @@ td {
   color: var(--accent-yellow);
 }
 .modal-row {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 .modal-buttons {
   display: flex;
@@ -407,77 +408,99 @@ td {
   font-weight: 500;
 }
 
-/* === Адаптация под мобильные === */
+/* === АДАПТИВНОСТЬ ПОД МОБИЛЬНЫЙ СКРИН (как на изображении) === */
 @media (max-width: 600px) {
   .container {
     border-radius: 12px;
     padding-bottom: 12px;
   }
 
-  .header {
-    padding: 14px 12px;
-  }
-  .avatar {
-    width: 48px;
-    height: 48px;
-    font-size: 16px;
-  }
-  .info h2 {
-    font-size: 1.1rem;
-  }
-  .info p {
-    font-size: 0.85rem;
-  }
-
-  .plan-box {
-    padding: 14px;
-    margin: 12px;
-  }
-  .plan-title {
-    font-size: 1rem;
-  }
-  .progress-text {
-    font-size: 0.8rem;
-  }
-
-  .section-title {
-    font-size: 1.05rem;
-    padding: 0 12px;
-  }
-
-  /* Форма — одна колонка, но с меньшими отступами */
+  /* Форма — делаем её как на скрине: поля в 1 строку, где возможно */
   .form-grid {
-    gap: 10px;
+    gap: 8px;
     padding: 0 12px 12px;
   }
-  label {
-    font-size: 0.8rem;
+  .form-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
-  input, select {
-    padding: 8px 10px;
+  .form-group > label {
+    flex: 0 0 60px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .form-group > input,
+  .form-group > select {
+    flex: 1;
+    min-width: 120px;
+    padding: 6px 8px;
     font-size: 12px;
   }
 
-  /* Кнопки — чуть меньше, но всё ещё читаемо */
+  /* Для полей "тариф + кол-во" и "длина + ширина" — делаем их в одну строку */
+  #lengthGroup,
+  #widthGroup,
+  #hoursGroup,
+  #preLengthGroup,
+  #preWidthGroup,
+  #preHoursGroup {
+    display: flex;
+    gap: 8px;
+  }
+  #lengthGroup > label,
+  #widthGroup > label,
+  #hoursGroup > label,
+  #preLengthGroup > label,
+  #preWidthGroup > label,
+  #preHoursGroup > label {
+    flex: 0 0 50px;
+    font-size: 0.8rem;
+  }
+  #lengthGroup > input,
+  #widthGroup > input,
+  #hoursGroup > input,
+  #preLengthGroup > input,
+  #preWidthGroup > input,
+  #preHoursGroup > input {
+    flex: 1;
+    min-width: 80px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  /* Кнопки — в одну строку, но с минимальным min-width */
   .btn-row {
     gap: 6px;
     padding: 0 12px 12px;
   }
   button {
-    min-width: 90px;
-    padding: 9px 10px;
+    min-width: 85px;
+    padding: 8px 9px;
     font-size: 12px;
   }
 
-  /* Таблицы — скрываем ненужные колонки на узких экранах */
+  /* Таблицы — на узких экранах: стек вместо таблицы */
   table {
     font-size: 12px;
   }
-  th:nth-child(3), td:nth-child(3) {
+  th:nth-child(3), td:nth-child(3),
+  th:nth-child(4), td:nth-child(4) {
     display: none;
   }
-  /* На очень узких — делаем стек (вместо таблицы) */
   @media (max-width: 400px) {
+    .form-group {
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group > label {
+      flex: none;
+      width: 100%;
+    }
+    .form-group > input,
+    .form-group > select {
+      min-width: 100%;
+    }
     table {
       display: block;
     }
@@ -485,12 +508,8 @@ td {
       display: block;
       width: 100%;
       text-align: left;
+      padding: 5px 8px;
       border-bottom: 1px solid #444444;
-      padding: 6px 8px;
-    }
-    th {
-      font-weight: 600;
-      background: #2d2d2d;
     }
     tr {
       display: block;
@@ -498,22 +517,6 @@ td {
       border-radius: 6px;
       background: #252525;
     }
-  }
-
-  /* Модалки — компактнее */
-  .modal-content {
-    padding: 16px;
-    max-width: 95%;
-  }
-  .modal-title {
-    font-size: 1.05rem;
-  }
-  .modal-buttons {
-    gap: 6px;
-  }
-  .details-item {
-    font-size: 0.8rem;
-    padding: 5px 0;
   }
 }
 </style>
