@@ -5,494 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Кабинет оператора</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
- <style>
+<style>
+/* === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ (как в макете) === */
 :root {
-  --bg-dark: #1a1a1a;
-  --bg-card: #2d2d2d;
-  --text-light: #ffffff;
-  --text-muted: #bbbbbb;
-  --accent-yellow: #ffeb3b;
-  --accent-yellow-dark: #fbc02d;
-  --accent-red: #ff5252;
-  --accent-red-dark: #ff1744;
-  --accent-green: #69f0ae;
-  --accent-green-dark: #00e676;
-  --border: #444444;
-  --shadow: rgba(0,0,0,0.3);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-
-body {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  color: var(--text-light);
-  padding: 12px;
-  min-height: 100vh;
-  line-height: 1.4;
-}
-
-.container {
-  max-width: 768px;
-  margin: 0 auto;
-  background: var(--bg-card);
-  border-radius: 14px;
-  box-shadow: 0 6px 20px var(--shadow);
-  overflow: hidden;
-  font-size: 15px;
-  position: relative;
-}
-
-/* Tabs — компактные, без переполнения */
-.tabs {
-  display: flex;
-  background: #333333;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.tab-btn {
-  flex: 0 0 auto;
-  padding: 12px 16px;
-  background: none;
-  border: none;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  font-size: 0.95rem;
-}
-.tab-btn.active {
-  color: var(--accent-yellow);
-  background: #252525;
-  border-bottom: 3px solid var(--accent-yellow);
-}
-
-/* Header — компактнее */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 14px;
-  background: #252525;
-  border-bottom: 1px solid var(--border);
-}
-.avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: #000;
-  font-size: 18px;
-  flex-shrink: 0;
-  box-shadow: 0 0 12px rgba(255, 235, 59, 0.4);
-}
-.info h2 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-.info p {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-/* Plan Box — как на скрине: компактно, с круглым прогрессом */
-.plan-box {
-  padding: 16px;
-  background: linear-gradient(135deg, #333333, #2d2d2d);
-  margin: 14px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  position: relative;
-}
-.plan-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--accent-yellow);
-}
-.progress-container {
-  height: 14px;
-  background: #444444;
-  border-radius: 7px;
-  overflow: hidden;
-  margin: 6px 0;
-  border: 1px solid #555555;
-}
-.progress-fill {
-  height: 100%;
-  border-radius: 7px;
-  transition: width 0.4s ease, background 0.4s ease;
-}
-.progress-text {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-top: 5px;
-}
-.shift-status {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-  font-style: italic;
-}
-
-/* Section title — как на скрине: маленький отступ, иконка слева */
-.section-title {
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin: 16px 0 12px;
-  padding: 0 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--accent-yellow);
-}
-
-/* Форма — компактная, как на скрине: поля в 1–2 строки */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  padding: 0 14px 14px;
-}
-@media (min-width: 600px) {
-  .form-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-.form-group {
-  margin: 0;
-}
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--text-light);
-}
-input, select {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 13px;
-  background: #333333;
-  color: var(--text-light);
-  transition: all 0.2s;
-}
-input:focus, select:focus {
-  outline: none;
-  border-color: var(--accent-yellow);
-  box-shadow: 0 0 0 2px rgba(255, 235, 59, 0.3);
-}
-
-/* Кнопки — как на скрине: жёлтая с неоновым бордюром, без агрессивного свечения */
-.btn-row {
-  display: flex;
-  gap: 8px;
-  padding: 0 14px 14px;
-  flex-wrap: wrap;
-}
-button {
-  flex: 1;
-  min-width: 100px;
-  border: none;
-  border-radius: 6px;
-  padding: 9px 10px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  position: relative;
-  overflow: hidden;
-}
-/* Кнопка "Создать заказ" — как вы просили: неоновый бордюр, без свечения при наведении */
-.btn-create {
-  background: linear-gradient(135deg, #ffeb3b, #fbc02d);
-  color: #000;
-  box-shadow: 
-    0 0 0 2px rgba(255, 235, 59, 0.6),
-    0 0 6px rgba(255, 235, 59, 0.4);
-  transition: transform 0.2s ease;
-}
-.btn-create:hover {
-  transform: translateY(-1px);
-}
-
-/* Остальные кнопки — компактные, без излишней тени */
-.btn-start {
-  background: linear-gradient(135deg, #00e676, #00c853);
-  color: #000;
-  box-shadow: 0 3px 10px rgba(0, 230, 118, 0.3);
-}
-.btn-end {
-  background: linear-gradient(135deg, #ff5252, #ff1744);
-  color: white;
-  box-shadow: 0 3px 10px rgba(255, 82, 82, 0.3);
-}
-.btn-blue {
-  background: linear-gradient(135deg, #2979ff, #2962ff);
-  color: white;
-  box-shadow: 0 3px 10px rgba(41, 121, 255, 0.3);
-}
-.btn-outline {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-light);
-  box-shadow: 0 3px 10px rgba(100, 100, 100, 0.2);
-}
-.btn-accept {
-  background: linear-gradient(135deg, #00e676, #00c853);
-  color: #000;
-  font-size: 12px;
-  padding: 6px 8px;
-  box-shadow: 0 3px 10px rgba(0, 230, 118, 0.3);
-}
-.btn-delete {
-  background: linear-gradient(135deg, #ff5252, #ff1744);
-  color: white;
-  font-size: 12px;
-  padding: 6px 8px;
-  min-width: auto;
-  box-shadow: 0 3px 10px rgba(255, 82, 82, 0.3);
-}
-.btn-view {
-  background: linear-gradient(135deg, #ffeb3b, #fbc02d);
-  color: #000;
-  font-size: 12px;
-  padding: 6px 8px;
-  min-width: auto;
-  box-shadow: 0 3px 10px rgba(255, 235, 59, 0.3);
-}
-
-/* Заказы по дате — компактно */
-.date-label, .preorders-label {
-  font-weight: 600;
-  color: var(--accent-yellow);
-  margin: 14px 0 10px;
-  padding: 0 14px;
-  display: block;
-  font-size: 1.05rem;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-  margin: 0 14px 14px;
-  display: block;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-th, td {
-  padding: 7px 9px;
-  border-bottom: 1px solid #444444;
-}
-th {
-  background: #333333;
-  text-align: left;
-  font-weight: 600;
-  color: var(--accent-yellow);
-  font-size: 0.9rem;
-}
-td {
-  color: var(--text-light);
-}
-.amount {
-  font-weight: 600;
-  color: var(--accent-green);
-}
-
-.empty-msg {
-  text-align: center;
-  color: var(--text-muted);
-  padding: 16px 14px;
-  font-style: italic;
-  font-size: 0.9rem;
-}
-
-.hint {
-  text-align: center;
-  margin: 16px 14px;
-  padding: 10px;
-  color: var(--text-muted);
-  font-size: 12px;
-  border: 1px dashed var(--border);
-  border-radius: 6px;
-  background: #333333;
-}
-
-.fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.hidden { display: none; }
-
-/* Modal styles — компактные */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-.modal.active {
-  display: flex;
-}
-.modal-content {
-  background: linear-gradient(135deg, #2d2d2d, #333333);
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 95%;
-  width: 100%;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-  border: 1px solid var(--border);
-  position: relative;
-}
-.modal-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 14px;
-  color: var(--accent-yellow);
-}
-.modal-row {
-  margin-bottom: 12px;
-}
-.modal-buttons {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-/* Details modal */
-.details-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  border-bottom: 1px solid #444444;
-  font-size: 0.85rem;
-}
-.details-label {
-  font-weight: 600;
-  color: var(--text-light);
-}
-.details-value {
-  color: var(--accent-yellow);
-  font-weight: 500;
-}
-
-/* === АДАПТИВНОСТЬ ПОД МОБИЛЬНЫЙ СКРИН (как на изображении) === */
-@media (max-width: 600px) {
-  .container {
-    border-radius: 12px;
-    padding-bottom: 12px;
-  }
-
-  /* Форма — делаем её как на скрине: поля в 1 строку, где возможно */
-  .form-grid {
-    gap: 8px;
-    padding: 0 12px 12px;
-  }
-  .form-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .form-group > label {
-    flex: 0 0 60px;
-    font-size: 0.8rem;
-    white-space: nowrap;
-  }
-  .form-group > input,
-  .form-group > select {
-    flex: 1;
-    min-width: 120px;
-    padding: 6px 8px;
-    font-size: 12px;
-  }
-
-  /* Для полей "тариф + кол-во" и "длина + ширина" — делаем их в одну строку */
-  #lengthGroup,
-  #widthGroup,
-  #hoursGroup,
-  #preLengthGroup,
-  #preWidthGroup,
-  #preHoursGroup {
-    display: flex;
-    gap: 8px;
-  }
-  #lengthGroup > label,
-  #widthGroup > label,
-  #hoursGroup > label,
-  #preLengthGroup > label,
-  #preWidthGroup > label,
-  #preHoursGroup > label {
-    flex: 0 0 50px;
-    font-size: 0.8rem;
-  }
-  #lengthGroup > input,
-  #widthGroup > input,
-  #hoursGroup > input,
-  #preLengthGroup > input,
-  #preWidthGroup > input,
-  #preHoursGroup > input {
-    flex: 1;
-    min-width: 80px;
-    padding: 6px 8px;
-    font-size: 12px;
-  }
-
-  /* Кнопки — в одну строку, но с минимальным min-width */
-  .btn-row {
-    gap: 6px;
-    padding: 0 12px 12px;
-  }
-  button {
-    min-width: 85px;
-    padding: 8px 9px;
-    font-size: 12px;
-  }
-
-  /* Таблицы — на узких экранах: стек вместо таблицы */
-  table {
-    font-size: 12px;
-  }
-  th:nth-child(3), td:nth-child(3),
-  th:nth-child(4), td:nth-child(4) {
-    display: none;
-  }
-  @media (max-width: 400px) {
-    .form-group <style>
-:root {
-  --bg-dark: #2c3e50;
+  --bg-primary: #2c3e50;
   --bg-card: #34495e;
+  --bg-header: #293a4a;
   --text-light: #ecf0f1;
   --text-muted: #bdc3c7;
   --accent-yellow: #f39c12;
@@ -502,19 +20,22 @@ td {
   --accent-green: #2ecc71;
   --accent-green-dark: #27ae60;
   --border: #4a6572;
-  --shadow: rgba(0,0,0,0.3);
+  --shadow: rgba(0, 0, 0, 0.3);
   --radius: 16px;
+  --btn-height: 48px;
+  --gap: 16px;
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-main);
 }
 
 body {
-  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-card) 100%);
   color: var(--text-light);
   padding: 16px;
   min-height: 100vh;
@@ -523,21 +44,20 @@ body {
 }
 
 .container {
-  max-width: 100%;
+  max-width: 960px;
   margin: 0 auto;
   background: var(--bg-card);
   border-radius: var(--radius);
   box-shadow: 0 8px 24px var(--shadow);
   overflow: hidden;
-  position: relative;
 }
 
-/* Tabs — одноколоночные, с закруглёнными кнопками */
+/* === ТАБЫ === */
 .tabs {
   display: flex;
   gap: 8px;
-  padding: 12px 16px;
-  background: #293a4a;
+  padding: 12px var(--gap);
+  background: var(--bg-header);
   border-bottom: 1px solid var(--border);
 }
 
@@ -564,13 +84,13 @@ body {
   background: rgba(255,255,255,0.05);
 }
 
-/* Header — как в макете: круглый аватар слева, текст справа */
+/* === ХЕДЕР (имя + аватар) === */
 .header {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: #293a4a;
+  background: var(--bg-header);
   border-bottom: 1px solid var(--border);
 }
 
@@ -593,7 +113,6 @@ body {
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 4px;
-  color: var(--text-light);
 }
 
 .info p {
@@ -601,11 +120,11 @@ body {
   color: var(--text-muted);
 }
 
-/* Plan Box — как в макете: круговой прогресс + текст */
+/* === ПЛАН (круговой прогресс) === */
 .plan-box {
-  padding: 18px 16px;
-  background: linear-gradient(135deg, #293a4a, #2c3e50);
-  margin: 16px;
+  padding: 18px var(--gap);
+  background: linear-gradient(135deg, var(--bg-header), var(--bg-primary));
+  margin: var(--gap);
   border-radius: var(--radius);
   position: relative;
   border: 1px solid var(--border);
@@ -640,7 +159,7 @@ body {
 
 .progress-circle circle {
   fill: none;
-  stroke: #4a6572;
+  stroke: var(--border);
   stroke-width: 8;
 }
 
@@ -677,11 +196,11 @@ body {
   font-style: italic;
 }
 
-/* Кнопки смены — как в макете: жёлтая и красная, с иконками */
+/* === КНОПКИ СМЕНЫ === */
 .btn-row {
   display: flex;
   gap: 12px;
-  padding: 0 16px 16px;
+  padding: 0 var(--gap) 16px;
 }
 
 button {
@@ -689,7 +208,8 @@ button {
   min-width: 0;
   border: none;
   border-radius: 10px;
-  padding: 14px 12px;
+  padding: 0;
+  height: var(--btn-height);
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -700,47 +220,47 @@ button {
   gap: 8px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .btn-start {
   background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark));
   color: #000;
-  box-shadow: 0 4px 12px rgba(243, 156, 17, 0.3);
 }
 
 .btn-start:hover {
-  box-shadow: 0 6px 16px rgba(243, 156, 17, 0.4), 0 0 12px rgba(243, 156, 17, 0.2);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(243, 156, 17, 0.4), 0 0 12px rgba(243, 156, 17, 0.2);
 }
 
 .btn-end {
   background: linear-gradient(135deg, var(--accent-red), var(--accent-red-dark));
   color: white;
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
 .btn-end:hover {
-  box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4), 0 0 12px rgba(231, 76, 60, 0.2);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4), 0 0 12px rgba(231, 76, 60, 0.2);
 }
 
-/* Новый заказ — форма в стиле макета */
+/* === ЗАГОЛОВОК СЕКЦИИ === */
 .section-title {
   font-size: 1.2rem;
   font-weight: 600;
   margin: 20px 0 12px;
-  padding: 0 16px;
+  padding: 0 var(--gap);
   display: flex;
   align-items: center;
   gap: 8px;
   color: var(--accent-yellow);
 }
 
+/* === ФОРМА ЗАКАЗА (адаптивная) === */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 12px;
-  padding: 0 16px 16px;
+  padding: 0 var(--gap) 16px;
 }
 
 .form-group {
@@ -761,7 +281,7 @@ input, select {
   border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 15px;
-  background: #293a4a;
+  background: var(--bg-header);
   color: var(--text-light);
   transition: all 0.2s;
 }
@@ -772,10 +292,7 @@ input:focus, select:focus {
   box-shadow: 0 0 0 2px rgba(243, 156, 17, 0.3);
 }
 
-/* Доп. поля — скрыты по умолчанию, показываются по тарифу */
-.hidden { display: none; }
-
-/* Кнопка "Создать заказ" — жёлтая, как в макете */
+/* === КНОПКА СОЗДАТЬ ЗАКАЗ === */
 .btn-create {
   background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark));
   color: #000;
@@ -783,6 +300,7 @@ input:focus, select:focus {
   padding: 14px;
   box-shadow: 0 4px 12px rgba(243, 156, 17, 0.3);
   margin-top: 8px;
+  width: 100%;
 }
 
 .btn-create:hover {
@@ -790,12 +308,13 @@ input:focus, select:focus {
   transform: translateY(-2px);
 }
 
-/* Заказы по дате */
-.date-label, .preorders-label {
+/* === ЗАКАЗЫ ПО ДАТЕ === */
+.date-label,
+.preorders-label {
   font-weight: 600;
   color: var(--accent-yellow);
   margin: 16px 0 12px;
-  padding: 0 16px;
+  padding: 0 var(--gap);
   display: block;
 }
 
@@ -803,11 +322,11 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
-  margin: 0 16px 16px;
+  margin: 0 var(--gap) 16px;
 }
 
 th {
-  background: #293a4a;
+  background: var(--bg-header);
   padding: 12px 8px;
   text-align: left;
   font-weight: 600;
@@ -817,7 +336,7 @@ th {
 
 td {
   padding: 12px 8px;
-  border-bottom: 1px solid #4a6572;
+  border-bottom: 1px solid var(--border);
   color: var(--text-light);
 }
 
@@ -829,23 +348,23 @@ td {
 .empty-msg {
   text-align: center;
   color: var(--text-muted);
-  padding: 24px 16px;
+  padding: 24px var(--gap);
   font-style: italic;
   font-size: 14px;
 }
 
 .hint {
   text-align: center;
-  margin: 20px 16px;
+  margin: 20px var(--gap);
   padding: 14px;
   color: var(--text-muted);
   font-size: 13px;
   border: 1px dashed var(--border);
   border-radius: 10px;
-  background: #293a4a;
+  background: var(--bg-header);
 }
 
-/* Модальные окна — адаптированы под мобильный экран */
+/* === МОДАЛЬНЫЕ ОКНА === */
 .modal {
   display: none;
   position: fixed;
@@ -866,9 +385,9 @@ td {
 
 .modal-content {
   background: var(--bg-card);
-  padding: 20px;
+  padding: 24px;
   border-radius: var(--radius);
-  max-width: 100%;
+  max-width: 90%;
   width: 100%;
   box-shadow: 0 -10px 30px rgba(0,0,0,0.4);
   border: 1px solid var(--border);
@@ -891,12 +410,11 @@ td {
   justify-content: space-between;
 }
 
-/* Детали заказа */
 .details-item {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid #4a6572;
+  border-bottom: 1px solid var(--border);
 }
 
 .details-label {
@@ -908,19 +426,57 @@ td {
   color: var(--accent-yellow);
 }
 
-/* Анимации */
-.fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Убираем десктопные медиа-запросы — только мобильный стиль */
+/* === АДАПТИВНОСТЬ (одинаковый стиль на ПК и мобильных) === */
 @media (min-width: 768px) {
-  /* Ничего не добавляем — мы делаем ТОЛЬКО мобильную версию */
+  .container {
+    max-width: 960px;
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .btn-row {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .plan-box,
+  .header,
+  .tabs {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .section-title,
+  .date-label,
+  .preorders-label {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* Для очень маленьких экранов (iPhone SE) — чуть меньше отступов */
+@media (max-width: 375px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-row {
+    padding: 0 8px 16px;
+  }
+
+  .plan-box,
+  .header,
+  .tabs {
+    padding: 12px 8px;
+  }
+
+  .section-title,
+  .date-label,
+  .preorders-label {
+    padding: 0 8px;
+  }
 }
 </style>
 </head>
