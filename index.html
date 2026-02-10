@@ -7,403 +7,575 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root {
---bg-dark: #1a1a1a;
---bg-card: #2d2d2d;
---text-light: #ffffff;
---text-muted: #bbbbbb;
---accent-yellow: #ffeb3b;
---accent-yellow-dark: #fbc02d;
---accent-red: #ff5252;
---accent-red-dark: #ff1744;
---accent-green: #69f0ae;
---accent-green-dark: #00e676;
---border: #444444;
---shadow: rgba(0,0,0,0.3);
-}
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-body {
-background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-color: var(--text-light);
-padding: 12px;
-min-height: 100vh;
-line-height: 1.4;
-}
-.container {
-max-width: 768px;
-margin: 0 auto;
-background: var(--bg-card);
-border-radius: 14px;
-box-shadow: 0 6px 20px var(--shadow);
-overflow: hidden;
-font-size: 15px;
-position: relative;
-}
-/* Tabs */
-.tabs {
-display: flex;
-background: #333333;
-border-bottom: 1px solid var(--border);
-}
-.tab-btn {
-flex: 1;
-padding: 14px;
-background: none;
-border: none;
-font-weight: 600;
-color: var(--text-muted);
-cursor: pointer;
-transition: all 0.2s;
-position: relative;
-}
-.tab-btn.active {
-color: var(--accent-yellow);
-background: #252525;
-border-bottom: 3px solid var(--accent-yellow);
-}
-.tab-btn:hover {
-color: var(--accent-yellow);
-}
-/* Header */
-.header {
-display: flex;
-align-items: center;
-gap: 14px;
-padding: 18px 16px 14px;
-background: #252525;
-border-bottom: 1px solid var(--border);
-}
-.avatar {
-width: 56px;
-height: 56px;
-border-radius: 50%;
-background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark));
-display: flex;
-align-items: center;
-justify-content: center;
-font-weight: bold;
-color: #000;
-font-size: 20px;
-flex-shrink: 0;
-box-shadow: 0 0 15px rgba(255, 235, 59, 0.4);
-}
-.info h2 {
-font-size: 1.3rem;
-font-weight: 600;
-margin-bottom: 4px;
-}
-.info p {
-font-size: 1rem;
-color: var(--text-muted);
-}
-/* Plan Box */
-.plan-box {
-padding: 18px 16px;
-background: linear-gradient(135deg, #333333, #2d2d2d);
-margin: 16px;
-border-radius: 12px;
-position: relative;
-border: 1px solid var(--border);
-}
-.plan-title {
-font-size: 1.1rem;
-font-weight: 600;
-margin-bottom: 10px;
-display: flex;
-align-items: center;
-gap: 6px;
-color: var(--accent-yellow);
-}
-.progress-container {
-height: 16px;
-background: #444444;
-border-radius: 8px;
-overflow: hidden;
-margin: 8px 0;
-border: 1px solid #555555;
-}
-.progress-fill {
-height: 100%;
-border-radius: 8px;
-transition: width 0.4s ease, background 0.4s ease;
-}
-.progress-text {
-display: flex;
-justify-content: space-between;
-font-size: 0.95rem;
-font-weight: 500;
-margin-top: 6px;
-}
-.shift-status {
-font-size: 0.9rem;
-color: var(--text-muted);
-margin-top: 6px;
-font-style: italic;
-}
-/* Section title */
-.section-title {
-font-size: 1.2rem;
-font-weight: 600;
-margin: 20px 0 14px;
-padding: 0 16px;
-display: flex;
-align-items: center;
-gap: 8px;
-color: var(--accent-yellow);
-}
-/* Form */
-.form-grid {
-display: grid;
-grid-template-columns: 1fr;
-gap: 14px;
-padding: 0 16px 16px;
-}
-@media (min-width: 600px) {
-.form-grid {
-grid-template-columns: 1fr 1fr;
-}
-}
-.form-group {
-margin: 0;
-}
-label {
-display: block;
-margin-bottom: 6px;
-font-weight: 600;
-font-size: 0.9rem;
-color: var(--text-light);
-}
-input, select {
-width: 100%;
-padding: 10px 12px;
-border: 1px solid var(--border);
-border-radius: 8px;
-font-size: 14px;
-background: #333333;
-color: var(--text-light);
-transition: all 0.2s;
-}
-input:focus, select:focus {
-outline: none;
-border-color: var(--accent-yellow);
-box-shadow: 0 0 0 2px rgba(255, 235, 59, 0.3);
-}
-.btn-row {
-display: flex;
-gap: 10px;
-padding: 0 16px 16px;
-flex-wrap: wrap;
-}
-button {
-flex: 1;
-min-width: 120px;
-border: none;
-border-radius: 8px;
-padding: 11px;
-font-weight: 600;
-font-size: 14px;
-cursor: pointer;
-transition: all 0.3s ease;
-display: inline-flex;
-align-items: center;
-justify-content: center;
-gap: 6px;
-position: relative;
-overflow: hidden;
-}
-/* Свечение для кнопок */
-.btn-start {
-background: linear-gradient(135deg, #00e676, #00c853);
-color: #000;
-box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
-}
-.btn-start:hover {
-box-shadow: 0 4px 20px rgba(0, 230, 118, 0.5), 0 0 20px rgba(0, 230, 118, 0.3);
-transform: translateY(-2px);
-}
-.btn-end {
-background: linear-gradient(135deg, #ff5252, #ff1744);
-color: white;
-box-shadow: 0 4px 15px rgba(255, 82, 82, 0.3);
-}
-.btn-end:hover {
-box-shadow: 0 4px 20px rgba(255, 82, 82, 0.5), 0 0 20px rgba(255, 82, 82, 0.3);
-transform: translateY(-2px);
-}
-.btn-blue {
-background: linear-gradient(135deg, #2979ff, #2962ff);
-color: white;
-box-shadow: 0 4px 15px rgba(41, 121, 255, 0.3);
-}
-.btn-blue:hover {
-box-shadow: 0 4px 20px rgba(41, 121, 255, 0.5), 0 0 20px rgba(41, 121, 255, 0.3);
-transform: translateY(-2px);
-}
-.btn-outline {
-background: transparent;
-border: 1px solid var(--border);
-color: var(--text-light);
-box-shadow: 0 4px 15px rgba(100, 100, 100, 0.2);
-}
-.btn-outline:hover {
-border-color: var(--accent-yellow);
-color: var(--accent-yellow);
-box-shadow: 0 4px 20px rgba(255, 235, 59, 0.3), 0 0 15px rgba(255, 235, 59, 0.2);
-transform: translateY(-2px);
+  --bg-dark: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.6);
+  --bg-overlay: rgba(15, 23, 42, 0.85);
+  --text-light: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-strong: #f1f5f9;
+  --accent-blue: #60a5fa;
+  --accent-blue-dark: #3b82f6;
+  --accent-purple: #a78bfa;
+  --accent-green: #6ee7b7;
+  --accent-red: #f87171;
+  --border: rgba(100, 116, 139, 0.3);
+  --shadow: rgba(0, 0, 0, 0.3);
+  --glow-blue: rgba(96, 165, 250, 0.4);
+  --glow-purple: rgba(167, 139, 250, 0.3);
 }
 
-/* === КНОПКИ ДЕЙСТВИЙ: компактные, в ряд, белый текст === */
-.action-buttons {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  height: 28px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
-.action-buttons button {
-  min-width: auto;
-  padding: 5px 8px;
-  font-size: 12px;
-  height: 26px;
-  border-radius: 6px;
+
+body {
+  background: linear-gradient(135deg, #0c1445 0%, #0f172a 100%);
+  color: var(--text-light);
+  padding: 12px;
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 768px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  box-shadow: 
+    0 8px 32px var(--shadow),
+    0 0 20px var(--glow-blue);
+  overflow: hidden;
+  font-size: 15px;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  background: var(--bg-overlay);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+.tab-btn {
+  flex: 1;
+  padding: 16px 12px;
+  background: transparent;
+  border: none;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  font-size: 0.95rem;
+}
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 30%;
+  height: 2px;
+  background: var(--accent-blue);
+  transition: transform 0.3s ease;
+}
+.tab-btn.active {
+  color: var(--accent-blue);
+}
+.tab-btn.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+.tab-btn:hover:not(.active) {
+  color: var(--text-strong);
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 18px;
+  background: var(--bg-overlay);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  color: white !important; /* ← белый текст везде */
+  font-weight: bold;
+  color: #0f172a;
+  font-size: 22px;
+  flex-shrink: 0;
+  box-shadow: 
+    0 0 20px var(--glow-blue),
+    inset 0 0 10px rgba(255,255,255,0.2);
+  backdrop-filter: blur(4px);
 }
-/* Яркая кнопка "Принять" */
-.btn-accept {
-  background: linear-gradient(135deg, #00e676, #00bfa5) !important;
-  box-shadow: 0 3px 10px rgba(0, 230, 118, 0.4);
+.info h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  background: linear-gradient(to right, #cbd5e1, #e2e8f0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.info p {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+/* Plan Box */
+.plan-box {
+  padding: 20px 18px;
+  background: var(--bg-overlay);
+  margin: 18px;
+  border-radius: 16px;
+  position: relative;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+.plan-title {
+  font-size: 1.2rem;
   font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-blue);
 }
-.btn-accept:hover {
-  box-shadow: 0 4px 15px rgba(0, 230, 118, 0.6), 0 0 15px rgba(0, 230, 118, 0.3);
-  transform: translateY(-1px);
+.progress-container {
+  height: 16px;
+  background: rgba(68, 68, 68, 0.6);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 8px 0;
+  border: 1px solid rgba(100, 100, 100, 0.4);
+  position: relative;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
 }
-/* Кнопка "Создать заказ" — тоже белый текст */
-#main-tab .btn-row > button:last-child {
-  color: white !important;
-  background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark)) !important;
-  box-shadow: 0 4px 15px rgba(255, 235, 59, 0.3);
+.progress-fill {
+  height: 100%;
+  border-radius: 8px;
+  /* Переливающийся градиент */
+  background: linear-gradient(
+    90deg,
+    #60a5fa 0%,
+    #818cf8 30%,
+    #a78bfa 60%,
+    #c084fc 100%
+  );
+  background-size: 300% 100%;
+  animation: glowPulse 4s ease-in-out infinite;
+  /* Плавная ширина */
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.6s ease;
+  /* Свечение */
+  box-shadow: 
+    0 0 12px rgba(96, 165, 250, 0.5),
+    0 0 20px rgba(167, 139, 250, 0.3);
+  position: relative;
 }
-#main-tab .btn-row > button:last-child:hover {
-  box-shadow: 0 4px 20px rgba(255, 235, 59, 0.5), 0 0 20px rgba(255, 235, 59, 0.3);
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shineWave 3s ease-in-out infinite;
+  opacity: 0.7;
+  border-radius: 8px;
+}
+@keyframes glowPulse {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes shineWave {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+/* При 100% — зелёный неон */
+.progress-fill[data-percentage="100"] {
+  background: linear-gradient(
+    90deg,
+    #6ee7b7 0%,
+    #34d399 30%,
+    #10b981 60%,
+    #059669 100%
+  );
+  box-shadow: 
+    0 0 16px rgba(110, 231, 183, 0.6),
+    0 0 24px rgba(110, 231, 183, 0.3);
+}
+.progress-fill[data-percentage="100"]::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
+}
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-top: 8px;
+  color: var(--text-muted);
+}
+.shift-status {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+/* Section title */
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 24px 0 16px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent-blue);
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+}
+
+/* Form */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 0 18px 20px;
+}
+@media (min-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.form-group {
+  margin: 0;
+}
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-strong);
+}
+input, select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  background: rgba(15, 23, 42, 0.5);
+  color: var(--text-strong);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+}
+
+/* Buttons */
+.btn-row {
+  display: flex;
+  gap: 12px;
+  padding: 0 18px 20px;
+  flex-wrap: wrap;
+}
+button {
+  flex: 1;
+  min-width: 130px;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.17, 0.67, 0.88, 1.01);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  background: rgba(30, 41, 59, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: 0.5s;
+}
+button:hover::before {
+  left: 100%;
+}
+button:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 18px var(--glow-blue);
+}
+
+/* === Единый стиль для основных действий === */
+.btn-blue {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.17, 0.67, 0.88, 1.01);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  box-shadow: 
+    0 4px 16px rgba(96, 165, 250, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.btn-blue:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(96, 165, 250, 0.6),
+    0 0 20px var(--glow-blue),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* === Особый эффект для "Создать заказ" === */
+.btn-create {
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { 
+    box-shadow: 
+      0 4px 16px rgba(96, 165, 250, 0.4),
+      0 0 0 1px rgba(255,255,255,0.05); 
+  }
+  50% { 
+    box-shadow: 
+      0 4px 16px rgba(96, 165, 250, 0.6),
+      0 0 24px var(--glow-blue),
+      0 0 0 1px rgba(255,255,255,0.1); 
+  }
+}
+
+.btn-create:hover {
+  animation: none;
+  box-shadow: 
+    0 8px 24px rgba(167, 139, 250, 0.7),
+    0 0 30px var(--glow-purple),
+    0 0 0 1px rgba(255,255,255,0.15);
+}
+
+/* === Компактные яркие кнопки действий === */
+.btn-action {
+  width: 32px;
+  height: 32px;
+  min-width: auto;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(96, 165, 250, 0.4);
+  margin: 0 2px;
+}
+.btn-action:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 
+    0 4px 10px rgba(96, 165, 250, 0.6),
+    0 0 12px var(--glow-blue);
+}
+.btn-action i {
+  font-size: 14px;
+  line-height: 1;
+}
+.btn-view { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+.btn-edit { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.btn-delete {
+  background: linear-gradient(135deg, var(--accent-red), #ef4444);
+  box-shadow: 0 2px 6px rgba(248, 113, 113, 0.4);
+}
+.btn-delete:hover {
+  box-shadow: 
+    0 4px 10px rgba(248, 113, 113, 0.6),
+    0 0 12px rgba(248, 113, 113, 0.4);
+}
+
+/* === Чаевые: прогресс-бары без жёлтого === */
+#tips-tab .progress-fill {
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)) !important;
+  box-shadow: 
+    0 0 12px rgba(96, 165, 250, 0.5),
+    0 0 20px rgba(167, 139, 250, 0.3) !important;
 }
 
 /* Orders list */
 .date-label, .preorders-label {
-font-weight: 600;
-color: var(--accent-yellow);
-margin: 16px 0 12px;
-padding: 0 16px;
-display: block;
+  font-weight: 600;
+  color: var(--accent-blue);
+  margin: 18px 0 14px;
+  padding: 0 18px;
+  display: block;
+  text-shadow: 0 0 6px rgba(96, 165, 250, 0.2);
 }
 table {
-width: 100%;
-border-collapse: collapse;
-font-size: 14px;
-margin: 0 16px 16px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 0 18px 18px;
 }
 th {
-background: #333333;
-padding: 10px 8px;
-text-align: left;
-font-weight: 600;
-border-bottom: 1px solid var(--border);
-color: var(--accent-yellow);
+  background: rgba(30, 41, 59, 0.5);
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  color: var(--accent-blue);
+  backdrop-filter: blur(4px);
 }
 td {
-padding: 10px 8px;
-border-bottom: 1px solid #444444;
-color: var(--text-light);
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+  color: var(--text-strong);
 }
 .amount {
-font-weight: 600;
-color: var(--accent-green);
+  font-weight: 600;
+  color: var(--accent-green);
+  text-shadow: 0 0 6px rgba(110, 231, 183, 0.3);
 }
+
 .empty-msg {
-text-align: center;
-color: var(--text-muted);
-padding: 20px 16px;
-font-style: italic;
+  text-align: center;
+  color: var(--text-muted);
+  padding: 24px 18px;
+  font-style: italic;
+  opacity: 0.8;
 }
+
 .hint {
-text-align: center;
-margin: 20px 16px;
-padding: 12px;
-color: var(--text-muted);
-font-size: 13px;
-border: 1px dashed var(--border);
-border-radius: 8px;
-background: #333333;
+  text-align: center;
+  margin: 24px 18px;
+  padding: 14px;
+  color: var(--text-muted);
+  font-size: 13px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(6px);
 }
+
+/* Animations */
 .fade-in {
-animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.4s ease-out;
 }
 @keyframes fadeIn {
-from { opacity: 0; transform: translateY(8px); }
-to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .hidden { display: none; }
-/* Modal styles */
+
+/* Modal */
 .modal {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: rgba(0,0,0,0.7);
-z-index: 1000;
-justify-content: center;
-align-items: center;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(6px);
 }
 .modal.active {
-display: flex;
+  display: flex;
 }
 .modal-content {
-background: linear-gradient(135deg, #2d2d2d, #333333);
-padding: 24px;
-border-radius: 12px;
-max-width: 400px;
-width: 90%;
-box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-border: 1px solid var(--border);
-position: relative;
+  background: var(--bg-card);
+  padding: 28px;
+  border-radius: 18px;
+  max-width: 420px;
+  width: 92%;
+  box-shadow: 
+    0 12px 40px var(--shadow),
+    0 0 30px var(--glow-blue);
+  border: 1px solid var(--border);
+  position: relative;
+  backdrop-filter: blur(12px);
 }
 .modal-title {
-font-size: 1.2rem;
-font-weight: 600;
-margin-bottom: 16px;
-color: var(--accent-yellow);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--accent-blue);
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
 }
 .modal-row {
-margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 .modal-buttons {
-display: flex;
-gap: 10px;
-justify-content: flex-end;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
 }
-/* Details modal */
+
 .details-item {
-display: flex;
-justify-content: space-between;
-padding: 8px 0;
-border-bottom: 1px solid #444444;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.2);
 }
 .details-label {
-font-weight: 600;
-color: var(--text-light);
+  font-weight: 600;
+  color: var(--text-strong);
 }
 .details-value {
-color: var(--accent-yellow);
+  color: var(--accent-blue);
+  font-weight: 500;
 }
 </style>
 </head>
@@ -413,7 +585,9 @@ color: var(--accent-yellow);
 <div class="tabs">
 <button class="tab-btn active" onclick="switchTab('main')">Основное</button>
 <button class="tab-btn" onclick="switchTab('preorders')">Предзаказы</button>
+<button class="tab-btn" onclick="switchTab('tips')">Чаевые</button>
 </div>
+
 <!-- Main Tab -->
 <div id="main-tab">
 <!-- Header -->
@@ -424,6 +598,7 @@ color: var(--accent-yellow);
 <p>Всего: <b><span id="totalAll">0.00</span> ₽</b></p>
 </div>
 </div>
+
 <!-- Plan Box -->
 <div class="plan-box">
 <div class="plan-title">
@@ -438,15 +613,17 @@ color: var(--accent-yellow);
 </div>
 <div class="shift-status" id="shiftStatus">Смена не начата</div>
 </div>
+
 <!-- Shift Controls -->
 <div class="btn-row">
-<button class="btn-start" onclick="startShift()">
-<i class="fas fa-play"></i> Начать смену
-</button>
-<button class="btn-end" onclick="endShift()">
-<i class="fas fa-stop"></i> Завершить смену
-</button>
+  <button class="btn-blue" onclick="startShift()">
+    <i class="fas fa-play"></i> Начать смену
+  </button>
+  <button class="btn-blue" onclick="endShift()">
+    <i class="fas fa-stop"></i> Завершить смену
+  </button>
 </div>
+
 <!-- Create Order -->
 <div class="section-title">
 <i class="fas fa-plus"></i> Новый заказ
@@ -489,11 +666,13 @@ color: var(--accent-yellow);
 <input type="number" step="0.1" id="hours" placeholder="0.0">
 </div>
 </div>
+
 <div class="btn-row">
-<button onclick="createMainOrderWithSound()">
-<i class="fas fa-check"></i> Создать заказ
-</button>
+  <button class="btn-blue btn-create" onclick="createMainOrderWithSound()">
+    <i class="fas fa-check"></i> Создать заказ
+  </button>
 </div>
+
 <!-- View Orders by Date -->
 <div class="section-title">
 <i class="fas fa-history"></i> Заказы по дате
@@ -505,7 +684,7 @@ color: var(--accent-yellow);
 </div>
 </div>
 <div class="btn-row">
-<button onclick="showOrdersByDate()">
+<button class="btn-blue" onclick="showOrdersByDate()">
 <i class="fas fa-eye"></i> Показать
 </button>
 <button class="btn-outline" onclick="saveOrdersToFile()">
@@ -517,6 +696,7 @@ color: var(--accent-yellow);
 </div>
 <div id="ordersList"></div>
 </div>
+
 <!-- Preorders Tab -->
 <div id="preorders-tab" class="hidden">
 <div class="section-title">
@@ -576,6 +756,69 @@ color: var(--accent-yellow);
 💡 Предзаказы не влияют на план. Нажмите «Принять», чтобы добавить в основные.
 </div>
 </div>
+
+<!-- Tips Tab -->
+<div id="tips-tab" class="hidden">
+  <div class="section-title">
+    <i class="fas fa-mug-hot"></i> Чаевые
+  </div>
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label>Сумма чаевых (₽)</label>
+      <input type="number" id="tipAmount" placeholder="Напр.: 300" min="0" step="1">
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-blue" onclick="addTip()">
+      <i class="fas fa-plus"></i> Добавить чаевые
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div style="padding: 0 18px 18px;">
+    <!-- Total Packets -->
+    <div class="plan-box" style="margin: 18px 0;">
+      <div class="plan-title">
+        <i class="fas fa-box"></i> Всего пакетиков
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="totalPacketsFill"></div>
+      </div>
+      <div class="progress-text">
+        <span>Накоплено:</span>
+        <b><span id="totalPacketsCount">0</span> шт</b>
+      </div>
+    </div>
+
+    <!-- Today's Packets -->
+    <div class="plan-box" style="margin: 18px 0;">
+      <div class="plan-title">
+        <i class="fas fa-sun"></i> Сегодня
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="todayPacketsFill"></div>
+      </div>
+      <div class="progress-text">
+        <span>За сегодня:</span>
+        <b><span id="todayPacketsCount">0</span> шт</b>
+      </div>
+    </div>
+
+    <!-- Tea Consumed -->
+    <div class="plan-box" style="margin: 18px 0;">
+      <div class="plan-title">
+        <i class="fas fa-wine-bottle"></i> Выпито чая
+      </div>
+      <div class="progress-text" style="margin-top: 12px; font-size: 1.1rem;">
+        <b><span id="teaLiters">0.0</span> л</b>
+        <span style="color: var(--text-muted);">(1 пакетик = 200 мл)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modals -->
 <div id="editModal" class="modal">
 <div class="modal-content">
@@ -623,6 +866,7 @@ color: var(--accent-yellow);
 </div>
 </div>
 </div>
+
 <div id="dateModal" class="modal">
 <div class="modal-content">
 <div class="modal-title">Выберите дату для заказа</div>
@@ -636,6 +880,7 @@ color: var(--accent-yellow);
 </div>
 </div>
 </div>
+
 <div id="detailsModal" class="modal">
 <div class="modal-content">
 <div class="modal-title">Детали заказа</div>
@@ -645,9 +890,10 @@ color: var(--accent-yellow);
 </div>
 </div>
 </div>
+
 <script>
 // === ФЛАГ ЗВУКА ===
-let soundEnabled = true;
+let soundEnabled = true; // ✅ true = звук включён, false = выключен
 
 // === Константы ===
 const TARIFFS = {
@@ -694,39 +940,35 @@ to { opacity: 0; }
 document.head.appendChild(style);
 
 // === Звуковой сигнал ===
-function playBellSound() {
-if (!soundEnabled) return;
-try {
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-if (!AudioContext) return;
-const audioContext = new AudioContext();
-const frequencies = [600, 800];
-let time = audioContext.currentTime;
-frequencies.forEach((freq, i) => {
-const oscillator = audioContext.createOscillator();
-const gainNode = audioContext.createGain();
-oscillator.connect(gainNode);
-gainNode.connect(audioContext.destination);
-oscillator.type = 'sine';
-oscillator.frequency.value = freq;
-gainNode.gain.setValueAtTime(0.2, time);
-gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.3);
-oscillator.start(time);
-oscillator.stop(time + 0.3);
-time += 0.25;
-});
-} catch (e) {
-console.warn('Звук не поддерживается:', e);
-}
+function playSuccessSound() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 800;
+    gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.3);
+  } catch (e) {
+    console.warn("Audio feedback not supported", e);
+  }
 }
 
 // === Обёртка для создания заказа + звук ===
 function createMainOrderWithSound() {
-createMainOrder();
-setTimeout(playBellSound, 100);
+  createMainOrder();
+  setTimeout(playSuccessSound, 100);
 }
 
-// === Остальной JS без изменений ===
+// === Утилиты ===
 function formatDateYMD(dateStr) {
 const [y, m, d] = dateStr.split('-');
 return `${d}.${m}.${y}`;
@@ -762,6 +1004,88 @@ localStorage.removeItem('current_shift');
 localStorage.setItem('current_shift', JSON.stringify(shift));
 }
 }
+
+// === Чаевые: утилиты ===
+function loadTipsData() {
+  try {
+    return JSON.parse(localStorage.getItem('tea_tips_data') || '{}');
+  } catch (e) {
+    return {};
+  }
+}
+function saveTipsData(data) {
+  localStorage.setItem('tea_tips_data', JSON.stringify(data));
+}
+
+// Обновление статистики чаевых
+function updateTipsUI() {
+  const data = loadTipsData();
+  const today = todayYMD();
+
+  // Всего пакетиков
+  const totalPackets = data.totalPackets || 0;
+  const totalProgress = Math.min(100, totalPackets / 1000 * 100); // шкала до 1000
+
+  // Сегодняшние пакетики
+  const todayPackets = (data.daily && data.daily[today]) || 0;
+  const todayProgress = Math.min(100, todayPackets / 200 * 100); // шкала до 200
+
+  // Чай в литрах
+  const teaLiters = (totalPackets * 0.2).toFixed(1);
+
+  // Обновляем DOM
+  document.getElementById('totalPacketsCount').textContent = totalPackets;
+  document.getElementById('todayPacketsCount').textContent = todayPackets;
+  document.getElementById('teaLiters').textContent = teaLiters;
+
+  // Прогресс-бары
+  document.getElementById('totalPacketsFill').style.width = `${totalProgress}%`;
+  document.getElementById('todayPacketsFill').style.width = `${todayProgress}%`;
+
+  // Для анимации перелива (опционально)
+  document.getElementById('totalPacketsFill').setAttribute('data-percentage', Math.round(totalProgress));
+  document.getElementById('todayPacketsFill').setAttribute('data-percentage', Math.round(todayProgress));
+}
+
+// Добавление чаевых
+function addTip() {
+  const input = document.getElementById('tipAmount');
+  const value = parseFloat(input.value);
+  if (!value || value <= 0) {
+    alert('Введите сумму чаевых (больше 0)');
+    return;
+  }
+
+  const packets = Math.floor(value); // 1 ₽ = 1 пакетик
+  const today = todayYMD();
+  const data = loadTipsData();
+
+  // Инициализация
+  data.totalPackets = data.totalPackets || 0;
+  data.daily = data.daily || {};
+
+  // Обновление
+  data.totalPackets += packets;
+  data.daily[today] = (data.daily[today] || 0) + packets;
+
+  // Сохранение
+  saveTipsData(data);
+
+  // Сброс поля
+  input.value = '';
+
+  // Обновление UI
+  updateTipsUI();
+
+  // Звук (если включён)
+  if (typeof playSuccessSound === 'function') {
+    setTimeout(playSuccessSound, 100);
+  }
+
+  alert(`✅ Добавлено ${packets} чайных пакетиков!`);
+}
+
+// === Расчёт суммы ===
 function calculateAmount(tariffKey, length, width, hours, qty) {
 const tariff = TARIFFS[tariffKey];
 if (!tariff) return 0;
@@ -775,6 +1099,8 @@ amount = tariff.price * length * qty;
 }
 return Math.round(amount * 100) / 100;
 }
+
+// === Расчёт количества единиц ===
 function calculateUnits(tariffKey, length, width, hours, qty) {
 const tariff = TARIFFS[tariffKey];
 if (!tariff) return { value: 0, unit: '' };
@@ -789,70 +1115,37 @@ value = length * qty;
 }
 return { value: Math.round(value * 100) / 100, unit: UNIT_LABELS[unit] || unit };
 }
+
+// === Обновление UI плана ===
 function updateUI() {
 const orders = loadOrders();
 const totalAll = orders.reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
 const shift = getCurrentShift();
 let currentShiftAmount = 0;
 let progressWidth = 0;
-let fillColor = '#444444';
 let statusText = 'Смена не начата';
+
 if (shift && shift.active) {
 currentShiftAmount = orders
 .filter(o => o.shiftId === shift.id)
 .reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
 progressWidth = Math.min(100, (currentShiftAmount / 3000) * 100);
-fillColor = `linear-gradient(90deg, #ffeb3b 0%, #fbc02d 50%, #00e676 100%)`;
 statusText = 'Смена активна';
-checkAndNotify1000(currentShiftAmount);
 } else if (shift && !shift.active) {
 currentShiftAmount = shift.finalAmount || 0;
 progressWidth = Math.min(100, (currentShiftAmount / 3000) * 100);
-fillColor = shift.finalAmount >= 3000 ? '#00e676' : '#ff5252';
 statusText = 'Смена завершена';
 }
+
 document.getElementById('totalAll').textContent = totalAll.toFixed(2);
 document.getElementById('todayEarned').textContent = currentShiftAmount.toFixed(2);
 const fillEl = document.getElementById('progressFill');
 fillEl.style.width = `${progressWidth}%`;
-fillEl.style.background = fillColor;
+fillEl.setAttribute('data-percentage', Math.round(progressWidth)); // ← для зелёного неона при 100%
 document.getElementById('shiftStatus').textContent = statusText;
 }
-function checkAndNotify1000(currentAmount) {
-const shift = getCurrentShift();
-if (!shift || !shift.active) {
-hasNotified1000 = false;
-return;
-}
-if (currentAmount >= 1000 && !hasNotified1000) {
-hasNotified1000 = true;
-playBellSound();
-const notification = document.createElement('div');
-notification.innerHTML = `
-<div style="
-position: fixed;
-top: 20px;
-right: 20px;
-background: linear-gradient(135deg, #ffeb3b, #fbc02d);
-color: #000;
-padding: 16px 24px;
-border-radius: 12px;
-box-shadow: 0 8px 24px rgba(255, 235, 59, 0.4);
-z-index: 2000;
-font-weight: bold;
-animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in 3s forwards;
-">
-🎯 Достигнуто 1000₽!
-</div>
-`;
-document.body.appendChild(notification);
-setTimeout(() => {
-if (notification.parentNode) {
-notification.parentNode.removeChild(notification);
-}
-}, 4000);
-}
-}
+
+// === Переключение полей ===
 function updateMainFormFields() {
 const tariffSelect = document.getElementById('tariff');
 if (!tariffSelect) return;
@@ -887,22 +1180,32 @@ if (l) l.classList.add('hidden');
 if (h) h.classList.remove('hidden');
 }
 }
+
+// === Tabs ===
 function switchTab(tabName) {
-document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-if (tabName === 'main') {
-document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
-document.getElementById('main-tab').classList.remove('hidden');
-document.getElementById('preorders-tab').classList.add('hidden');
-updateUI();
-setTimeout(updateMainFormFields, 50);
-} else {
-document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-document.getElementById('main-tab').classList.add('hidden');
-document.getElementById('preorders-tab').classList.remove('hidden');
-renderPreorders();
-setTimeout(updatePreorderFormFields, 50);
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('main-tab').classList.add('hidden');
+  document.getElementById('preorders-tab').classList.add('hidden');
+  document.getElementById('tips-tab').classList.add('hidden');
+
+  if (tabName === 'main') {
+    document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+    document.getElementById('main-tab').classList.remove('hidden');
+    updateUI();
+    setTimeout(updateMainFormFields, 50);
+  } else if (tabName === 'preorders') {
+    document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+    document.getElementById('preorders-tab').classList.remove('hidden');
+    renderPreorders();
+    setTimeout(updatePreorderFormFields, 50);
+  } else if (tabName === 'tips') {
+    document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+    document.getElementById('tips-tab').classList.remove('hidden');
+    updateTipsUI();
+  }
 }
-}
+
+// === Смена ===
 function startShift() {
 const shift = getCurrentShift();
 if (shift && shift.active) {
@@ -911,7 +1214,6 @@ return;
 }
 const newShift = { id: Date.now(), startedAt: new Date().toISOString(), active: true };
 setCurrentShift(newShift);
-playBellSound();
 alert('✅ Смена начата!');
 updateUI();
 }
@@ -929,10 +1231,11 @@ shift.active = false;
 shift.finishedAt = new Date().toISOString();
 shift.finalAmount = finalAmount;
 setCurrentShift(shift);
-playBellSound();
 alert(`✅ Смена завершена!\nЗаработано: ${finalAmount.toFixed(2)} ₽`);
 updateUI();
 }
+
+// === Удаление заказов ===
 function deleteOrder(orderId) {
 if (!confirm('Вы уверены, что хотите удалить этот заказ?')) {
 return;
@@ -940,11 +1243,10 @@ return;
 const orders = loadOrders();
 const orderIndex = orders.findIndex(o => o.id === orderId);
 if (orderIndex === -1) return;
-const deletedOrder = orders[orderIndex];
 orders.splice(orderIndex, 1);
 saveOrders(orders);
 const shift = getCurrentShift();
-if (shift && shift.active && deletedOrder.shiftId === shift.id) {
+if (shift && shift.active) {
 updateUI();
 }
 showOrdersByDate();
@@ -962,6 +1264,8 @@ savePreorders(preorders);
 renderPreorders();
 alert('✅ Предзаказ удален!');
 }
+
+// === Модальное окно для выбора даты ===
 function openDateModal(preorderId) {
 pendingPreorderId = preorderId;
 const modalDateInput = document.getElementById('modalDate');
@@ -986,6 +1290,8 @@ acceptPreorder(pendingPreorderId, selectedDate);
 }
 closeDateModal();
 }
+
+// === Просмотр деталей заказа ===
 function viewOrderDetails(orderId) {
 const orders = loadOrders();
 const order = orders.find(o => o.id === orderId);
@@ -993,21 +1299,56 @@ if (!order) return;
 const units = calculateUnits(order.tariff, order.length, order.width, order.hours, order.qty);
 const tariffName = TARIFF_NAMES[order.tariff] || order.tariff;
 let html = '';
-html += `<div class="details-item"><span class="details-label">№ заказа:</span><span class="details-value">${order.orderNumber}</span></div>`;
-html += `<div class="details-item"><span class="details-label">Деталь:</span><span class="details-value">${order.detail}</span></div>`;
-html += `<div class="details-item"><span class="details-label">Тариф:</span><span class="details-value">${tariffName}</span></div>`;
-html += `<div class="details-item"><span class="details-label">Количество:</span><span class="details-value">${order.qty}</span></div>`;
-if (order.length !== null) html += `<div class="details-item"><span class="details-label">Длина:</span><span class="details-value">${order.length} м</span></div>`;
-if (order.width !== null) html += `<div class="details-item"><span class="details-label">Ширина:</span><span class="details-value">${order.width} м</span></div>`;
-if (order.hours !== null) html += `<div class="details-item"><span class="details-label">Часы:</span><span class="details-value">${order.hours} ч</span></div>`;
-html += `<div class="details-item"><span class="details-label">Объем работ:</span><span class="details-value">${units.value} ${units.unit}</span></div>`;
-html += `<div class="details-item"><span class="details-label">Сумма:</span><span class="details-value">${order.amount.toFixed(2)} ₽</span></div>`;
+html += `<div class="details-item">
+<span class="details-label">№ заказа:</span>
+<span class="details-value">${order.orderNumber}</span>
+</div>`;
+html += `<div class="details-item">
+<span class="details-label">Деталь:</span>
+<span class="details-value">${order.detail}</span>
+</div>`;
+html += `<div class="details-item">
+<span class="details-label">Тариф:</span>
+<span class="details-value">${tariffName}</span>
+</div>`;
+html += `<div class="details-item">
+<span class="details-label">Количество:</span>
+<span class="details-value">${order.qty}</span>
+</div>`;
+if (order.length !== null) {
+html += `<div class="details-item">
+<span class="details-label">Длина:</span>
+<span class="details-value">${order.length} м</span>
+</div>`;
+}
+if (order.width !== null) {
+html += `<div class="details-item">
+<span class="details-label">Ширина:</span>
+<span class="details-value">${order.width} м</span>
+</div>`;
+}
+if (order.hours !== null) {
+html += `<div class="details-item">
+<span class="details-label">Часы:</span>
+<span class="details-value">${order.hours} ч</span>
+</div>`;
+}
+html += `<div class="details-item">
+<span class="details-label">Объем работ:</span>
+<span class="details-value">${units.value} ${units.unit}</span>
+</div>`;
+html += `<div class="details-item">
+<span class="details-label">Сумма:</span>
+<span class="details-value">${order.amount.toFixed(2)} ₽</span>
+</div>`;
 document.getElementById('detailsContent').innerHTML = html;
 document.getElementById('detailsModal').classList.add('active');
 }
 function closeDetailsModal() {
 document.getElementById('detailsModal').classList.remove('active');
 }
+
+// === Редактирование заказов ===
 function openEditModal(orderId) {
 const orders = loadOrders();
 const order = orders.find(o => o.id === orderId);
@@ -1079,6 +1420,8 @@ closeEditModal();
 alert('✅ Заказ обновлен!');
 }
 }
+
+// === Основные функции заказов ===
 function createMainOrder() {
 const num = document.getElementById('orderNum').value.trim();
 if (!num) { alert('Укажите № заказа'); return; }
@@ -1191,7 +1534,18 @@ if (preorders.length === 0) {
 container.innerHTML = '<div class="empty-msg">Нет предзаказов</div>';
 return;
 }
-let html = `<table><thead><tr><th>№</th><th>Деталь</th><th>Сумма</th><th>Действия</th></tr></thead><tbody>`;
+let html = `
+<table>
+<thead>
+<tr>
+<th>№</th>
+<th>Деталь</th>
+<th>Сумма</th>
+<th>Действия</th>
+</tr>
+</thead>
+<tbody>
+`;
 preorders.forEach(p => {
 html += `
 <tr>
@@ -1199,14 +1553,12 @@ html += `
 <td>${p.detail}</td>
 <td class="amount">${p.amount.toFixed(2)} ₽</td>
 <td>
-  <div class="action-buttons">
-    <button class="btn-accept" onclick="acceptPreorder(${p.id})">
-      <i class="fas fa-check"></i> Принять
-    </button>
-    <button class="btn-delete" onclick="deletePreorder(${p.id})">
-      <i class="fas fa-trash"></i>
-    </button>
-  </div>
+<button class="btn-accept" onclick="acceptPreorder(${p.id})">
+<i class="fas fa-check"></i> Принять
+</button>
+<button class="btn-delete" onclick="deletePreorder(${p.id})">
+<i class="fas fa-trash"></i>
+</button>
 </td>
 </tr>
 `;
@@ -1227,7 +1579,18 @@ let html = `<div class="date-label">Заказы за ${formattedDate}</div>`;
 if (filtered.length === 0) {
 html += '<div class="empty-msg">Нет заказов за эту дату</div>';
 } else {
-html += `<table><thead><tr><th>№</th><th>Деталь</th><th>Сумма</th><th>Действия</th></tr></thead><tbody>`;
+html += `
+<table>
+<thead>
+<tr>
+<th>№</th>
+<th>Деталь</th>
+<th>Сумма</th>
+<th>Действия</th>
+</tr>
+</thead>
+<tbody>
+`;
 filtered.forEach(o => {
 html += `
 <tr>
@@ -1235,17 +1598,15 @@ html += `
 <td>${o.detail}</td>
 <td class="amount">${o.amount.toFixed(2)} ₽</td>
 <td>
-  <div class="action-buttons">
-    <button class="btn-view" onclick="viewOrderDetails(${o.id})">
-      <i class="fas fa-eye"></i>
-    </button>
-    <button class="btn-accept" onclick="openEditModal(${o.id})">
-      <i class="fas fa-edit"></i>
-    </button>
-    <button class="btn-delete" onclick="deleteOrder(${o.id})">
-      <i class="fas fa-trash"></i>
-    </button>
-  </div>
+  <button class="btn-action btn-view" onclick="viewOrderDetails(${o.id})">
+    <i class="fas fa-eye"></i>
+  </button>
+  <button class="btn-action btn-edit" onclick="openEditModal(${o.id})">
+    <i class="fas fa-edit"></i>
+  </button>
+  <button class="btn-action btn-delete" onclick="deleteOrder(${o.id})">
+    <i class="fas fa-trash"></i>
+  </button>
 </td>
 </tr>
 `;
@@ -1267,8 +1628,10 @@ alert('Нет заказов за эту дату');
 return;
 }
 const formattedDate = formatDateYMD(dateInput);
-let content = `ЗАКАЗЫ ЗА ${formattedDate}\n`;
-content += `========================\n`;
+let content = `ЗАКАЗЫ ЗА ${formattedDate}
+`;
+content += `========================
+`;
 let totalSum = 0;
 let totalM2 = 0;
 let totalLinear = 0;
@@ -1276,24 +1639,43 @@ let totalTime = 0;
 filtered.forEach((o, idx) => {
 const tariffName = TARIFF_NAMES[o.tariff] || o.tariff;
 const units = calculateUnits(o.tariff, o.length, o.width, o.hours, o.qty);
-content += `№${idx + 1}. ${o.orderNumber}\n`;
-content += `   ${o.detail} (${tariffName})\n`;
-if (o.length) content += `   Длина: ${o.length} м\n`;
-if (o.width) content += `   Ширина: ${o.width} м\n`;
-if (o.hours) content += `   Часы: ${o.hours} ч\n`;
-content += `   Кол-во: ${o.qty}\n`;
-content += `   Объем: ${units.value} ${units.unit}\n`;
-content += `   Сумма: ${o.amount.toFixed(2)} ₽\n---\n`;
+content += `№${idx + 1}. ${o.orderNumber}
+`;
+content += `   ${o.detail} (${tariffName})
+`;
+if (o.length) content += `   Длина: ${o.length} м
+`;
+if (o.width) content += `   Ширина: ${o.width} м
+`;
+if (o.hours) content += `   Часы: ${o.hours} ч
+`;
+content += `   Кол-во: ${o.qty}
+`;
+content += `   Объем: ${units.value} ${units.unit}
+`;
+content += `   Сумма: ${o.amount.toFixed(2)} ₽
+---
+`;
 totalSum += o.amount;
-if (units.unit === 'м²') totalM2 += units.value;
-else if (units.unit === 'пог. м') totalLinear += units.value;
-else if (units.unit === 'часы') totalTime += units.value;
+if (units.unit === 'м²') {
+totalM2 += units.value;
+} else if (units.unit === 'пог. м') {
+totalLinear += units.value;
+} else if (units.unit === 'часы') {
+totalTime += units.value;
+}
 });
-content += `\nИТОГО: ${totalSum.toFixed(2)} ₽\n`;
-if (totalM2 > 0) content += `Общая площадь: ${totalM2.toFixed(2)} м²\n`;
-if (totalLinear > 0) content += `Общая длина: ${totalLinear.toFixed(2)} пог. м\n`;
-if (totalTime > 0) content += `Общее время: ${totalTime.toFixed(1)} ч\n`;
-content += `\nЭкспорт: ${new Date().toLocaleString('ru-RU')}`;
+content += `
+ИТОГО: ${totalSum.toFixed(2)} ₽
+`;
+if (totalM2 > 0) content += `Общая площадь: ${totalM2.toFixed(2)} м²
+`;
+if (totalLinear > 0) content += `Общая длина: ${totalLinear.toFixed(2)} пог. м
+`;
+if (totalTime > 0) content += `Общее время: ${totalTime.toFixed(1)} ч
+`;
+content += `
+Экспорт: ${new Date().toLocaleString('ru-RU')}`;
 const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
 const blob = new Blob([bom, content], { type: 'text/plain;charset=utf-8' });
 const url = URL.createObjectURL(blob);
@@ -1328,6 +1710,8 @@ a.click();
 document.body.removeChild(a);
 URL.revokeObjectURL(url);
 }
+
+// === Импорт файлов ===
 document.getElementById('jsonImportInput').addEventListener('change', function(e) {
 const file = e.target.files[0];
 if (!file) return;
@@ -1338,7 +1722,9 @@ const content = event.target.result;
 let importedOrders = [];
 if (content.trim().startsWith('{') || content.trim().startsWith('[')) {
 importedOrders = JSON.parse(content);
-if (!Array.isArray(importedOrders)) importedOrders = [importedOrders];
+if (!Array.isArray(importedOrders)) {
+importedOrders = [importedOrders];
+}
 } else {
 importedOrders = parseTxtOrders(content);
 }
@@ -1377,13 +1763,24 @@ alert('Ошибка при чтении файла:\n' + err.message);
 };
 reader.readAsText(file, 'utf-8');
 });
+
+// === Парсинг TXT ===
 function parseTxtOrders(txtContent) {
 const orders = [];
 const blocks = txtContent.split('---');
 for (const block of blocks) {
 const lines = block.trim().split('\n').filter(line => line.trim() !== '');
 if (lines.length < 3) continue;
-const order = { orderNumber: '', detail: '', tariff: '', qty: 1, length: null, width: null, hours: null, amount: 0 };
+const order = {
+orderNumber: '',
+detail: '',
+tariff: '',
+qty: 1,
+length: null,
+width: null,
+hours: null,
+amount: 0
+};
 let currentDetail = '';
 let currentTariff = '';
 for (const line of lines) {
@@ -1392,27 +1789,59 @@ if (cleanLine.startsWith('№') && cleanLine.includes('.')) {
 const match = cleanLine.match(/№\d+\.\s*(.+)/);
 if (match) order.orderNumber = match[1].trim();
 } else if (/^[A-Z0-9]/.test(cleanLine) && !cleanLine.includes(':') && !cleanLine.includes('Сумма') && !cleanLine.includes('ИТОГО')) {
-if (!order.orderNumber && cleanLine.length > 2) order.orderNumber = cleanLine;
+if (!order.orderNumber && cleanLine.length > 2) {
+order.orderNumber = cleanLine;
+}
 }
 if (cleanLine.includes('(') && cleanLine.includes(')') && !cleanLine.includes('Сумма')) {
 const match = cleanLine.match(/(.+)\s*\((.+)\)/);
-if (match) { currentDetail = match[1].trim(); currentTariff = match[2].trim(); }
+if (match) {
+currentDetail = match[1].trim();
+currentTariff = match[2].trim();
 }
-if (cleanLine.startsWith('Длина:')) { const match = cleanLine.match(/Длина:\s*([\d.]+)\s*м/); if (match) order.length = parseFloat(match[1]); }
-if (cleanLine.startsWith('Ширина:')) { const match = cleanLine.match(/Ширина:\s*([\d.]+)\s*м/); if (match) order.width = parseFloat(match[1]); }
-if (cleanLine.startsWith('Часы:')) { const match = cleanLine.match(/Часы:\s*([\d.]+)\s*ч/); if (match) order.hours = parseFloat(match[1]); }
-if (cleanLine.startsWith('Кол-во:')) { const match = cleanLine.match(/Кол-во:\s*(\d+)/); if (match) order.qty = parseInt(match[1]); }
-if (cleanLine.startsWith('Сумма:')) { const match = cleanLine.match(/Сумма:\s*([\d.]+)\s*₽/); if (match) order.amount = parseFloat(match[1]); }
+}
+if (cleanLine.startsWith('Длина:')) {
+const match = cleanLine.match(/Длина:\s*([\d.]+)\s*м/);
+if (match) order.length = parseFloat(match[1]);
+}
+if (cleanLine.startsWith('Ширина:')) {
+const match = cleanLine.match(/Ширина:\s*([\d.]+)\s*м/);
+if (match) order.width = parseFloat(match[1]);
+}
+if (cleanLine.startsWith('Часы:')) {
+const match = cleanLine.match(/Часы:\s*([\d.]+)\s*ч/);
+if (match) order.hours = parseFloat(match[1]);
+}
+if (cleanLine.startsWith('Кол-во:')) {
+const match = cleanLine.match(/Кол-во:\s*(\d+)/);
+if (match) order.qty = parseInt(match[1]);
+}
+if (cleanLine.startsWith('Сумма:')) {
+const match = cleanLine.match(/Сумма:\s*([\d.]+)\s*₽/);
+if (match) order.amount = parseFloat(match[1]);
+}
 }
 if (currentTariff) {
-const tariffMap = {'Распил': 'RASPIL_M2','Лин. распил': 'LINEAR_RASPIL','Склейка +': 'SKLEIKA_OB','Склейка –': 'SKLEIKA_NO_OB','Пазы': 'PAZY','Фаска': 'FREZER_FASKA','Время': 'TIME'};
+const tariffMap = {
+'Распил': 'RASPIL_M2',
+'Лин. распил': 'LINEAR_RASPIL',
+'Склейка +': 'SKLEIKA_OB',
+'Склейка –': 'SKLEIKA_NO_OB',
+'Пазы': 'PAZY',
+'Фаска': 'FREZER_FASKA',
+'Время': 'TIME'
+};
 order.tariff = tariffMap[currentTariff] || 'RASPIL_M2';
 }
 order.detail = currentDetail || '—';
-if (order.orderNumber) orders.push(order);
+if (order.orderNumber) {
+orders.push(order);
+}
 }
 return orders;
 }
+
+// === Инициализация ===
 document.addEventListener('DOMContentLoaded', () => {
 document.getElementById('viewDate').value = todayYMD();
 const mainSelect = document.getElementById('tariff');
