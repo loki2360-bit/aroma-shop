@@ -404,6 +404,46 @@ button:hover {
     0 0 0 1px rgba(255,255,255,0.15);
 }
 
+/* === Компактные яркие кнопки действий === */
+.btn-action {
+  width: 32px;
+  height: 32px;
+  min-width: auto;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(96, 165, 250, 0.4);
+  margin: 0 2px;
+}
+.btn-action:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 
+    0 4px 10px rgba(96, 165, 250, 0.6),
+    0 0 12px var(--glow-blue);
+}
+.btn-action i {
+  font-size: 14px;
+  line-height: 1;
+}
+.btn-view { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+.btn-edit { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.btn-delete {
+  background: linear-gradient(135deg, var(--accent-red), #ef4444);
+  box-shadow: 0 2px 6px rgba(248, 113, 113, 0.4);
+}
+.btn-delete:hover {
+  box-shadow: 
+    0 4px 10px rgba(248, 113, 113, 0.6),
+    0 0 12px rgba(248, 113, 113, 0.4);
+}
+
 /* Orders list */
 .date-label, .preorders-label {
   font-weight: 600;
@@ -1401,15 +1441,15 @@ html += `
 <td>${o.detail}</td>
 <td class="amount">${o.amount.toFixed(2)} ₽</td>
 <td>
-<button class="btn-view" onclick="viewOrderDetails(${o.id})" style="margin-right:4px;">
-<i class="fas fa-eye"></i>
-</button>
-<button class="btn-accept" onclick="openEditModal(${o.id})" style="background:linear-gradient(135deg,#2979ff,#2962ff);min-width:auto;padding:8px 10px;margin-right:4px;box-shadow:0 4px 15px rgba(41, 121, 255, 0.3);">
-<i class="fas fa-edit"></i>
-</button>
-<button class="btn-delete" onclick="deleteOrder(${o.id})">
-<i class="fas fa-trash"></i>
-</button>
+  <button class="btn-action btn-view" onclick="viewOrderDetails(${o.id})">
+    <i class="fas fa-eye"></i>
+  </button>
+  <button class="btn-action btn-edit" onclick="openEditModal(${o.id})">
+    <i class="fas fa-edit"></i>
+  </button>
+  <button class="btn-action btn-delete" onclick="deleteOrder(${o.id})">
+    <i class="fas fa-trash"></i>
+  </button>
 </td>
 </tr>
 `;
