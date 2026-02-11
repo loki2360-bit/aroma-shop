@@ -442,9 +442,17 @@ body {
           <input type="date" id="viewDate" class="neu-input" value="">
         </div>
       </div>
-      <button class="neu-btn neu-btn-accent" onclick="showOrdersByDate()" style="margin-top: 12px;">
-        <i class="fas fa-eye"></i> Показать заказы
-      </button>
+      <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <button class="neu-btn neu-btn-accent" onclick="showOrdersByDate()">
+          <i class="fas fa-eye"></i> Показать
+        </button>
+        <button class="neu-btn" onclick="saveOrdersToFile()">
+          <i class="fas fa-download"></i> В TXT
+        </button>
+        <button class="neu-btn" onclick="saveOrdersToJSON()">
+          <i class="fas fa-file-code"></i> В JSON
+        </button>
+      </div>
 
       <!-- Список заказов -->
       <div id="ordersListContainer" style="margin-top: 24px;"></div>
@@ -497,9 +505,15 @@ body {
           <input type="number" step="0.1" id="preHours" class="neu-input" placeholder="0.0">
         </div>
       </div>
-      <button class="neu-btn neu-btn-accent" onclick="createPreorder()" style="margin-top: 12px;">
-        <i class="fas fa-save"></i> Сохранить предзаказ
-      </button>
+      <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <button class="neu-btn neu-btn-accent" onclick="createPreorder()">
+          <i class="fas fa-save"></i> Сохранить предзаказ
+        </button>
+        <button class="neu-btn" onclick="document.getElementById('jsonImportInput').click()">
+          <i class="fas fa-upload"></i> Загрузить TXT/JSON
+        </button>
+      </div>
+      <input type="file" id="jsonImportInput" accept=".txt,.json" style="display: none;" />
     </div>
   </div>
 
@@ -1247,6 +1261,136 @@ function saveOrdersToJSON() {
   a.download = `заказы_${formatDateYMD(dateInput)}.json`;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+// === Импорт файлов ===
+document.getElementById('jsonImportInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      const content = event.target.result;
+      let importedOrders = [];
+      if (content.trim().startsWith('{') || content.trim().startsWith('[')) {
+        importedOrders = JSON.parse(content);
+        if (!Array.isArray(importedOrders)) {
+          importedOrders = [importedOrders];
+        }
+      } else {
+        importedOrders = parseTxtOrders(content);
+      }
+      if (importedOrders.length === 0) {
+        alert('Не удалось найти заказы в файле!');
+        return;
+      }
+      const preorders = loadPreorders();
+      const newPreorders = importedOrders.map(item => ({
+        id: Date.now() + Math.random(),
+        orderNumber: item.orderNumber || 'ИМП-' + (preorders.length + 1),
+        tariff: item.tariff || 'RASPIL_M2',
+        detail: item.detail || '—',
+        qty: item.qty || 1,
+        length: item.length || null,
+        width: item.width || null,
+        hours: item.hours || null,
+        amount: typeof item.amount === 'number' ? item.amount : calculateAmount(
+          item.tariff || 'RASPIL_M2',
+          item.length || 0,
+          item.width || 0,
+          item.hours || 0,
+          item.qty || 1
+        ),
+        date: todayYMD(),
+        timestamp: new Date().toISOString()
+      }));
+      const updated = [...preorders, ...newPreorders];
+      savePreorders(updated);
+      renderPreorders();
+      alert(`✅ Загружено ${newPreorders.length} предзаказов!`);
+    } catch (err) {
+      console.error(err);
+      alert('Ошибка при чтении файла:\n' + err.message);
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+});
+
+// === Парсинг TXT ===
+function parseTxtOrders(txtContent) {
+  const orders = [];
+  const blocks = txtContent.split('---');
+  for (const block of blocks) {
+    const lines = block.trim().split('\n').filter(line => line.trim() !== '');
+    if (lines.length < 3) continue;
+    const order = {
+      orderNumber: '',
+      detail: '',
+      tariff: '',
+      qty: 1,
+      length: null,
+      width: null,
+      hours: null,
+      amount: 0
+    };
+    let currentDetail = '';
+    let currentTariff = '';
+    for (const line of lines) {
+      const cleanLine = line.trim();
+      if (cleanLine.startsWith('№') && cleanLine.includes('.')) {
+        const match = cleanLine.match(/№\d+\.\s*(.+)/);
+        if (match) order.orderNumber = match[1].trim();
+      } else if (/^[A-Z0-9]/.test(cleanLine) && !cleanLine.includes(':') && !cleanLine.includes('Сумма') && !cleanLine.includes('ИТОГО')) {
+        if (!order.orderNumber && cleanLine.length > 2) {
+          order.orderNumber = cleanLine;
+        }
+      }
+      if (cleanLine.includes('(') && cleanLine.includes(')') && !cleanLine.includes('Сумма')) {
+        const match = cleanLine.match(/(.+)\s*\((.+)\)/);
+        if (match) {
+          currentDetail = match[1].trim();
+          currentTariff = match[2].trim();
+        }
+      }
+      if (cleanLine.startsWith('Длина:')) {
+        const match = cleanLine.match(/Длина:\s*([\d.]+)\s*м/);
+        if (match) order.length = parseFloat(match[1]);
+      }
+      if (cleanLine.startsWith('Ширина:')) {
+        const match = cleanLine.match(/Ширина:\s*([\d.]+)\s*м/);
+        if (match) order.width = parseFloat(match[1]);
+      }
+      if (cleanLine.startsWith('Часы:')) {
+        const match = cleanLine.match(/Часы:\s*([\d.]+)\s*ч/);
+        if (match) order.hours = parseFloat(match[1]);
+      }
+      if (cleanLine.startsWith('Кол-во:')) {
+        const match = cleanLine.match(/Кол-во:\s*(\d+)/);
+        if (match) order.qty = parseInt(match[1]);
+      }
+      if (cleanLine.startsWith('Сумма:')) {
+        const match = cleanLine.match(/Сумма:\s*([\d.]+)\s*₽/);
+        if (match) order.amount = parseFloat(match[1]);
+      }
+    }
+    if (currentTariff) {
+      const tariffMap = {
+        'Распил': 'RASPIL_M2',
+        'Лин. распил': 'LINEAR_RASPIL',
+        'Склейка +': 'SKLEIKA_OB',
+        'Склейка –': 'SKLEIKA_NO_OB',
+        'Пазы': 'PAZY',
+        'Фаска': 'FREZER_FASKA',
+        'Время': 'TIME'
+      };
+      order.tariff = tariffMap[currentTariff] || 'RASPIL_M2';
+    }
+    order.detail = currentDetail || '—';
+    if (order.orderNumber) {
+      orders.push(order);
+    }
+  }
+  return orders;
 }
 
 // === Расчёт единиц ===
