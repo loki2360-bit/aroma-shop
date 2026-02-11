@@ -83,6 +83,9 @@ body {
 .sidebar.collapsed {
   transform: translateX(-100%);
 }
+.sidebar.expanded {
+  transform: translateX(0);
+}
 .sidebar-item {
   padding: 14px 20px;
   cursor: pointer;
@@ -118,15 +121,251 @@ body {
   margin-left: 0;
 }
 
-/* ... остальные стили без изменений ... */
+/* Неоморфические кнопки */
+.neu-btn {
+  background: var(--card);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.neu-btn:active {
+  box-shadow: inset -2px -2px 5px var(--shadow-dark), inset 2px 2px 5px var(--shadow-light);
+}
+.neu-btn-accent {
+  background: var(--accent-yellow);
+  color: #000;
+  box-shadow: 
+    0 0 12px rgba(255, 235, 59, 0.5),
+    inset 2px 2px 5px rgba(200, 180, 0, 0.3),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.3);
+}
+.neu-btn-accent:active {
+  box-shadow: 
+    0 0 8px rgba(255, 235, 59, 0.4),
+    inset -2px -2px 5px rgba(200, 180, 0, 0.3),
+    inset 2px 2px 5px rgba(255, 255, 255, 0.3);
+}
+
+/* Поля ввода */
+.neu-input,
+.neu-select {
+  background: var(--card);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  width: 100%;
+}
+.neu-input:focus,
+.neu-select:focus {
+  outline: none;
+  box-shadow: 
+    inset 2px 2px 5px var(--shadow-dark), 
+    inset -2px -2px 5px var(--shadow-light),
+    0 0 8px rgba(255, 235, 59, 0.4);
+}
+
+/* Прогресс-бары */
+.progress-container {
+  height: 24px;
+  background: var(--card);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 12px 0;
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 12px;
+  background: var(--accent-yellow);
+  box-shadow: 0 0 12px rgba(255, 235, 59, 0.5);
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+  position: relative;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.95rem;
+}
+.progress-title {
+  font-weight: 600;
+  color: var(--accent-yellow);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Статистика: диаграмма */
+.chart-container {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 24px 0;
+  box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+}
+.chart-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--accent-yellow);
+}
+.bar-item {
+  margin: 12px 0;
+}
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+}
+.bar-container {
+  height: 28px;
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+}
+.bar-fill {
+  height: 100%;
+  background: var(--accent-yellow);
+  border-radius: 14px;
+  width: 0;
+  transition: width 1.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  box-shadow: 0 0 10px rgba(255, 235, 59, 0.4);
+}
+
+/* Скрытие контента */
+.content-block {
+  display: none;
+}
+.content-block.active {
+  display: block;
+  animation: fadeIn 0.5s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Модальные окна */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+  border: 1px solid var(--border);
+}
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--accent-yellow);
+}
+.modal-row {
+  margin-bottom: 16px;
+}
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.details-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.details-label {
+  font-weight: 600;
+  color: var(--text);
+}
+.details-value {
+  color: var(--accent-yellow);
+}
+
+/* Таблица заказов */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+.orders-table th,
+.orders-table td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.orders-table th {
+  color: var(--accent-yellow);
+  font-weight: 600;
+}
+.orders-table .amount {
+  color: var(--accent-yellow);
+  font-weight: 600;
+}
+.empty-msg {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 20px;
+  font-style: italic;
+}
+
+/* Кнопки действий */
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+}
+.action-btn:hover {
+  background: var(--accent-yellow);
+  color: #000;
+}
+.action-btn i {
+  font-size: 14px;
+}
 
 /* Адаптивность */
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
-  }
-  .sidebar.expanded {
-    transform: translateX(0);
   }
   .main-content {
     margin-left: 0;
@@ -162,10 +401,355 @@ body {
 
 <!-- Основной контент -->
 <div class="main-content" id="mainContent">
-  <!-- ... ваш контент ... -->
+  <!-- Основное -->
+  <div id="main" class="content-block active">
+    <div class="container">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark)); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; font-size: 20px; box-shadow: 0 0 15px rgba(255, 235, 59, 0.4);">
+          <i class="fas fa-user"></i>
+        </div>
+        <div>
+          <h2>Оператор №<span id="opId">1</span></h2>
+          <p>Всего: <b><span id="totalAll">0.00</span> ₽</b></p>
+        </div>
+      </div>
+
+      <div class="progress-title">
+        <i class="fas fa-bullseye"></i> План: <b>3000 ₽</b>
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="planProgress"></div>
+      </div>
+      <div class="progress-label">
+        <span>Текущая смена:</span>
+        <span><b><span id="todayEarned">0.00</span> ₽</b></span>
+      </div>
+      <div class="progress-label">
+        <span id="shiftStatus">Смена не начата</span>
+      </div>
+
+      <div style="margin: 24px 0;">
+        <button class="neu-btn neu-btn-accent" onclick="startShift()">
+          <i class="fas fa-play"></i> Начать смену
+        </button>
+        <button class="neu-btn neu-btn-accent" onclick="endShift()" style="margin-left: 12px;">
+          <i class="fas fa-stop"></i> Завершить смену
+        </button>
+      </div>
+
+      <div class="progress-title" style="margin-top: 24px;">
+        <i class="fas fa-plus"></i> Новый заказ
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">№ заказа</label>
+          <input type="text" id="orderNum" class="neu-input" placeholder="ORD-001">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Тариф</label>
+          <select id="tariff" class="neu-select">
+            <option value="RASPIL_M2">Распил — 65 ₽/м²</option>
+            <option value="LINEAR_RASPIL">Лин. распил — 26 ₽/м</option>
+            <option value="SKLEIKA_OB">Склейка + — 210 ₽/м²</option>
+            <option value="SKLEIKA_NO_OB">Склейка – — 165 ₽/м²</option>
+            <option value="PAZY">Пазы — 30 ₽/м</option>
+            <option value="FREZER_FASKA">Фаска — 16 ₽/м</option>
+            <option value="TIME">Время — 330 ₽/ч</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Деталь</label>
+          <input type="text" id="detail" class="neu-input" placeholder="Название">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Кол-во</label>
+          <input type="number" id="qty" value="1" min="1" class="neu-input">
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0;">
+        <div id="lengthGroup">
+          <label style="display: block; margin-bottom: 6px;">Длина (м)</label>
+          <input type="number" step="0.01" id="length" class="neu-input" placeholder="0.00">
+        </div>
+        <div id="widthGroup" class="hidden">
+          <label style="display: block; margin-bottom: 6px;">Ширина (м)</label>
+          <input type="number" step="0.01" id="width" class="neu-input" placeholder="0.00">
+        </div>
+        <div id="hoursGroup" class="hidden">
+          <label style="display: block; margin-bottom: 6px;">Часы</label>
+          <input type="number" step="0.1" id="hours" class="neu-input" placeholder="0.0">
+        </div>
+      </div>
+      <button class="neu-btn neu-btn-accent" onclick="createMainOrderWithSound()" style="margin-top: 12px;">
+        <i class="fas fa-check"></i> Создать заказ
+      </button>
+
+      <!-- Просмотр заказов по дате -->
+      <div class="progress-title" style="margin-top: 24px;">
+        <i class="fas fa-history"></i> Заказы по дате
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr; gap: 16px; margin: 16px 0;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Дата</label>
+          <input type="date" id="viewDate" class="neu-input" value="">
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <button class="neu-btn neu-btn-accent" onclick="showOrdersByDate()">
+          <i class="fas fa-eye"></i> Показать
+        </button>
+        <button class="neu-btn" onclick="saveOrdersToFile()">
+          <i class="fas fa-download"></i> В TXT
+        </button>
+        <button class="neu-btn" onclick="saveOrdersToJSON()">
+          <i class="fas fa-file-code"></i> В JSON
+        </button>
+      </div>
+
+      <!-- Список заказов -->
+      <div id="ordersListContainer" style="margin-top: 24px;"></div>
+    </div>
+  </div>
+
+  <!-- Предзаказы -->
+  <div id="preorders" class="content-block">
+    <div class="container">
+      <h2 style="color: var(--accent-yellow); margin-bottom: 16px;"><i class="fas fa-clock"></i> Предзаказы</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">№ заказа</label>
+          <input type="text" id="preOrderNum" class="neu-input" placeholder="PRE-001">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Тариф</label>
+          <select id="preTariff" class="neu-select">
+            <option value="RASPIL_M2">Распил — 65 ₽/м²</option>
+            <option value="LINEAR_RASPIL">Лин. распил — 26 ₽/м</option>
+            <option value="SKLEIKA_OB">Склейка + — 210 ₽/м²</option>
+            <option value="SKLEIKA_NO_OB">Склейка – — 165 ₽/м²</option>
+            <option value="PAZY">Пазы — 30 ₽/м</option>
+            <option value="FREZER_FASKA">Фаска — 16 ₽/м</option>
+            <option value="TIME">Время — 330 ₽/ч</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Деталь</label>
+          <input type="text" id="preDetail" class="neu-input" placeholder="Название">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Кол-во</label>
+          <input type="number" id="preQty" value="1" min="1" class="neu-input">
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div id="preLengthGroup">
+          <label style="display: block; margin-bottom: 6px;">Длина (м)</label>
+          <input type="number" step="0.01" id="preLength" class="neu-input" placeholder="0.00">
+        </div>
+        <div id="preWidthGroup" class="hidden">
+          <label style="display: block; margin-bottom: 6px;">Ширина (м)</label>
+          <input type="number" step="0.01" id="preWidth" class="neu-input" placeholder="0.00">
+        </div>
+        <div id="preHoursGroup" class="hidden">
+          <label style="display: block; margin-bottom: 6px;">Часы</label>
+          <input type="number" step="0.1" id="preHours" class="neu-input" placeholder="0.0">
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <button class="neu-btn neu-btn-accent" onclick="createPreorder()">
+          <i class="fas fa-save"></i> Сохранить предзаказ
+        </button>
+        <button class="neu-btn" onclick="document.getElementById('jsonImportInput').click()">
+          <i class="fas fa-upload"></i> Загрузить TXT/JSON
+        </button>
+      </div>
+      <input type="file" id="jsonImportInput" accept=".txt,.json" style="display: none;" />
+
+      <!-- Список предзаказов -->
+      <div class="progress-title" style="margin-top: 24px;">
+        <i class="fas fa-list"></i> Список предзаказов
+      </div>
+      <div id="preordersListContainer" style="margin-top: 16px;"></div>
+    </div>
+  </div>
+
+  <!-- Чаевые -->
+  <div id="tips" class="content-block">
+    <div class="container">
+      <h2 style="color: var(--accent-yellow); margin-bottom: 16px;"><i class="fas fa-mug-hot"></i> Чаевые</h2>
+      <div style="display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 20px;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Сумма чаевых (₽)</label>
+          <input type="number" id="tipAmount" class="neu-input" placeholder="Напр.: 300" min="0" step="1">
+        </div>
+      </div>
+      <button class="neu-btn neu-btn-accent" onclick="addTip()">
+        <i class="fas fa-plus"></i> Добавить чаевые
+      </button>
+
+      <div style="margin: 24px 0;">
+        <div class="progress-title">
+          <i class="fas fa-box"></i> Всего пакетиков
+        </div>
+        <div class="progress-container">
+          <div class="progress-fill" id="totalPacketsFill"></div>
+        </div>
+        <div class="progress-label">
+          <span>Накоплено</span>
+          <span><b><span id="totalPacketsCount">0</span> шт</b></span>
+        </div>
+
+        <div class="progress-title" style="margin-top: 16px;">
+          <i class="fas fa-sun"></i> Сегодня
+        </div>
+        <div class="progress-container">
+          <div class="progress-fill" id="todayPacketsFill"></div>
+        </div>
+        <div class="progress-label">
+          <span>За сегодня</span>
+          <span><b><span id="todayPacketsCount">0</span> шт</b></span>
+        </div>
+
+        <div class="progress-title" style="margin-top: 16px;">
+          <i class="fas fa-wine-bottle"></i> Выпито чая
+        </div>
+        <div class="progress-label" style="margin-top: 8px;">
+          <span><b><span id="teaLiters">0.0</span> л</b></span>
+          <span style="color: var(--text-muted); font-size: 0.85rem;">(1 пакетик = 200 мл)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Статистика -->
+  <div id="stats" class="content-block">
+    <div class="container">
+      <h2 style="color: var(--accent-yellow); margin-bottom: 16px;"><i class="fas fa-chart-bar"></i> Общая статистика</h2>
+      
+      <!-- Прогресс: погонные метры -->
+      <div class="progress-title">
+        <i class="fas fa-ruler-horizontal"></i> Погонные метры
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="linearProgress"></div>
+      </div>
+      <div class="progress-label">
+        <span>Всего</span>
+        <span><b id="linearTotal">0.0</b> м</span>
+      </div>
+
+      <!-- Прогресс: квадратные метры -->
+      <div class="progress-title">
+        <i class="fas fa-border-all"></i> Квадратные метры
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="areaProgress"></div>
+      </div>
+      <div class="progress-label">
+        <span>Всего</span>
+        <span><b id="areaTotal">0.0</b> м²</span>
+      </div>
+
+      <!-- Прогресс: часы -->
+      <div class="progress-title">
+        <i class="fas fa-clock"></i> Время работы
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="timeProgress"></div>
+      </div>
+      <div class="progress-label">
+        <span>Всего</span>
+        <span><b id="timeTotal">0.0</b> ч</span>
+      </div>
+
+      <!-- Диаграмма частоты операций -->
+      <div class="chart-container">
+        <div class="chart-title">
+          <i class="fas fa-tasks"></i> Популярность операций
+        </div>
+        <div id="operationsChart">
+          <p style="color: var(--text-muted); text-align: center;">Данные появятся после создания заказов</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ... модальные окна ... -->
+<!-- Модальные окна -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-title">Редактировать заказ</div>
+    <input type="hidden" id="editOrderId">
+    <div class="modal-row">
+      <label>№ заказа</label>
+      <input type="text" id="editOrderNum" class="neu-input">
+    </div>
+    <div class="modal-row">
+      <label>Деталь</label>
+      <input type="text" id="editDetail" class="neu-input">
+    </div>
+    <div class="modal-row">
+      <label>Тариф</label>
+      <select id="editTariff" class="neu-select">
+        <option value="RASPIL_M2">Распил — 65 ₽/м²</option>
+        <option value="LINEAR_RASPIL">Лин. распил — 26 ₽/м</option>
+        <option value="SKLEIKA_OB">Склейка + — 210 ₽/м²</option>
+        <option value="SKLEIKA_NO_OB">Склейка – — 165 ₽/м²</option>
+        <option value="PAZY">Пазы — 30 ₽/м</option>
+        <option value="FREZER_FASKA">Фаска — 16 ₽/м</option>
+        <option value="TIME">Время — 330 ₽/ч</option>
+      </select>
+    </div>
+    <div class="modal-row">
+      <label>Кол-во</label>
+      <input type="number" id="editQty" min="1" class="neu-input">
+    </div>
+    <div class="modal-row" id="editLengthGroup">
+      <label>Длина (м)</label>
+      <input type="number" step="0.01" id="editLength" class="neu-input">
+    </div>
+    <div class="modal-row hidden" id="editWidthGroup">
+      <label>Ширина (м)</label>
+      <input type="number" step="0.01" id="editWidth" class="neu-input">
+    </div>
+    <div class="modal-row hidden" id="editHoursGroup">
+      <label>Часы</label>
+      <input type="number" step="0.1" id="editHours" class="neu-input">
+    </div>
+    <div class="modal-buttons">
+      <button class="neu-btn" onclick="closeEditModal()">Отмена</button>
+      <button class="neu-btn neu-btn-accent" onclick="saveEditedOrder()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div id="dateModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-title">Выберите дату для заказа</div>
+    <div class="modal-row">
+      <label>Дата</label>
+      <input type="date" id="modalDate" class="neu-input">
+    </div>
+    <div class="modal-buttons">
+      <button class="neu-btn" onclick="closeDateModal()">Отмена</button>
+      <button class="neu-btn neu-btn-accent" onclick="confirmDateSelection()">Подтвердить</button>
+    </div>
+  </div>
+</div>
+
+<div id="detailsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-title">Детали заказа</div>
+    <div id="detailsContent"></div>
+    <div class="modal-buttons">
+      <button class="neu-btn" onclick="closeDetailsModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // === ФЛАГ ЗВУКА ===
