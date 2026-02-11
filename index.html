@@ -166,21 +166,21 @@ inset 2px 2px 5px var(--shadow-dark),
 inset -2px -2px 5px var(--shadow-light),
 0 0 8px rgba(255, 235, 59, 0.4);
 }
-/* === Статус-бар: 10 точек, без линии === */
+/* === Статус-бар: 20 точек, без линии === */
 .status-bar {
 display: flex;
 align-items: center;
-gap: 8px;
+gap: 6px;
 padding: 8px 0;
 margin: 8px 0;
 }
 
 .step {
-width: 12px;
-height: 12px;
+width: 10px;
+height: 10px;
 border-radius: 50%;
-background: #4a7bbd; /* светло-синий (неактивный) */
-box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+background: var(--border); /* серый вместо синего */
+box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .step.active {
@@ -189,12 +189,12 @@ background: var(--accent-yellow); /* оранжевый */
 
 .step.current {
 background: #1e3a8a; /* тёмно-синий */
-box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.4);
+box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.4);
 }
 
 .step.completed {
 background: var(--accent-green); /* зелёный */
-box-shadow: 0 0 0 3px rgba(105, 240, 174, 0.4);
+box-shadow: 0 0 0 2px rgba(105, 240, 174, 0.4);
 }
 /* Прогресс-бары (оставлены для других разделов) */
 .progress-container {
@@ -429,8 +429,18 @@ margin-left: 0;
 <div class="progress-title">
 <i class="fas fa-bullseye"></i> План: <b>3000 ₽</b>
 </div>
-<!-- НОВЫЙ СТАТУС-БАР: 10 точек -->
+<!-- НОВЫЙ СТАТУС-БАР: 20 точек -->
 <div class="status-bar" id="planStatusBar">
+  <div class="step"></div>
+  <div class="step"></div>
+  <div class="step"></div>
+  <div class="step"></div>
+  <div class="step"></div>
+  <div class="step"></div>
+  <div class="step"></div>
+  <div class="step"></div>
+  <div class="step"></div>
+  <div class="step"></div>
   <div class="step"></div>
   <div class="step"></div>
   <div class="step"></div>
@@ -900,9 +910,9 @@ document.getElementById('totalAll').textContent = totalAll.toFixed(2);
 document.getElementById('todayEarned').textContent = currentShiftAmount.toFixed(2);
 document.getElementById('shiftStatus').textContent = statusText;
 
-// === Обновление статус-бара (10 шагов) ===
+// === Обновление статус-бара (20 шагов) ===
 const steps = document.querySelectorAll('#planStatusBar .step');
-const targetStep = Math.min(9, Math.floor((currentShiftAmount / 3000) * 10)); // 0–9
+const targetStep = Math.min(19, Math.floor((currentShiftAmount / 3000) * 20)); // 0–19
 
 steps.forEach((step, i) => {
 step.classList.remove('active', 'current', 'completed');
@@ -912,16 +922,17 @@ step.classList.add('active');
 step.classList.add('current');
 }
 // Если достигли 100% → последняя точка = completed (зелёная)
-if (currentShiftAmount >= 3000 && i === 9) {
+if (currentShiftAmount >= 3000 && i === 19) {
 step.classList.remove('current');
 step.classList.add('completed');
 }
 });
 
-// Для совместимости (если где-то ещё используется)
+// Для совместимости (если где-то ещё используется прогресс-бар)
 const progressWidth = Math.min(100, (currentShiftAmount / 3000) * 100);
 setTimeout(() => {
-document.getElementById('planProgress').style.width = `${progressWidth}%`;
+const planProgress = document.getElementById('planProgress');
+if (planProgress) planProgress.style.width = `${progressWidth}%`;
 }, 300);
 }
 // === Переключение полей ===
