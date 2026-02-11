@@ -166,31 +166,20 @@ inset 2px 2px 5px var(--shadow-dark),
 inset -2px -2px 5px var(--shadow-light),
 0 0 8px rgba(255, 235, 59, 0.4);
 }
-/* Статус-бар (точки вместо прогресс-бара) */
+/* === Статус-бар: 10 точек, без линии === */
 .status-bar {
 display: flex;
 align-items: center;
-gap: 12px;
+gap: 8px;
 padding: 8px 0;
 margin: 8px 0;
 }
 
-.status-bar::before {
-content: '';
-flex: 1;
-height: 3px;
-background: var(--border);
-border-radius: 2px;
-position: relative;
-}
-
 .step {
-width: 16px;
-height: 16px;
+width: 12px;
+height: 12px;
 border-radius: 50%;
 background: #4a7bbd; /* светло-синий (неактивный) */
-position: relative;
-z-index: 1;
 box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 
@@ -200,9 +189,13 @@ background: var(--accent-yellow); /* оранжевый */
 
 .step.current {
 background: #1e3a8a; /* тёмно-синий */
-box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.4);
+box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.4);
 }
 
+.step.completed {
+background: var(--accent-green); /* зелёный */
+box-shadow: 0 0 0 3px rgba(105, 240, 174, 0.4);
+}
 /* Прогресс-бары (оставлены для других разделов) */
 .progress-container {
 height: 24px;
@@ -436,8 +429,11 @@ margin-left: 0;
 <div class="progress-title">
 <i class="fas fa-bullseye"></i> План: <b>3000 ₽</b>
 </div>
-<!-- ЗАМЕНА: статус-бар вместо прогресс-бара -->
+<!-- НОВЫЙ СТАТУС-БАР: 10 точек -->
 <div class="status-bar" id="planStatusBar">
+  <div class="step"></div>
+  <div class="step"></div>
+  <div class="step"></div>
   <div class="step"></div>
   <div class="step"></div>
   <div class="step"></div>
@@ -904,18 +900,29 @@ document.getElementById('totalAll').textContent = totalAll.toFixed(2);
 document.getElementById('todayEarned').textContent = currentShiftAmount.toFixed(2);
 document.getElementById('shiftStatus').textContent = statusText;
 
-// === Обновление статус-бара (7 шагов) ===
+// === Обновление статус-бара (10 шагов) ===
 const steps = document.querySelectorAll('#planStatusBar .step');
-const targetStep = Math.min(6, Math.floor((currentShiftAmount / 3000) * 7)); // 0–6
+const targetStep = Math.min(9, Math.floor((currentShiftAmount / 3000) * 10)); // 0–9
 
 steps.forEach((step, i) => {
-step.classList.remove('active', 'current');
+step.classList.remove('active', 'current', 'completed');
 if (i < targetStep) {
 step.classList.add('active');
 } else if (i === targetStep) {
 step.classList.add('current');
 }
+// Если достигли 100% → последняя точка = completed (зелёная)
+if (currentShiftAmount >= 3000 && i === 9) {
+step.classList.remove('current');
+step.classList.add('completed');
+}
 });
+
+// Для совместимости (если где-то ещё используется)
+const progressWidth = Math.min(100, (currentShiftAmount / 3000) * 100);
+setTimeout(() => {
+document.getElementById('planProgress').style.width = `${progressWidth}%`;
+}, 300);
 }
 // === Переключение полей ===
 function updateMainFormFields() {
