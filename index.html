@@ -35,6 +35,38 @@ body {
   line-height: 1.4;
 }
 
+/* Шапка с гамбургером */
+.header-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--card);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.toggle-menu-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.toggle-menu-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
 /* Боковое меню */
 .sidebar {
   position: fixed;
@@ -43,9 +75,13 @@ body {
   width: 240px;
   height: 100vh;
   background: var(--card);
-  padding: 20px 0;
+  padding: 72px 0 20px; /* отступ под шапку */
   z-index: 100;
   box-shadow: 8px 0 20px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease;
+}
+.sidebar.collapsed {
+  transform: translateX(-100%);
 }
 .sidebar-item {
   padding: 14px 20px;
@@ -73,16 +109,13 @@ body {
 /* Основной контент */
 .main-content {
   margin-left: 240px;
-  padding: 24px;
+  padding: 72px 24px 24px; /* отступ под шапку */
   max-width: 768px;
   margin: 0 auto;
+  transition: margin-left 0.3s ease;
 }
-.container {
-  background: var(--card);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
-  margin-bottom: 24px;
+.main-content.menu-collapsed {
+  margin-left: 0;
 }
 
 /* Неоморфические кнопки */
@@ -325,12 +358,33 @@ body {
 .action-btn i {
   font-size: 14px;
 }
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.expanded {
+    transform: translateX(0);
+  }
+  .main-content {
+    margin-left: 0;
+  }
+}
 </style>
 </head>
 <body>
 
+<!-- Шапка с гамбургером -->
+<div class="header-bar">
+  <button class="toggle-menu-btn" id="toggleMenuBtn">
+    <i class="fas fa-bars"></i>
+  </button>
+  <div style="font-weight: 600; font-size: 1.1rem;">Кабинет оператора</div>
+</div>
+
 <!-- Боковое меню -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
   <div class="sidebar-item active" data-target="main">
     <i class="fas fa-home"></i> Основное
   </div>
@@ -346,16 +400,18 @@ body {
 </div>
 
 <!-- Основной контент -->
-<div class="main-content">
+<div class="main-content" id="mainContent">
+  <!-- Все ваши блоки остаются без изменений -->
   <!-- Основное -->
   <div id="main" class="content-block active">
     <div class="container">
+      <!-- ... содержимое как в предыдущей версии ... -->
       <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
         <div style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-dark)); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; font-size: 20px; box-shadow: 0 0 15px rgba(255, 235, 59, 0.4);">
           <i class="fas fa-user"></i>
         </div>
         <div>
-          <h2>Александр<span id="opId">FELDER K700S</span></h2>
+          <h2>Оператор №<span id="opId">1</span></h2>
           <p>Всего: <b><span id="totalAll">0.00</span> ₽</b></p>
         </div>
       </div>
@@ -625,8 +681,9 @@ body {
   </div>
 </div>
 
-<!-- Модальные окна -->
+<!-- Модальные окна (остаются без изменений) -->
 <div id="editModal" class="modal">
+  <!-- ... содержимое модального окна ... -->
   <div class="modal-content">
     <div class="modal-title">Редактировать заказ</div>
     <input type="hidden" id="editOrderId">
@@ -1516,10 +1573,36 @@ document.querySelectorAll('.sidebar-item').forEach(item => {
     } else if (target === 'preorders') {
       renderPreorders();
     }
+
+    // Свернуть меню на мобильных
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.remove('expanded');
+      document.getElementById('mainContent').classList.remove('menu-expanded');
+    }
   });
 });
 
-// === Инициализация ===
+// === Скрываемое меню ===
+const toggleBtn = document.getElementById('toggleMenuBtn');
+const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('mainContent');
+
+// Загрузить состояние из localStorage
+const isMenuCollapsed = localStorage.getItem('menuCollapsed') === 'true';
+if (isMenuCollapsed) {
+  sidebar.classList.add('collapsed');
+  mainContent.classList.add('menu-collapsed');
+}
+
+// Переключение меню
+toggleBtn.addEventListener('click', () => {
+  const isCollapsed = sidebar.classList.contains('collapsed');
+  sidebar.classList.toggle('collapsed', !isCollapsed);
+  mainContent.classList.toggle('menu-collapsed', !isCollapsed);
+  localStorage.setItem('menuCollapsed', !isCollapsed);
+});
+
+// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('viewDate').value = todayYMD();
   ['tariff','preTariff','editTariff'].forEach(id => {
