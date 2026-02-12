@@ -1,83 +1,67 @@
-// === База признаков перекупа ===
-const BASIC_TRIGGERS = [
-  'гарантия', 'оригинал', 'самовывоз', 'только сегодня', 
-  'не упусти', 'в наличии', 'звони скорее', 'новый'
-];
+let itemCount = 2;
 
-const PRO_TRIGGERS = [
-  ...BASIC_TRIGGERS,
-  'без торга', 'рассмотрю предложение', 'актуально', 'покупал для друга',
-  'не моё', 'работает исправно', 'чистый корпус', 'полный комплект',
-  'чек есть', 'магазинная упаковка', 'не пыльный', 'как новый'
-];
-
-// === Проверка Pro-статуса ===
-function isPro() {
-  return localStorage.getItem('avitoScout_pro') === 'unlocked';
+function addItem() {
+  if (itemCount >= 5) return alert('Максимум 5 объявлений');
+  const container = document.getElementById('items');
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.innerHTML = `<textarea placeholder="Вставьте текст объявления ${itemCount + 1}..."></textarea>`;
+  container.appendChild(div);
+  itemCount++;
 }
 
-// === Активация Pro ===
-function activatePro() {
-  const code = document.getElementById('codeInput').value.trim();
-  if (!code) return alert('Введите код активации');
+function extractData(text) {
+  const lower = text.toLowerCase();
   
-  // Простая проверка: должен начинаться с SCOUT-2026-
-  if (code.startsWith('SCOUT-2026-') && code.length >= 15) {
-    localStorage.setItem('avitoScout_pro', 'unlocked');
-    localStorage.setItem('avitoScout_code', code);
-    alert('✅ Pro-режим активирован!');
-    location.reload();
-  } else {
-    alert('❌ Неверный код. Проверьте написание.');
-  }
+  // Цена
+  const priceMatch = text.match(/(\d[\d\s]*)\s*₽/);
+  const price = priceMatch ? priceMatch[1].replace(/\s/g, '') + ' ₽' : '—';
+
+  // Ключевые признаки
+  const hasWarranty = lower.includes('гарантия');
+  const hasReceipt = lower.includes('чек') || lower.includes('кассов');
+  const isNew = lower.includes('новы') || lower.includes('оригинал');
+  const noScratches = lower.includes('царапин') || lower.includes('без дефект');
+
+  return {
+    price,
+    warranty: hasWarranty,
+    receipt: hasReceipt,
+    condition: isNew ? 'Новое' : (noScratches ? 'Без царапин' : 'Б/у'),
+    textPreview: text.substring(0, 60) + '...'
+  };
 }
 
-// === Анализ текста ===
-function analyzeAd() {
-  const text = document.getElementById('adText').value.toLowerCase().trim();
-  if (!text) return alert('Введите текст объявления');
+function compareItems() {
+  const textareas = document.querySelectorAll('#items textarea');
+  const items = [];
 
-  const triggers = isPro() ? PRO_TRIGGERS : BASIC_TRIGGERS;
-  let matches = 0;
-  const found = [];
-
-  for (const trigger of triggers) {
-    if (text.includes(trigger)) {
-      matches++;
-      found.push(trigger);
+  for (const ta of textareas) {
+    if (ta.value.trim()) {
+      items.push(extractData(ta.value));
     }
   }
 
-  let risk = '🟢 Вероятно частник';
-  if (matches >= 3) risk = '🟡 Возможно перекуп';
-  if (matches >= 5) risk = '🔴 Высокий риск: перекуп';
+  if (items.length < 2) {
+    return alert('Введите хотя бы 2 объявления');
+  }
 
-  let resultHtml = `
-    <h3>Результат анализа:</h3>
-    <p><strong>${risk}</strong></p>
-    <p>Найдено совпадений: ${matches} из ${triggers.length}</p>
+  let tableHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          ${items.map((_, i) => `<th>Объявление ${i + 1}</th>`).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Цена</td>${items.map(i => `<td>${i.price}</td>`).join('')}</tr>
+        <tr><td>Гарантия</td>${items.map(i => `<td class="${i.warranty ? 'check' : 'cross'}"></td>`).join('')}</tr>
+        <tr><td>Чек</td>${items.map(i => `<td class="${i.receipt ? 'check' : 'cross'}"></td>`).join('')}</tr>
+        <tr><td>Состояние</td>${items.map(i => `<td>${i.condition}</td>`).join('')}</tr>
+      </tbody>
+    </table>
   `;
 
-  if (found.length > 0) {
-    resultHtml += `<p><small>Подозрительные фразы: ${found.join(', ')}</small></p>`;
-  }
-
-  // Pro-функции
-  if (isPro()) {
-    resultHtml += `<p>✨ Pro-режим: расширенный анализ включён</p>`;
-  } else {
-    resultHtml += `<p><em>💡 Хотите глубже? Активируйте Pro-режим.</em></p>`;
-  }
-
-  const resultDiv = document.getElementById('result');
-  resultDiv.innerHTML = resultHtml;
-  resultDiv.classList.add('show');
+  document.getElementById('result').innerHTML = tableHTML;
 }
-
-// === При загрузке скрыть поле, если уже Pro ===
-document.addEventListener('DOMContentLoaded', () => {
-  if (isPro()) {
-    document.querySelector('.pro-activate').style.display = 'none';
-    document.querySelector('.pro-link').style.display = 'none';
-  }
-});
