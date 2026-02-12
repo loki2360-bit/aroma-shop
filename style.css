@@ -5,80 +5,77 @@
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f8f9fa;
+  background: #f9fafb;
   color: #333;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 .container {
-  max-width: 700px;
-  margin: 40px auto;
+  max-width: 900px;
+  margin: 30px auto;
   padding: 20px;
 }
 h1 {
   text-align: center;
+  color: #2563eb;
   margin-bottom: 10px;
-  color: #2c6fbb;
 }
 p {
   text-align: center;
+  color: #64748b;
   margin-bottom: 20px;
-  color: #666;
+}
+.item {
+  margin-bottom: 15px;
 }
 textarea {
   width: 100%;
-  height: 120px;
+  height: 100px;
   padding: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 16px;
-  margin-bottom: 15px;
+  font-size: 15px;
+  resize: vertical;
 }
 button {
-  background: #2c6fbb;
+  background: #2563eb;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 16px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
 }
 button:hover {
-  background: #1e5aa8;
+  background: #1d4ed8;
 }
 .result {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 8px;
-  background: white;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  display: none;
-}
-.result.show {
-  display: block;
-}
-.pro-activate {
-  margin-top: 25px;
-  text-align: center;
-}
-.pro-activate input {
-  padding: 8px;
-  width: 220px;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-.pro-link {
-  display: inline-block;
-  margin-top: 20px;
-  color: #d32f2f;
-  font-weight: bold;
-  text-decoration: none;
-}
-.pro-link:hover {
-  text-decoration: underline;
-}
-.footer {
-  text-align: center;
   margin-top: 30px;
-  color: #888;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #1e293b;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+.check::after {
+  content: "✅";
+  color: #10b981;
+}
+.cross::after {
+  content: "❌";
+  color: #ef4444;
 }
