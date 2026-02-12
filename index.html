@@ -3,28 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Avito Scout — Проверь перекупа</title>
+  <title>Avito Compare — Сравнение объявлений</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🔍 Avito Scout</h1>
-    <p>Вставьте текст объявления с Авито — узнаете, частник или перекуп.</p>
+    <h1>⚖️ Avito Compare</h1>
+    <p>Вставьте текст 2–5 объявлений с Авито — получите таблицу для сравнения.</p>
 
-    <textarea id="adText" placeholder="Пример: Продаю iPhone 13, оригинал, гарантия, самовывоз..."></textarea>
-    <button onclick="analyzeAd()">Анализировать</button>
+    <div id="items">
+      <div class="item">
+        <textarea placeholder="Вставьте текст объявления 1..."></textarea>
+      </div>
+      <div class="item">
+        <textarea placeholder="Вставьте текст объявления 2..."></textarea>
+      </div>
+    </div>
+
+    <button onclick="addItem()">+ Добавить ещё</button>
+    <button onclick="compareItems()" style="margin-left: 10px;">Сравнить</button>
 
     <div id="result" class="result"></div>
-
-    <!-- Поле активации Pro -->
-    <div class="pro-activate">
-      <input type="text" id="codeInput" placeholder="Код активации Pro (например: SCOUT-2026-XXXX)" />
-      <button onclick="activatePro()">Активировать</button>
-    </div>
-
-    <div class="footer">
-      <a href="premium.html" class="pro-link">💎 Разблокировать Pro-режим (99 ₽)</a>
-    </div>
   </div>
 
   <script src="app.js"></script>
