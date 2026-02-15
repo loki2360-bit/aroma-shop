@@ -7,13 +7,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
-      --bg: #121212;
-      --card: #1a1a1a;
+      --bg: #000000;
+      --card: #0a0a0a;
       --text: #ffffff;
       --text-muted: #aaaaaa;
-      --accent-green: #00f3ff; /* яркий неоновый зелёный */
-      --border: #2a2a2a;
-      --shadow-dark: #000000;
+      --accent: #00f3ff; /* неоново-зелёный */
+      --border: #222222;
     }
 
     * {
@@ -43,46 +42,33 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px;
+      padding: 16px 16px 12px;
       background: var(--card);
       border-radius: 20px 20px 0 0;
       margin-bottom: 20px;
-      position: relative;
     }
-    .header::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 6px;
-      background: linear-gradient(90deg, #00f3ff, #00cc99);
-      border-radius: 6px 6px 0 0;
-    }
-
     .operator-name {
       font-weight: 700;
       font-size: 1.3rem;
       color: var(--text);
     }
-
     .balance-box {
-      background: rgba(0, 243, 255, 0.1);
-      border: 1px solid var(--accent-green);
+      background: var(--accent);
       border-radius: 12px;
-      padding: 10px 16px;
+      padding: 12px 16px;
       text-align: center;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.1rem;
       box-shadow: 0 0 12px rgba(0, 243, 255, 0.3);
     }
     .balance-label {
       font-size: 0.85rem;
-      color: var(--text-muted);
+      opacity: 0.8;
       margin-bottom: 4px;
     }
     .balance-value {
-      font-weight: 700;
       font-size: 1.2rem;
-      color: var(--accent-green);
     }
 
     /* === План === */
@@ -90,7 +76,7 @@
       margin-bottom: 24px;
     }
     .plan-title {
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 12px;
       color: var(--text);
     }
@@ -99,26 +85,25 @@
       background: var(--border);
       border-radius: 4px;
       overflow: hidden;
-      position: relative;
     }
     .progress-fill {
       height: 100%;
-      background: var(--accent-green);
-      width: 50%; /* будет обновляться JS */
-      transition: width 0.8s ease-out;
+      background: var(--accent);
+      width: 50%; /* можно заменить на JS */
       border-radius: 4px;
+      transition: width 0.8s ease-out;
     }
     .progress-values {
       display: flex;
       justify-content: space-between;
       margin-top: 6px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      font-size: 0.9rem;
+      color: var(--text);
     }
 
     /* === Новый заказ === */
     .section-title {
-      font-weight: 600;
+      font-weight: 700;
       margin: 24px 0 16px;
       color: var(--text);
       display: flex;
@@ -126,12 +111,11 @@
       gap: 8px;
     }
     .section-title i {
-      color: var(--accent-green);
+      color: var(--accent);
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: 1fr;
       gap: 14px;
       margin-bottom: 20px;
     }
@@ -156,17 +140,17 @@
       padding: 10px 14px;
       color: var(--text);
       font-size: 0.95rem;
-      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px rgba(255,255,255,0.05);
+      box-shadow: inset 2px 2px 5px var(--border), inset -2px -2px 5px rgba(255,255,255,0.05);
       width: 100%;
     }
     .neu-input:focus,
     .neu-select:focus {
       outline: none;
       box-shadow:
-        inset 2px 2px 5px var(--shadow-dark),
+        inset 2px 2px 5px var(--border),
         inset -2px -2px 5px rgba(255,255,255,0.05),
-        0 0 0 2px var(--accent-green),
-        0 0 8px var(--accent-green);
+        0 0 0 2px var(--accent),
+        0 0 8px var(--accent);
     }
 
     /* === Кнопка Создать === */
@@ -175,12 +159,12 @@
       border: none;
       border-radius: 12px;
       padding: 14px;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 1rem;
       color: var(--text);
       cursor: pointer;
       box-shadow:
-        0 0 0 2px var(--accent-green),
+        0 0 0 2px var(--accent),
         0 0 12px rgba(0, 243, 255, 0.4);
       transition: all 0.3s ease;
       width: 100%;
@@ -188,7 +172,7 @@
     }
     .btn-create:hover {
       box-shadow:
-        0 0 0 2px var(--accent-green),
+        0 0 0 2px var(--accent),
         0 0 16px rgba(0, 243, 255, 0.6);
     }
     .btn-create:active {
@@ -197,7 +181,7 @@
 
     /* === Заказы по дате === */
     .date-section {
-      margin-top: 32px;
+      margin: 32px 0;
     }
     .date-input {
       width: 100%;
@@ -207,15 +191,15 @@
       padding: 12px 14px;
       color: var(--text);
       font-size: 0.95rem;
-      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px rgba(255,255,255,0.05);
+      box-shadow: inset 2px 2px 5px var(--border), inset -2px -2px 5px rgba(255,255,255,0.05);
     }
     .date-input:focus {
       outline: none;
       box-shadow:
-        inset 2px 2px 5px var(--shadow-dark),
+        inset 2px 2px 5px var(--border),
         inset -2px -2px 5px rgba(255,255,255,0.05),
-        0 0 0 2px var(--accent-green),
-        0 0 8px var(--accent-green);
+        0 0 0 2px var(--accent),
+        0 0 8px var(--accent);
     }
 
     .btn-group {
@@ -229,29 +213,26 @@
       border: none;
       border-radius: 10px;
       padding: 12px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text);
       cursor: pointer;
       box-shadow:
-        inset 2px 2px 5px var(--shadow-dark),
+        inset 2px 2px 5px var(--border),
         inset -2px -2px 5px rgba(255,255,255,0.05);
       transition: all 0.2s;
     }
     .btn-action:hover {
       box-shadow:
-        inset 2px 2px 5px var(--shadow-dark),
+        inset 2px 2px 5px var(--border),
         inset -2px -2px 5px rgba(255,255,255,0.05),
-        0 0 0 2px var(--accent-green);
+        0 0 0 2px var(--accent);
     }
     .btn-show {
       background: transparent;
       box-shadow:
-        0 0 0 2px var(--accent-green),
+        0 0 0 2px var(--accent),
         0 0 10px rgba(0, 243, 255, 0.3);
     }
-
-    /* === Модальные окна — скрыты, но оставлены для будущего */
-    .modal { display: none; }
 
     /* === Адаптивность === */
     @media (max-width: 480px) {
@@ -262,8 +243,8 @@
         padding: 12px;
       }
       .balance-box {
-        padding: 8px 12px;
-        font-size: 0.9rem;
+        padding: 10px 12px;
+        font-size: 1rem;
       }
     }
   </style>
@@ -283,7 +264,7 @@
     <div class="plan-section">
       <div class="plan-title">план</div>
       <div class="progress-bar">
-        <div class="progress-fill" id="planFill"></div>
+        <div class="progress-fill"></div>
       </div>
       <div class="progress-values">
         <span>3000₽</span>
@@ -338,12 +319,9 @@
         </div>
       </div>
 
-      <div class="form-row">
-        <div>
-          <div class="input-label">Часы</div>
-          <input type="number" step="0.1" id="hours" class="neu-input" placeholder="0.0">
-        </div>
-        <div></div> <!-- пусто для выравнивания -->
+      <div>
+        <div class="input-label">Часы</div>
+        <input type="number" step="0.1" id="hours" class="neu-input" placeholder="0.0">
       </div>
 
       <button class="btn-create" onclick="createOrder()">
@@ -375,7 +353,7 @@
   </div>
 
   <script>
-    // === Логика — как в вашем оригинале, но упрощена под макет ===
+    // === Логика — минимум, только для работы формы и даты ===
     const TARIFFS = {
       RASPIL_M2: { price: 65, unit: 'm2' },
       LINEAR_RASPIL: { price: 26, unit: 'linear' },
@@ -419,12 +397,6 @@
       return Math.round(amount * 100) / 100;
     }
 
-    // Обновление плана (пример: 1500 из 3000 = 50%)
-    function updatePlan() {
-      const fill = document.getElementById('planFill');
-      fill.style.width = '50%'; // можно сделать динамически через данные
-    }
-
     function createOrder() {
       const num = document.getElementById('orderNum').value.trim();
       if (!num) { alert('Укажите № заказа'); return; }
@@ -463,7 +435,6 @@
       document.getElementById('hours').value = '';
 
       alert('✅ Заказ создан!');
-      updatePlan();
     }
 
     function showOrdersByDate() {
@@ -477,11 +448,11 @@
         return;
       }
       let html = `<div style="background:var(--card); border-radius:12px; padding:16px; margin-top:12px;">
-        <div style="font-weight:600; margin-bottom:12px;">Заказы за ${formatDateYMD(date)}</div>`;
+        <div style="font-weight:700; margin-bottom:12px;">Заказы за ${formatDateYMD(date)}</div>`;
       filtered.forEach(o => {
         html += `<div style="padding:10px; border-bottom:1px solid var(--border);">
           <div><b>${o.orderNumber}</b> — ${o.detail}</div>
-          <div style="color:var(--accent-green);">${o.amount.toFixed(2)} ₽</div>
+          <div style="color:var(--accent);">${o.amount.toFixed(2)} ₽</div>
         </div>`;
       });
       html += '</div>';
@@ -523,7 +494,8 @@
     // Инициализация
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('viewDate').value = todayYMD();
-      updatePlan();
+      // Прогресс плана — фиксированный 50% (как на макете)
+      document.querySelector('.progress-fill').style.width = '50%';
     });
   </script>
 </body>
