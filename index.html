@@ -1,202 +1,1510 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Avito Compare — Сравнение объявлений</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f9fafb;
-      color: #1e293b;
-      line-height: 1.6;
-      padding-bottom: 40px;
-    }
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    /* Логотип */
-    .logo {
-      font-weight: 800;
-      font-size: 36px;
-      text-align: center;
-      margin: 36px 0 16px;
-    }
-    .logo span.gradient {
-      background: linear-gradient(120deg, #6366f1, #8b5cf6, #ec4899);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      background-size: 300% 300%;
-      animation: gradientShift 4s ease infinite;
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #64748b;
-      margin-bottom: 30px;
-      font-size: 19px;
-    }
-
-    .item {
-      margin-bottom: 18px;
-    }
-    textarea {
-      width: 100%;
-      height: 110px;
-      padding: 14px;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      font-size: 16px;
-      resize: vertical;
-      transition: border-color 0.2s;
-    }
-    textarea:focus {
-      outline: none;
-      border-color: #8b5cf6;
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-    }
-
-    .btn-group {
-      text-align: center;
-      margin: 24px 0 36px;
-    }
-    .btn {
-      background: linear-gradient(120deg, #6366f1, #8b5cf6);
-      color: white;
-      border: none;
-      padding: 13px 28px;
-      border-radius: 14px;
-      font-size: 17px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-    }
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
-    }
-    .btn-secondary {
-      background: #f1f5f9;
-      color: #475569;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
-    .btn-secondary:hover {
-      background: #e2e8f0;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-    }
-
-    .result {
-      margin-top: 30px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    }
-    th, td {
-      padding: 14px 16px;
-      text-align: left;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    th {
-      background: #f8fafc;
-      font-weight: 700;
-      color: #334155;
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    .check::after { content: "✅"; color: #10b981; }
-    .cross::after { content: "❌"; color: #ef4444; }
-
-    /* Pro Banner — уже в едином стиле */
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Кабинет оператора</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --card: #121212;
+  --text: #ffffff;
+  --text-muted: #aaaaaa;
+  --accent-blue: #00f3ff;
+  --accent-red: #ff5252;
+  --accent-green: #69f0ae;
+  --border: #2a2a2a;
+  --shadow-light: #1a1a1a;
+  --shadow-dark: #000000;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  padding: 0;
+  min-height: 100vh;
+  line-height: 1.4;
+}
+/* Шапка с гамбургером */
+.header-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--card);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.toggle-menu-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.toggle-menu-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+/* Боковое меню */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: var(--card);
+  padding: 72px 0 20px;
+  z-index: 100;
+  box-shadow: 8px 0 20px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease;
+}
+.sidebar.collapsed {
+  transform: translateX(-100%);
+}
+.sidebar.expanded {
+  transform: translateX(0);
+}
+.sidebar-item {
+  padding: 14px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  border-radius: 0 12px 12px 0;
+  margin: 0 8px;
+}
+.sidebar-item:hover,
+.sidebar-item.active {
+  color: var(--accent-blue);
+  background: var(--card);
+  box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+}
+.sidebar-item i {
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
+}
+/* Основной контент */
+.main-content {
+  margin-left: 240px;
+  padding: 72px 24px 24px;
+  max-width: 768px;
+  margin: 0 auto;
+  transition: margin-left 0.3s ease;
+}
+.main-content.menu-collapsed {
+  margin-left: 0;
+}
+/* Неоморфические кнопки */
+.neu-btn {
+  background: var(--card);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.neu-btn:active {
+  box-shadow: inset -2px -2px 5px var(--shadow-dark), inset 2px 2px 5px var(--shadow-light);
+}
+.neu-btn-accent {
+  background: var(--accent-blue);
+  color: #000;
+  box-shadow:
+    0 0 0 2px var(--accent-blue),
+    inset 2px 2px 5px rgba(0, 0, 0, 0.4),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.05);
+}
+.neu-btn-accent:active {
+  box-shadow:
+    0 0 0 2px var(--accent-blue),
+    inset -2px -2px 5px rgba(0, 0, 0, 0.4),
+    inset 2px 2px 5px rgba(255, 255, 255, 0.05);
+}
+/* Поля ввода */
+.neu-input,
+.neu-select {
+  background: var(--card);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  width: 100%;
+}
+.neu-input:focus,
+.neu-select:focus {
+  outline: none;
+  box-shadow:
+    inset 2px 2px 5px var(--shadow-dark),
+    inset -2px -2px 5px var(--shadow-light),
+    0 0 0 2px var(--accent-blue);
+}
+/* === Статус-бар: 20 точек, без линии === */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  margin: 8px 0;
+}
+.step {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+.step.active {
+  background: var(--accent-blue);
+}
+.step.current {
+  background: #0077ff;
+  box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.6);
+}
+.step.completed {
+  background: var(--accent-green);
+  box-shadow: 0 0 0 2px rgba(105, 240, 174, 0.4);
+}
+/* Прогресс-бары */
+.progress-container {
+  height: 24px;
+  background: var(--card);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 12px 0;
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 12px;
+  background: var(--accent-blue);
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+  position: relative;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.95rem;
+}
+.progress-title {
+  font-weight: 600;
+  color: var(--accent-blue);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* Статистика: диаграмма */
+.chart-container {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 24px 0;
+  box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+}
+.chart-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--accent-blue);
+}
+.bar-item {
+  margin: 12px 0;
+}
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+}
+.bar-container {
+  height: 28px;
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+}
+.bar-fill {
+  height: 100%;
+  background: var(--accent-blue);
+  border-radius: 14px;
+  width: 0;
+  transition: width 1.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+/* Скрытие контента */
+.content-block {
+  display: none;
+}
+.content-block.active {
+  display: block;
+  animation: fadeIn 0.5s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Модальные окна */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+  border: 1px solid var(--border);
+}
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--accent-blue);
+}
+.modal-row {
+  margin-bottom: 16px;
+}
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.details-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.details-label {
+  font-weight: 600;
+  color: var(--text);
+}
+.details-value {
+  color: var(--accent-blue);
+}
+/* Таблица заказов */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+.orders-table th,
+.orders-table td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.orders-table th {
+  color: var(--accent-blue);
+  font-weight: 600;
+}
+.orders-table .amount {
+  color: var(--accent-blue);
+  font-weight: 600;
+}
+.empty-msg {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 20px;
+  font-style: italic;
+}
+/* Кнопки действий */
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 3px var(--shadow-dark), inset -1px -1px 3px var(--shadow-light);
+}
+.action-btn:hover {
+  background: var(--accent-blue);
+  color: #000;
+}
+.action-btn i {
+  font-size: 14px;
+}
+/* Адаптивность */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .main-content {
+    margin-left: 0;
+  }
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <!-- Логотип -->
-    <div class="logo">
-      <span class="gradient">Avito</span>Compare
-    </div>
-    <p class="subtitle">Вставьте текст 2–5 объявлений с Авито — получите таблицу для сравнения.</p>
-
-    <!-- Pro Banner -->
-    <div id="proBanner" style="
-      background: linear-gradient(120deg, #6366f1 0%, #8b5cf6 45%, #ec4899 100%);
-      color: white;
-      padding: 28px;
-      border-radius: 20px;
-      margin: 36px auto;
-      box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.25);
-      text-align: center;
-      max-width: 820px;
-      position: relative;
-      overflow: hidden;
-    ">
-      <div style="position: absolute; top: -50px; right: -50px; width: 120px; height: 120px; background: rgba(255,255,255,0.15); border-radius: 50%;"></div>
-      <div style="position: absolute; bottom: -40px; left: 10%; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-      <div style="position: relative; z-index: 2;">
-        <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">⚡ Сравнивайте как профи!</h2>
-        <p style="font-size: 19px; opacity: 0.96; margin-bottom: 24px; line-height: 1.5; max-width: 600px; margin: 0 auto 24px;">
-          До <strong>5 объявлений</strong>, экспорт в CSV, история и ручное редактирование — всё в одном месте.
-        </p>
-        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 26px;">
-          <span style="background: rgba(255,255,255,0.25); backdrop-filter: blur(4px); padding: 8px 18px; border-radius: 50px; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,0.3);">📊 До 5 объявлений</span>
-          <span style="background: rgba(255,255,255,0.25); backdrop-filter: blur(4px); padding: 8px 18px; border-radius: 50px; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,0.3);">📤 Экспорт в CSV</span>
-          <span style="background: rgba(255,255,255,0.25); backdrop-filter: blur(4px); padding: 8px 18px; border-radius: 50px; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,0.3);">✏️ Редактируйте таблицу</span>
+<!-- Шапка с гамбургером -->
+<div class="header-bar">
+  <button class="toggle-menu-btn" id="toggleMenuBtn">
+    <i class="fas fa-bars"></i>
+  </button>
+  <div style="font-weight: 600; font-size: 1.1rem;">Кабинет оператора</div>
+</div>
+<!-- Боковое меню -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-item active" data-target="main">
+    <i class="fas fa-home"></i> Основное
+  </div>
+  <div class="sidebar-item" data-target="preorders">
+    <i class="fas fa-clock"></i> Предзаказы
+  </div>
+  <!-- УДАЛЕНО: Чаевые -->
+  <div class="sidebar-item" data-target="stats">
+    <i class="fas fa-chart-bar"></i> Статистика
+  </div>
+</div>
+<!-- Основной контент -->
+<div class="main-content" id="mainContent">
+  <!-- Основное -->
+  <div id="main" class="content-block active">
+    <div class="container">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), #00aaff); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; font-size: 20px;">
+          <i class="fas fa-user"></i>
         </div>
-        <button onclick="activatePro()" style="
-          background: white;
-          color: #7e22ce;
-          border: none;
-          padding: 14px 42px;
-          border-radius: 14px;
-          font-weight: 800;
-          font-size: 20px;
-          cursor: pointer;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-          transition: all 0.25s ease;
-        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.3)';"
-           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.2)';">
-          💎 Активировать Pro — 4999 ₽
+        <div>
+          <h2>Александр<span id="opId"></span></h2>
+          <p>Всего: <b><span id="totalAll">0.00</span> ₽</b></p>
+        </div>
+      </div>
+      <div class="progress-title">
+        <i class="fas fa-bullseye"></i> План: <b>3000 ₽</b>
+      </div>
+      <!-- НОВЫЙ СТАТУС-БАР: 20 точек -->
+      <div class="status-bar" id="planStatusBar">
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+      </div>
+      <div class="progress-label">
+        <span>Текущая смена:</span>
+        <span><b><span id="todayEarned">0.00</span> ₽</b></span>
+      </div>
+      <div class="progress-label">
+        <span id="shiftStatus">Смена не начата</span>
+      </div>
+      <div style="margin: 24px 0;">
+        <button class="neu-btn neu-btn-accent" onclick="startShift()">
+          <i class="fas fa-play"></i> Начать смену
         </button>
-        <p style="margin-top: 20px; font-size: 15px; opacity: 0.9; font-weight: 500;">🔒 Один платёж — пожизненный доступ. Без подписки.</p>
+        <button class="neu-btn neu-btn-accent" onclick="endShift()" style="margin-left: 12px;">
+          <i class="fas fa-stop"></i> Завершить смену
+        </button>
+      </div>
+      <div class="progress-title" style="margin-top: 24px;">
+        <i class="fas fa-plus"></i> Новый заказ
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">№ заказа</label>
+          <input type="text" id="orderNum" class="neu-input" placeholder="ORD-001">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Тариф</label>
+          <select id="tariff" class="neu-select">
+            <option value="RASPIL_M2">Распил — 65 ₽/м²</option>
+            <option value="LINEAR_RASPIL">Лин. распил — 26 ₽/м</option>
+            <option value="SKLEIKA_OB">Склейка + — 210 ₽/м²</option>
+            <option value="SKLEIKA_NO_OB">Склейка – — 165 ₽/м²</option>
+            <option value="PAZY">Пазы — 30 ₽/м</option>
+            <option value="FREZER_FASKA">Фаска — 16 ₽/м</option>
+            <option value="TIME">Время — 330 ₽/ч</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Деталь</label>
+          <input type="text" id="detail" class="neu-input" placeholder="Название">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Кол-во</label>
+          <input type="number" id="qty" value="1" min="1" class="neu-input">
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0;">
+        <div id="lengthGroup">
+          <label style="display: block; margin-bottom: 6px;">Длина (м)</label>
+          <input type="number" step="0.01" id="length" class="neu-input" placeholder="0.00">
+        </div>
+        <div id="widthGroup" class="hidden">
+          <label style="display: block; margin-bottom: 6px;">Ширина (м)</label>
+          <input type="number" step="0.01" id="width" class="neu-input" placeholder="0.00">
+        </div>
+        <div id="hoursGroup" class="hidden">
+          <label style="display: block; margin-bottom: 6px;">Часы</label>
+          <input type="number" step="0.1" id="hours" class="neu-input" placeholder="0.0">
+        </div>
+      </div>
+      <button class="neu-btn neu-btn-accent" onclick="createMainOrderWithSound()" style="margin-top: 12px;">
+        <i class="fas fa-check"></i> Создать заказ
+      </button>
+      <!-- Просмотр заказов по дате -->
+      <div class="progress-title" style="margin-top: 24px;">
+        <i class="fas fa-history"></i> Заказы по дате
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr; gap: 16px; margin: 16px 0;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Дата</label>
+          <input type="date" id="viewDate" class="neu-input" value="">
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <button class="neu-btn neu-btn-accent" onclick="showOrdersByDate()">
+          <i class="fas fa-eye"></i> Показать
+        </button>
+        <button class="neu-btn" onclick="saveOrdersToFile()">
+          <i class="fas fa-download"></i> В TXT
+        </button>
+        <button class="neu-btn" onclick="saveOrdersToJSON()">
+          <i class="fas fa-file-code"></i> В JSON
+        </button>
+      </div>
+      <!-- Список заказов -->
+      <div id="ordersListContainer" style="margin-top: 24px;"></div>
+    </div>
+  </div>
+  <!-- Предзаказы -->
+  <div id="preorders" class="content-block">
+    <div class="container">
+      <h2 style="color: var(--accent-blue); margin-bottom: 16px;"><i class="fas fa-clock"></i> Предзаказы</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">№ заказа</label>
+          <input type="text" id="preOrderNum" class="neu-input" placeholder="PRE-001">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Тариф</label>
+          <select id="preTariff" class="neu-select">
+            <option value="RASPIL_M2">Распил — 65 ₽/м²</option>
+            <option value="LINEAR_RASPIL">Лин. распил — 26 ₽/м</option>
+            <option value="SKLEIKA_OB">Склейка + — 210 ₽/м²</option>
+            <option value="SKLEIKA_NO_OB">Склейка – — 165 ₽/м²</option>
+            <option value="PAZY">Пазы — 30 ₽/м</option>
+            <option value="FREZER_FASKA">Фаска — 16 ₽/м</option>
+            <option value="TIME">Время — 330 ₽/ч</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Деталь</label>
+          <input type="text" id="preDetail" class="neu-input" placeholder="Название">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px;">Кол-во</label>
+          <input type="number" id="preQty" value="1" min="1" class="neu-input">
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div id="preLengthGroup">
+          <label style="display: block; margin-bottom: 6px;">Длина (м)</label>
+          <input type="number" step="0.01" id="preLength" class="neu-input" placeholder="0.00">
+        </div>
+        <div id="preWidthGroup" class="hidden">
+          <label style="display: block; margin-bottom: 6px;">Ширина (м)</label>
+          <input type="number" step="0.01" id="preWidth" class="neu-input" placeholder="0.00">
+        </div>
+        <div id="preHoursGroup" class="hidden">
+          <label style="display: block; margin-bottom: 6px;">Часы</label>
+          <input type="number" step="0.1" id="preHours" class="neu-input" placeholder="0.0">
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <button class="neu-btn neu-btn-accent" onclick="createPreorder()">
+          <i class="fas fa-save"></i> Сохранить предзаказ
+        </button>
+        <button class="neu-btn" onclick="document.getElementById('jsonImportInput').click()">
+          <i class="fas fa-upload"></i> Загрузить TXT/JSON
+        </button>
+      </div>
+      <input type="file" id="jsonImportInput" accept=".txt,.json" style="display: none;" />
+      <!-- Список предзаказов -->
+      <div class="progress-title" style="margin-top: 24px;">
+        <i class="fas fa-list"></i> Список предзаказов
+      </div>
+      <div id="preordersListContainer" style="margin-top: 16px;"></div>
+    </div>
+  </div>
+  <!-- Статистика -->
+  <div id="stats" class="content-block">
+    <div class="container">
+      <h2 style="color: var(--accent-blue); margin-bottom: 16px;"><i class="fas fa-chart-bar"></i> Общая статистика</h2>
+      <!-- Прогресс: погонные метры -->
+      <div class="progress-title">
+        <i class="fas fa-ruler-horizontal"></i> Погонные метры
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="linearProgress"></div>
+      </div>
+      <div class="progress-label">
+        <span>Всего</span>
+        <span><b id="linearTotal">0.0</b> м</span>
+      </div>
+      <!-- Прогресс: квадратные метры -->
+      <div class="progress-title">
+        <i class="fas fa-border-all"></i> Квадратные метры
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="areaProgress"></div>
+      </div>
+      <div class="progress-label">
+        <span>Всего</span>
+        <span><b id="areaTotal">0.0</b> м²</span>
+      </div>
+      <!-- Прогресс: часы -->
+      <div class="progress-title">
+        <i class="fas fa-clock"></i> Время работы
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="timeProgress"></div>
+      </div>
+      <div class="progress-label">
+        <span>Всего</span>
+        <span><b id="timeTotal">0.0</b> ч</span>
+      </div>
+      <!-- Диаграмма частоты операций -->
+      <div class="chart-container">
+        <div class="chart-title">
+          <i class="fas fa-tasks"></i> Популярность операций
+        </div>
+        <div id="operationsChart">
+          <p style="color: var(--text-muted); text-align: center;">Данные появятся после создания заказов</p>
+        </div>
       </div>
     </div>
-
-    <!-- Поля ввода -->
-    <div id="items">
-      <div class="item"><textarea placeholder="Вставьте текст объявления 1..."></textarea></div>
-      <div class="item"><textarea placeholder="Вставьте текст объявления 2..."></textarea></div>
-    </div>
-
-    <div class="btn-group">
-      <button class="btn-secondary" onclick="addItem()">+ Добавить ещё</button>
-      <button class="btn" onclick="compareItems()" style="margin-left: 12px;">Сравнить</button>
-    </div>
-
-    <div id="result" class="result"></div>
   </div>
-
-  <script src="app.js"></script>
+</div>
+<!-- Модальные окна -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-title">Редактировать заказ</div>
+    <input type="hidden" id="editOrderId">
+    <div class="modal-row">
+      <label>№ заказа</label>
+      <input type="text" id="editOrderNum" class="neu-input">
+    </div>
+    <div class="modal-row">
+      <label>Деталь</label>
+      <input type="text" id="editDetail" class="neu-input">
+    </div>
+    <div class="modal-row">
+      <label>Тариф</label>
+      <select id="editTariff" class="neu-select">
+        <option value="RASPIL_M2">Распил — 65 ₽/м²</option>
+        <option value="LINEAR_RASPIL">Лин. распил — 26 ₽/м</option>
+        <option value="SKLEIKA_OB">Склейка + — 210 ₽/м²</option>
+        <option value="SKLEIKA_NO_OB">Склейка – — 165 ₽/м²</option>
+        <option value="PAZY">Пазы — 30 ₽/м</option>
+        <option value="FREZER_FASKA">Фаска — 16 ₽/м</option>
+        <option value="TIME">Время — 330 ₽/ч</option>
+      </select>
+    </div>
+    <div class="modal-row">
+      <label>Кол-во</label>
+      <input type="number" id="editQty" min="1" class="neu-input">
+    </div>
+    <div class="modal-row" id="editLengthGroup">
+      <label>Длина (м)</label>
+      <input type="number" step="0.01" id="editLength" class="neu-input">
+    </div>
+    <div class="modal-row hidden" id="editWidthGroup">
+      <label>Ширина (м)</label>
+      <input type="number" step="0.01" id="editWidth" class="neu-input">
+    </div>
+    <div class="modal-row hidden" id="editHoursGroup">
+      <label>Часы</label>
+      <input type="number" step="0.1" id="editHours" class="neu-input">
+    </div>
+    <div class="modal-buttons">
+      <button class="neu-btn" onclick="closeEditModal()">Отмена</button>
+      <button class="neu-btn neu-btn-accent" onclick="saveEditedOrder()">Сохранить</button>
+    </div>
+  </div>
+</div>
+<div id="dateModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-title">Выберите дату для заказа</div>
+    <div class="modal-row">
+      <label>Дата</label>
+      <input type="date" id="modalDate" class="neu-input">
+    </div>
+    <div class="modal-buttons">
+      <button class="neu-btn" onclick="closeDateModal()">Отмена</button>
+      <button class="neu-btn neu-btn-accent" onclick="confirmDateSelection()">Подтвердить</button>
+    </div>
+  </div>
+</div>
+<div id="detailsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-title">Детали заказа</div>
+    <div id="detailsContent"></div>
+    <div class="modal-buttons">
+      <button class="neu-btn" onclick="closeDetailsModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+<script>
+// === ФЛАГ ЗВУКА ===
+let soundEnabled = true;
+// === Константы ===
+const TARIFFS = {
+  RASPIL_M2: { price: 65, unit: 'm2' },
+  LINEAR_RASPIL: { price: 26, unit: 'linear' },
+  SKLEIKA_OB: { price: 210, unit: 'm2' },
+  SKLEIKA_NO_OB: { price: 165, unit: 'm2' },
+  PAZY: { price: 30, unit: 'linear' },
+  FREZER_FASKA: { price: 16, unit: 'linear' },
+  TIME: { price: 330, unit: 'time' }
+};
+const TARIFF_NAMES = {
+  RASPIL_M2: 'Распил',
+  LINEAR_RASPIL: 'Лин. распил',
+  SKLEIKA_OB: 'Склейка +',
+  SKLEIKA_NO_OB: 'Склейка –',
+  PAZY: 'Пазы',
+  FREZER_FASKA: 'Фаска',
+  TIME: 'Время'
+};
+const UNIT_LABELS = {
+  m2: 'м²',
+  linear: 'пог. м',
+  time: 'часы'
+};
+// === Утилиты ===
+function formatDateYMD(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  return `${d}.${m}.${y}`;
+}
+function todayYMD() {
+  return new Date().toISOString().split('T')[0];
+}
+function loadOrders() {
+  try {
+    return JSON.parse(localStorage.getItem('operator_orders') || '[]');
+  } catch (e) { return []; }
+}
+function saveOrders(orders) {
+  localStorage.setItem('operator_orders', JSON.stringify(orders));
+}
+function loadPreorders() {
+  try {
+    return JSON.parse(localStorage.getItem('operator_preorders') || '[]');
+  } catch (e) { return []; }
+}
+function savePreorders(preorders) {
+  localStorage.setItem('operator_preorders', JSON.stringify(preorders));
+}
+function getCurrentShift() {
+  try {
+    return JSON.parse(localStorage.getItem('current_shift') || 'null');
+  } catch (e) { return null; }
+}
+function setCurrentShift(shift) {
+  if (shift === null) {
+    localStorage.removeItem('current_shift');
+  } else {
+    localStorage.setItem('current_shift', JSON.stringify(shift));
+  }
+}
+// === Звуковой сигнал ===
+function playSuccessSound() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 800;
+    gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.3);
+  } catch (e) {
+    console.warn("Audio feedback not supported", e);
+  }
+}
+// === Расчёт суммы ===
+function calculateAmount(tariffKey, length, width, hours, qty) {
+  const tariff = TARIFFS[tariffKey];
+  if (!tariff) return 0;
+  let amount = 0;
+  if (tariff.unit === 'time') {
+    amount = tariff.price * hours * qty;
+  } else if (tariff.unit === 'm2') {
+    amount = tariff.price * length * width * qty;
+  } else {
+    amount = tariff.price * length * qty;
+  }
+  return Math.round(amount * 100) / 100;
+}
+// === Обновление UI плана (с новым статус-баром) ===
+function updateUI() {
+  const orders = loadOrders();
+  const totalAll = orders.reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
+  const shift = getCurrentShift();
+  let currentShiftAmount = 0;
+  let statusText = 'Смена не начата';
+  if (shift && shift.active) {
+    currentShiftAmount = orders
+      .filter(o => o.shiftId === shift.id)
+      .reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
+    statusText = 'Смена активна';
+  } else if (shift && !shift.active) {
+    currentShiftAmount = shift.finalAmount || 0;
+    statusText = 'Смена завершена';
+  }
+  document.getElementById('totalAll').textContent = totalAll.toFixed(2);
+  document.getElementById('todayEarned').textContent = currentShiftAmount.toFixed(2);
+  document.getElementById('shiftStatus').textContent = statusText;
+  // === Обновление статус-бара (20 шагов) ===
+  const steps = document.querySelectorAll('#planStatusBar .step');
+  const targetStep = Math.min(19, Math.floor((currentShiftAmount / 3000) * 20));
+  steps.forEach((step, i) => {
+    step.classList.remove('active', 'current', 'completed');
+    if (i < targetStep) {
+      step.classList.add('active');
+    } else if (i === targetStep) {
+      step.classList.add('current');
+    }
+    if (currentShiftAmount >= 3000 && i === 19) {
+      step.classList.remove('current');
+      step.classList.add('completed');
+    }
+  });
+  const progressWidth = Math.min(100, (currentShiftAmount / 3000) * 100);
+  setTimeout(() => {
+    const planProgress = document.getElementById('planProgress');
+    if (planProgress) planProgress.style.width = `${progressWidth}%`;
+  }, 300);
+}
+// === Переключение полей ===
+function updateMainFormFields() {
+  const tariff = document.getElementById('tariff').value;
+  ['widthGroup', 'hoursGroup'].forEach(id => document.getElementById(id)?.classList.add('hidden'));
+  document.getElementById('lengthGroup')?.classList.remove('hidden');
+  if (['RASPIL_M2', 'SKLEIKA_OB', 'SKLEIKA_NO_OB'].includes(tariff)) {
+    document.getElementById('widthGroup')?.classList.remove('hidden');
+  } else if (tariff === 'TIME') {
+    document.getElementById('lengthGroup')?.classList.add('hidden');
+    document.getElementById('hoursGroup')?.classList.remove('hidden');
+  }
+}
+function updatePreorderFormFields() {
+  const tariff = document.getElementById('preTariff').value;
+  ['preWidthGroup', 'preHoursGroup'].forEach(id => document.getElementById(id)?.classList.add('hidden'));
+  document.getElementById('preLengthGroup')?.classList.remove('hidden');
+  if (['RASPIL_M2', 'SKLEIKA_OB', 'SKLEIKA_NO_OB'].includes(tariff)) {
+    document.getElementById('preWidthGroup')?.classList.remove('hidden');
+  } else if (tariff === 'TIME') {
+    document.getElementById('preLengthGroup')?.classList.add('hidden');
+    document.getElementById('preHoursGroup')?.classList.remove('hidden');
+  }
+}
+function updateEditFormFields() {
+  const tariff = document.getElementById('editTariff').value;
+  ['editWidthGroup', 'editHoursGroup'].forEach(id => document.getElementById(id)?.classList.add('hidden'));
+  document.getElementById('editLengthGroup')?.classList.remove('hidden');
+  if (['RASPIL_M2', 'SKLEIKA_OB', 'SKLEIKA_NO_OB'].includes(tariff)) {
+    document.getElementById('editWidthGroup')?.classList.remove('hidden');
+  } else if (tariff === 'TIME') {
+    document.getElementById('editLengthGroup')?.classList.add('hidden');
+    document.getElementById('editHoursGroup')?.classList.remove('hidden');
+  }
+}
+// === Смена ===
+function startShift() {
+  const shift = getCurrentShift();
+  if (shift && shift.active) {
+    alert('Смена уже активна!');
+    return;
+  }
+  const newShift = { id: Date.now(), startedAt: new Date().toISOString(), active: true };
+  setCurrentShift(newShift);
+  alert('✅ Смена начата!');
+  updateUI();
+}
+function endShift() {
+  const shift = getCurrentShift();
+  if (!shift || !shift.active) {
+    alert('Нет активной смены для завершения!');
+    return;
+  }
+  const orders = loadOrders();
+  const finalAmount = orders
+    .filter(o => o.shiftId === shift.id)
+    .reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
+  shift.active = false;
+  shift.finishedAt = new Date().toISOString();
+  shift.finalAmount = finalAmount;
+  setCurrentShift(shift);
+  alert(`✅ Смена завершена!\nЗаработано: ${finalAmount.toFixed(2)} ₽`);
+  updateUI();
+}
+// === Удаление ===
+function deleteOrder(orderId) {
+  if (!confirm('Вы уверены, что хотите удалить этот заказ?')) return;
+  const orders = loadOrders();
+  const idx = orders.findIndex(o => o.id === orderId);
+  if (idx === -1) return;
+  orders.splice(idx, 1);
+  saveOrders(orders);
+  const shift = getCurrentShift();
+  if (shift && shift.active) updateUI();
+  showOrdersByDate();
+  alert('✅ Заказ удален!');
+}
+function deletePreorder(preorderId) {
+  if (!confirm('Вы уверены, что хотите удалить этот предзаказ?')) return;
+  const preorders = loadPreorders();
+  const idx = preorders.findIndex(p => p.id === preorderId);
+  if (idx === -1) return;
+  preorders.splice(idx, 1);
+  savePreorders(preorders);
+  renderPreorders();
+  alert('✅ Предзаказ удален!');
+}
+// === Модальные окна ===
+let pendingPreorderId = null;
+function openDateModal(preorderId) {
+  pendingPreorderId = preorderId;
+  document.getElementById('modalDate').value = todayYMD();
+  document.getElementById('dateModal').classList.add('active');
+}
+function closeDateModal() {
+  document.getElementById('dateModal').classList.remove('active');
+  pendingPreorderId = null;
+}
+function confirmDateSelection() {
+  const date = document.getElementById('modalDate').value;
+  if (!date) { alert('Выберите дату'); return; }
+  if (pendingPreorderId !== null) acceptPreorder(pendingPreorderId, date);
+  closeDateModal();
+}
+function viewOrderDetails(orderId) {
+  const orders = loadOrders();
+  const order = orders.find(o => o.id === orderId);
+  if (!order) return;
+  const units = calculateUnits(order.tariff, order.length, order.width, order.hours, order.qty);
+  const tariffName = TARIFF_NAMES[order.tariff] || order.tariff;
+  let html = '';
+  html += `<div class="details-item"><span class="details-label">№ заказа:</span><span class="details-value">${order.orderNumber}</span></div>`;
+  html += `<div class="details-item"><span class="details-label">Деталь:</span><span class="details-value">${order.detail}</span></div>`;
+  html += `<div class="details-item"><span class="details-label">Тариф:</span><span class="details-value">${tariffName}</span></div>`;
+  html += `<div class="details-item"><span class="details-label">Количество:</span><span class="details-value">${order.qty}</span></div>`;
+  if (order.length !== null) html += `<div class="details-item"><span class="details-label">Длина:</span><span class="details-value">${order.length} м</span></div>`;
+  if (order.width !== null) html += `<div class="details-item"><span class="details-label">Ширина:</span><span class="details-value">${order.width} м</span></div>`;
+  if (order.hours !== null) html += `<div class="details-item"><span class="details-label">Часы:</span><span class="details-value">${order.hours} ч</span></div>`;
+  html += `<div class="details-item"><span class="details-label">Объем работ:</span><span class="details-value">${units.value} ${units.unit}</span></div>`;
+  html += `<div class="details-item"><span class="details-label">Сумма:</span><span class="details-value">${order.amount.toFixed(2)} ₽</span></div>`;
+  document.getElementById('detailsContent').innerHTML = html;
+  document.getElementById('detailsModal').classList.add('active');
+}
+function closeDetailsModal() {
+  document.getElementById('detailsModal').classList.remove('active');
+}
+function openEditModal(orderId) {
+  const orders = loadOrders();
+  const order = orders.find(o => o.id === orderId);
+  if (!order) return;
+  editingOrder = order;
+  document.getElementById('editOrderId').value = order.id;
+  document.getElementById('editOrderNum').value = order.orderNumber;
+  document.getElementById('editDetail').value = order.detail;
+  document.getElementById('editTariff').value = order.tariff;
+  document.getElementById('editQty').value = order.qty;
+  document.getElementById('editLength').value = order.length || '';
+  document.getElementById('editWidth').value = order.width || '';
+  document.getElementById('editHours').value = order.hours || '';
+  updateEditFormFields();
+  document.getElementById('editModal').classList.add('active');
+}
+let editingOrder = null;
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('active');
+  editingOrder = null;
+}
+function saveEditedOrder() {
+  if (!editingOrder) return;
+  const orderId = parseInt(document.getElementById('editOrderId').value);
+  const num = document.getElementById('editOrderNum').value.trim();
+  if (!num) { alert('Укажите № заказа'); return; }
+  const tariffKey = document.getElementById('editTariff').value;
+  const detail = document.getElementById('editDetail').value.trim() || '—';
+  const qty = parseInt(document.getElementById('editQty').value) || 1;
+  const length = parseFloat(document.getElementById('editLength').value) || 0;
+  const width = parseFloat(document.getElementById('editWidth').value) || 0;
+  const hours = parseFloat(document.getElementById('editHours').value) || 0;
+  const amount = calculateAmount(tariffKey, length, width, hours, qty);
+  const orders = loadOrders();
+  const idx = orders.findIndex(o => o.id === orderId);
+  if (idx !== -1) {
+    orders[idx] = {
+      ...orders[idx],
+      orderNumber: num,
+      tariff: tariffKey,
+      detail: detail,
+      qty: qty,
+      length: length || null,
+      width: width || null,
+      hours: hours || null,
+      amount: amount
+    };
+    saveOrders(orders);
+    updateUI();
+    showOrdersByDate();
+    closeEditModal();
+    alert('✅ Заказ обновлён!');
+  }
+}
+// === Основные функции ===
+function createMainOrder() {
+  const num = document.getElementById('orderNum').value.trim();
+  if (!num) { alert('Укажите № заказа'); return; }
+  const tariffKey = document.getElementById('tariff').value;
+  const detail = document.getElementById('detail').value.trim() || '—';
+  const qty = parseInt(document.getElementById('qty').value) || 1;
+  const length = parseFloat(document.getElementById('length').value) || 0;
+  const width = parseFloat(document.getElementById('width').value) || 0;
+  const hours = parseFloat(document.getElementById('hours').value) || 0;
+  const amount = calculateAmount(tariffKey, length, width, hours, qty);
+  const shift = getCurrentShift();
+  if (!shift || !shift.active) {
+    alert('⚠️ Начните смену, чтобы создавать заказы!');
+    return;
+  }
+  const order = {
+    id: Date.now(),
+    orderNumber: num,
+    tariff: tariffKey,
+    detail: detail,
+    qty: qty,
+    length: length || null,
+    width: width || null,
+    hours: hours || null,
+    amount: amount,
+    date: todayYMD(),
+    shiftId: shift.id,
+    timestamp: new Date().toISOString()
+  };
+  const orders = loadOrders();
+  orders.push(order);
+  saveOrders(orders);
+  updateUI();
+  ['orderNum','detail','qty','length','width','hours'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = (id === 'qty') ? '1' : '';
+  });
+  updateMainFormFields();
+}
+function createMainOrderWithSound() {
+  createMainOrder();
+  setTimeout(playSuccessSound, 100);
+}
+function createPreorder() {
+  const num = document.getElementById('preOrderNum').value.trim();
+  if (!num) { alert('Укажите № предзаказа'); return; }
+  const tariffKey = document.getElementById('preTariff').value;
+  const detail = document.getElementById('preDetail').value.trim() || '—';
+  const qty = parseInt(document.getElementById('preQty').value) || 1;
+  const length = parseFloat(document.getElementById('preLength').value) || 0;
+  const width = parseFloat(document.getElementById('preWidth').value) || 0;
+  const hours = parseFloat(document.getElementById('preHours').value) || 0;
+  const amount = calculateAmount(tariffKey, length, width, hours, qty);
+  const preorder = {
+    id: Date.now(),
+    orderNumber: num,
+    tariff: tariffKey,
+    detail: detail,
+    qty: qty,
+    length: length || null,
+    width: width || null,
+    hours: hours || null,
+    amount: amount,
+    date: todayYMD(),
+    timestamp: new Date().toISOString()
+  };
+  const preorders = loadPreorders();
+  preorders.push(preorder);
+  savePreorders(preorders);
+  alert('✅ Предзаказ сохранён!');
+  renderPreorders();
+  ['preOrderNum','preDetail','preQty','preLength','preWidth','preHours'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = (id === 'preQty') ? '1' : '';
+  });
+  updatePreorderFormFields();
+}
+// === Принять предзаказ ===
+function acceptPreorder(preorderId, selectedDate = null) {
+  const preorders = loadPreorders();
+  const idx = preorders.findIndex(p => p.id === preorderId);
+  if (idx === -1) return;
+  const preorder = preorders[idx];
+  const shift = getCurrentShift();
+  if (!shift || !shift.active) {
+    alert('Начните смену, чтобы принять предзаказ!');
+    return;
+  }
+  if (!selectedDate) {
+    openDateModal(preorderId);
+    return;
+  }
+  const order = {...preorder, shiftId: shift.id, date: selectedDate};
+  const orders = loadOrders();
+  orders.push(order);
+  saveOrders(orders);
+  preorders.splice(idx, 1);
+  savePreorders(preorders);
+  alert(`✅ Предзаказ "${preorder.orderNumber}" принят на дату ${formatDateYMD(selectedDate)}!`);
+  updateUI();
+  renderPreorders();
+}
+// === Рендер предзаказов ===
+function renderPreorders() {
+  const preorders = loadPreorders();
+  const container = document.getElementById('preordersListContainer');
+  if (preorders.length === 0) {
+    container.innerHTML = '<div class="empty-msg">Нет предзаказов</div>';
+    return;
+  }
+  let html = `<table class="orders-table"><thead><tr><th>№</th><th>Деталь</th><th>Сумма</th><th>Действия</th></tr></thead><tbody>`;
+  preorders.forEach(p => {
+    html += `
+      <tr>
+        <td>${p.orderNumber}</td>
+        <td>${p.detail}</td>
+        <td class="amount">${p.amount.toFixed(2)} ₽</td>
+        <td>
+          <button class="action-btn" onclick="acceptPreorder(${p.id})"><i class="fas fa-check"></i></button>
+          <button class="action-btn" onclick="deletePreorder(${p.id})"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+// === Показать заказы по дате ===
+function showOrdersByDate() {
+  const dateInput = document.getElementById('viewDate').value;
+  if (!dateInput) { alert('Выберите дату'); return; }
+  const orders = loadOrders();
+  const filtered = orders.filter(o => o.date === dateInput);
+  const formattedDate = formatDateYMD(dateInput);
+  let html = `<div class="progress-title">Заказы за ${formattedDate}</div>`;
+  if (filtered.length === 0) {
+    html += '<div class="empty-msg">Нет заказов за эту дату</div>';
+  } else {
+    html += `<table class="orders-table"><thead><tr><th>№</th><th>Деталь</th><th>Сумма</th><th>Действия</th></tr></thead><tbody>`;
+    filtered.forEach(o => {
+      html += `
+        <tr>
+          <td>${o.orderNumber}</td>
+          <td>${o.detail}</td>
+          <td class="amount">${o.amount.toFixed(2)} ₽</td>
+          <td>
+            <button class="action-btn" onclick="viewOrderDetails(${o.id})"><i class="fas fa-eye"></i></button>
+            <button class="action-btn" onclick="openEditModal(${o.id})"><i class="fas fa-edit"></i></button>
+            <button class="action-btn" onclick="deleteOrder(${o.id})"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>`;
+    });
+    html += '</tbody></table>';
+  }
+  document.getElementById('ordersListContainer').innerHTML = html;
+}
+// === Экспорт ===
+function saveOrdersToFile() {
+  const dateInput = document.getElementById('viewDate').value;
+  if (!dateInput) { alert('Сначала выберите дату'); return; }
+  const orders = loadOrders();
+  const filtered = orders.filter(o => o.date === dateInput);
+  if (filtered.length === 0) { alert('Нет заказов за эту дату'); return; }
+  const formattedDate = formatDateYMD(dateInput);
+  let content = `ЗАКАЗЫ ЗА ${formattedDate}
+========================
+`;
+  let totalSum = 0;
+  filtered.forEach((o, idx) => {
+    const tariffName = TARIFF_NAMES[o.tariff] || o.tariff;
+    const units = calculateUnits(o.tariff, o.length, o.width, o.hours, o.qty);
+    content += `№${idx + 1}. ${o.orderNumber}
+${o.detail} (${tariffName})
+`;
+    if (o.length) content += `   Длина: ${o.length} м
+`;
+    if (o.width) content += `   Ширина: ${o.width} м
+`;
+    if (o.hours) content += `   Часы: ${o.hours} ч
+`;
+    content += `   Кол-во: ${o.qty}
+Объем: ${units.value} ${units.unit}
+Сумма: ${o.amount.toFixed(2)} ₽
+---
+`;
+    totalSum += o.amount;
+  });
+  content += `
+ИТОГО: ${totalSum.toFixed(2)} ₽
+Экспорт: ${new Date().toLocaleString('ru-RU')}`;
+  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+  const blob = new Blob([bom, content], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `заказы_${formattedDate}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function saveOrdersToJSON() {
+  const dateInput = document.getElementById('viewDate').value;
+  if (!dateInput) { alert('Сначала выберите дату'); return; }
+  const orders = loadOrders();
+  const filtered = orders.filter(o => o.date === dateInput);
+  if (filtered.length === 0) { alert('Нет заказов за эту дату'); return; }
+  const jsonContent = JSON.stringify(filtered, null, 2);
+  const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `заказы_${formatDateYMD(dateInput)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+// === Импорт файлов ===
+document.getElementById('jsonImportInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      const content = event.target.result;
+      let importedOrders = [];
+      if (content.trim().startsWith('{') || content.trim().startsWith('[')) {
+        importedOrders = JSON.parse(content);
+        if (!Array.isArray(importedOrders)) {
+          importedOrders = [importedOrders];
+        }
+      } else {
+        importedOrders = parseTxtOrders(content);
+      }
+      if (importedOrders.length === 0) {
+        alert('Не удалось найти заказы в файле!');
+        return;
+      }
+      const preorders = loadPreorders();
+      const newPreorders = importedOrders.map(item => ({
+        id: Date.now() + Math.random(),
+        orderNumber: item.orderNumber || 'ИМП-' + (preorders.length + 1),
+        tariff: item.tariff || 'RASPIL_M2',
+        detail: item.detail || '—',
+        qty: item.qty || 1,
+        length: item.length || null,
+        width: item.width || null,
+        hours: item.hours || null,
+        amount: typeof item.amount === 'number' ? item.amount : calculateAmount(
+          item.tariff || 'RASPIL_M2',
+          item.length || 0,
+          item.width || 0,
+          item.hours || 0,
+          item.qty || 1
+        ),
+        date: todayYMD(),
+        timestamp: new Date().toISOString()
+      }));
+      const updated = [...preorders, ...newPreorders];
+      savePreorders(updated);
+      renderPreorders();
+      alert(`✅ Загружено ${newPreorders.length} предзаказов!`);
+    } catch (err) {
+      console.error(err);
+      alert('Ошибка при чтении файла:\n' + err.message);
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+});
+// === Парсинг TXT ===
+function parseTxtOrders(txtContent) {
+  const orders = [];
+  const blocks = txtContent.split('---');
+  for (const block of blocks) {
+    const lines = block.trim().split('\n').filter(line => line.trim() !== '');
+    if (lines.length < 3) continue;
+    const order = {
+      orderNumber: '',
+      detail: '',
+      tariff: '',
+      qty: 1,
+      length: null,
+      width: null,
+      hours: null,
+      amount: 0
+    };
+    let currentDetail = '';
+    let currentTariff = '';
+    for (const line of lines) {
+      const cleanLine = line.trim();
+      if (cleanLine.startsWith('№') && cleanLine.includes('.')) {
+        const match = cleanLine.match(/№\d+\.\s*(.+)/);
+        if (match) order.orderNumber = match[1].trim();
+      } else if (/^[A-Z0-9]/.test(cleanLine) && !cleanLine.includes(':') && !cleanLine.includes('Сумма') && !cleanLine.includes('ИТОГО')) {
+        if (!order.orderNumber && cleanLine.length > 2) {
+          order.orderNumber = cleanLine;
+        }
+      }
+      if (cleanLine.includes('(') && cleanLine.includes(')') && !cleanLine.includes('Сумма')) {
+        const match = cleanLine.match(/(.+)\s*\((.+)\)/);
+        if (match) {
+          currentDetail = match[1].trim();
+          currentTariff = match[2].trim();
+        }
+      }
+      if (cleanLine.startsWith('Длина:')) {
+        const match = cleanLine.match(/Длина:\s*([\d.]+)\s*м/);
+        if (match) order.length = parseFloat(match[1]);
+      }
+      if (cleanLine.startsWith('Ширина:')) {
+        const match = cleanLine.match(/Ширина:\s*([\d.]+)\s*м/);
+        if (match) order.width = parseFloat(match[1]);
+      }
+      if (cleanLine.startsWith('Часы:')) {
+        const match = cleanLine.match(/Часы:\s*([\d.]+)\s*ч/);
+        if (match) order.hours = parseFloat(match[1]);
+      }
+      if (cleanLine.startsWith('Кол-во:')) {
+        const match = cleanLine.match(/Кол-во:\s*(\d+)/);
+        if (match) order.qty = parseInt(match[1]);
+      }
+      if (cleanLine.startsWith('Сумма:')) {
+        const match = cleanLine.match(/Сумма:\s*([\d.]+)\s*₽/);
+        if (match) order.amount = parseFloat(match[1]);
+      }
+    }
+    if (currentTariff) {
+      const tariffMap = {
+        'Распил': 'RASPIL_M2',
+        'Лин. распил': 'LINEAR_RASPIL',
+        'Склейка +': 'SKLEIKA_OB',
+        'Склейка –': 'SKLEIKA_NO_OB',
+        'Пазы': 'PAZY',
+        'Фаска': 'FREZER_FASKA',
+        'Время': 'TIME'
+      };
+      order.tariff = tariffMap[currentTariff] || 'RASPIL_M2';
+    }
+    order.detail = currentDetail || '—';
+    if (order.orderNumber) {
+      orders.push(order);
+    }
+  }
+  return orders;
+}
+// === Расчёт единиц ===
+function calculateUnits(tariffKey, length, width, hours, qty) {
+  const tariff = TARIFFS[tariffKey];
+  if (!tariff) return { value: 0, unit: '' };
+  let value = 0;
+  let unit = tariff.unit;
+  if (tariff.unit === 'time') value = hours * qty;
+  else if (tariff.unit === 'm2') value = length * width * qty;
+  else value = length * qty;
+  return { value: Math.round(value * 100) / 100, unit: UNIT_LABELS[unit] || unit };
+}
+// === Статистика ===
+function calculateStats() {
+  const orders = loadOrders();
+  let totalLinear = 0;
+  let totalArea = 0;
+  let totalTime = 0;
+  const operationCount = {
+    RASPIL_M2: 0,
+    LINEAR_RASPIL: 0,
+    SKLEIKA_OB: 0,
+    SKLEIKA_NO_OB: 0,
+    PAZY: 0,
+    FREZER_FASKA: 0,
+    TIME: 0
+  };
+  orders.forEach(o => {
+    if (o.tariff === 'LINEAR_RASPIL' || o.tariff === 'PAZY' || o.tariff === 'FREZER_FASKA') {
+      totalLinear += (o.length || 0) * (o.qty || 1);
+    } else if (o.tariff === 'RASPIL_M2' || o.tariff === 'SKLEIKA_OB' || o.tariff === 'SKLEIKA_NO_OB') {
+      totalArea += (o.length || 0) * (o.width || 0) * (o.qty || 1);
+    } else if (o.tariff === 'TIME') {
+      totalTime += (o.hours || 0) * (o.qty || 1);
+    }
+    operationCount[o.tariff] = (operationCount[o.tariff] || 0) + 1;
+  });
+  const MAX_LINEAR = 1000;
+  const MAX_AREA = 200;
+  const MAX_TIME = 100;
+  return {
+    linear: { value: totalLinear, percent: Math.min(100, totalLinear / MAX_LINEAR * 100) },
+    area: { value: totalArea, percent: Math.min(100, totalArea / MAX_AREA * 100) },
+    time: { value: totalTime, percent: Math.min(100, totalTime / MAX_TIME * 100) },
+    operations: operationCount
+  };
+}
+function renderStats() {
+  const stats = calculateStats();
+  document.getElementById('linearTotal').textContent = stats.linear.value.toFixed(1);
+  document.getElementById('areaTotal').textContent = stats.area.value.toFixed(1);
+  document.getElementById('timeTotal').textContent = stats.time.value.toFixed(1);
+  setTimeout(() => {
+    document.getElementById('linearProgress').style.width = `${stats.linear.percent}%`;
+    document.getElementById('areaProgress').style.width = `${stats.area.percent}%`;
+    document.getElementById('timeProgress').style.width = `${stats.time.percent}%`;
+  }, 300);
+  const opNames = {
+    RASPIL_M2: 'Распил',
+    LINEAR_RASPIL: 'Лин. распил',
+    SKLEIKA_OB: 'Склейка +',
+    SKLEIKA_NO_OB: 'Склейка –',
+    PAZY: 'Пазы',
+    FREZER_FASKA: 'Фаска',
+    TIME: 'Время'
+  };
+  let maxCount = Math.max(...Object.values(stats.operations));
+  if (maxCount === 0) maxCount = 1;
+  let chartHtml = '';
+  for (const [key, count] of Object.entries(stats.operations)) {
+    if (count === 0) continue;
+    const percent = (count / maxCount) * 100;
+    chartHtml += `
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>${opNames[key]}</span>
+          <span>${count}</span>
+        </div>
+        <div class="bar-container">
+          <div class="bar-fill" style="width: ${percent}%;"></div>
+        </div>
+      </div>
+    `;
+  }
+  document.getElementById('operationsChart').innerHTML = chartHtml || '<p style="color:var(--text-muted); text-align:center;">Нет данных</p>';
+}
+// === Переключение меню ===
+document.querySelectorAll('.sidebar-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.content-block').forEach(c => c.classList.remove('active'));
+    item.classList.add('active');
+    const target = item.dataset.target;
+    document.getElementById(target).classList.add('active');
+    if (target === 'stats') {
+      renderStats();
+    } else if (target === 'main') {
+      updateUI();
+    } else if (target === 'preorders') {
+      renderPreorders();
+    }
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.remove('expanded');
+    }
+  });
+});
+// === Скрываемое меню ===
+const toggleBtn = document.getElementById('toggleMenuBtn');
+const sidebar = document.getElementById('sidebar');
+if (window.innerWidth > 768) {
+  const isMenuCollapsed = localStorage.getItem('menuCollapsed') === 'true';
+  if (isMenuCollapsed) {
+    sidebar.classList.add('collapsed');
+    document.getElementById('mainContent').classList.add('menu-collapsed');
+  }
+}
+toggleBtn.addEventListener('click', () => {
+  if (window.innerWidth <= 768) {
+    sidebar.classList.toggle('expanded');
+  } else {
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    sidebar.classList.toggle('collapsed', !isCollapsed);
+    document.getElementById('mainContent').classList.toggle('menu-collapsed', !isCollapsed);
+    localStorage.setItem('menuCollapsed', !isCollapsed);
+  }
+});
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('viewDate').value = todayYMD();
+  ['tariff','preTariff','editTariff'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', () => {
+      if (id === 'tariff') updateMainFormFields();
+      else if (id === 'preTariff') updatePreorderFormFields();
+      else updateEditFormFields();
+    });
+  });
+  updateUI();
+  renderPreorders();
+});
+</script>
 </body>
 </html>
