@@ -57,7 +57,7 @@ body {
   margin: 0 auto;
 }
 
-/* === ЕДИНАЯ ВОЗДУШНАЯ ПЛАШКА — 4 иконки в строке === */
+/* === ЕДИНАЯ ВОЗДУШНАЯ ПЛАШКА С МАТОВЫМ СТЕКЛОМ === */
 .bottom-bar {
   position: fixed;
   bottom: 32px;
@@ -66,13 +66,15 @@ body {
   display: flex;
   border-radius: 20px;
   overflow: hidden;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(58, 58, 58, 0.75);
+  /* ✅ МАТОВОЕ ПОЛУПРОЗРАЧНОЕ СТЕКЛО */
+  background: rgba(58, 58, 58, 0.65); /* полупрозрачный фон */
+  backdrop-filter: blur(14px);          /* эффект размытия фона */
+  -webkit-backdrop-filter: blur(14px);  /* для Safari */
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    0 10px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
   z-index: 200;
+  padding: 0;
 }
 
 .bar-item {
@@ -89,6 +91,7 @@ body {
   cursor: pointer;
   transition: all 0.25s ease;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
 }
 
 .bar-item:last-child {
@@ -644,7 +647,7 @@ body {
   </div>
 </div>
 
-<!-- ЕДИНАЯ ВОЗДУШНАЯ ПЛАШКА — 4 иконки, без + -->
+<!-- ✅ ЕДИНАЯ НИЖНЯЯ ПЛАШКА С МАТОВЫМ СТЕКЛОМ -->
 <div class="bottom-bar" id="bottomBar">
   <button class="bar-item active" data-target="main">
     <i class="fas fa-home"></i>
@@ -1120,7 +1123,7 @@ function createMainOrder() {
   orders.push(order);
   saveOrders(orders);
   updateUI();
-  ['orderNum','detail','qty','length','width','hours'].forEach(id => {
+  ['orderNum', 'detail', 'qty', 'length', 'width', 'hours'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = (id === 'qty') ? '1' : '';
   });
@@ -1158,7 +1161,7 @@ function createPreorder() {
   savePreorders(preorders);
   alert('✅ Предзаказ сохранён!');
   renderPreorders();
-  ['preOrderNum','preDetail','preQty','preLength','preWidth','preHours'].forEach(id => {
+  ['preOrderNum', 'preDetail', 'preQty', 'preLength', 'preWidth', 'preHours'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = (id === 'preQty') ? '1' : '';
   });
@@ -1525,7 +1528,7 @@ function renderStats() {
   document.getElementById('operationsChart').innerHTML = chartHtml || '<p style="color:var(--text-muted); text-align:center;">Нет данных</p>';
 }
 
-// === Переключение через новую воздушную плашку (4 иконки) ===
+// === Переключение через новую воздушную плашку (матовое стекло) ===
 document.querySelectorAll('.bar-item').forEach(item => {
   item.addEventListener('click', () => {
     // Снять активность со всех
