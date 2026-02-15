@@ -57,92 +57,70 @@ body {
   margin: 0 auto;
 }
 
-/* === Плавающее воздушное меню (как на скриншоте, с твоими иконками) === */
-.floating-menu {
+/* === ЕДИНАЯ ВОЗДУШНАЯ ПЛАШКА — 4 иконки в строке === */
+.bottom-bar {
   position: fixed;
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  align-items: center;
-  gap: 16px;
-  z-index: 200;
-  pointer-events: none;
-}
-
-.menu-item,
-.fab-btn {
-  pointer-events: auto;
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  transition: all 0.25s ease;
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+  border-radius: 20px;
+  overflow: hidden;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   background: rgba(58, 58, 58, 0.75);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 200;
 }
 
-.menu-item:hover,
-.menu-item.active {
+.bar-item {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bar-item:last-child {
+  border-right: none;
+}
+
+.bar-item:hover,
+.bar-item.active {
   color: var(--accent-yellow);
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.menu-item i {
+.bar-item i {
   font-size: 1.3rem;
-}
-
-.fab-btn {
-  width: 60px;
-  height: 60px;
-  background: var(--accent-yellow);
-  color: #000;
-  font-size: 1.5rem;
-  border-radius: 50%;
-  box-shadow:
-    0 8px 24px rgba(255, 235, 59, 0.5),
-    inset 2px 2px 6px rgba(200, 180, 0, 0.4),
-    inset -2px -2px 6px rgba(255, 255, 255, 0.4);
-  transform: scale(1);
-  transition: all 0.3s cubic-bezier(0.17, 0.67, 0.88, 1.01);
-}
-
-.fab-btn:active {
-  transform: scale(0.92);
-  box-shadow:
-    0 4px 16px rgba(255, 235, 59, 0.4),
-    inset 1px 1px 4px rgba(200, 180, 0, 0.4),
-    inset -1px -1px 4px rgba(255, 255, 255, 0.4);
 }
 
 /* Адаптация под мобильные */
 @media (max-width: 480px) {
-  .floating-menu {
+  .bottom-bar {
     bottom: 24px;
-    gap: 12px;
+    padding: 0;
   }
-  .menu-item, .fab-btn {
-    width: 56px;
-    height: 56px;
+  .bar-item {
+    padding: 14px 10px;
+    font-size: 0.75rem;
   }
-  .fab-btn { width: 52px; height: 52px; }
+  .bar-item i {
+    font-size: 1.2rem;
+  }
 }
 
-/* Неоморфические кнопки, поля и остальной стиль — без изменений */
+/* Неоморфические кнопки и остальной стиль — без изменений */
 .neu-btn {
   background: var(--card);
   border: none;
@@ -263,7 +241,7 @@ body {
   margin-bottom: 16px;
   color: var(--accent-yellow);
 }
-.bar-item {
+.bar-item-chart {
   margin: 12px 0;
 }
 .bar-label {
@@ -666,28 +644,21 @@ body {
   </div>
 </div>
 
-<!-- Плавающее воздушное меню (твои иконки, стиль как на скриншоте) -->
-<div class="floating-menu" id="floatingMenu">
-  <button class="menu-item active" data-target="main">
+<!-- ЕДИНАЯ ВОЗДУШНАЯ ПЛАШКА — 4 иконки, без + -->
+<div class="bottom-bar" id="bottomBar">
+  <button class="bar-item active" data-target="main">
     <i class="fas fa-home"></i>
     <span>Основное</span>
   </button>
-
-  <button class="fab-btn" onclick="navigateTo('main')">
-    <i class="fas fa-plus"></i>
-  </button>
-
-  <button class="menu-item" data-target="preorders">
+  <button class="bar-item" data-target="preorders">
     <i class="fas fa-clock"></i>
     <span>Предзаказы</span>
   </button>
-
-  <button class="menu-item" data-target="tips">
+  <button class="bar-item" data-target="tips">
     <i class="fas fa-mug-hot"></i>
     <span>Чаевые</span>
   </button>
-
-  <button class="menu-item" data-target="stats">
+  <button class="bar-item" data-target="stats">
     <i class="fas fa-chart-bar"></i>
     <span>Статистика</span>
   </button>
@@ -1350,7 +1321,9 @@ document.getElementById('jsonImportInput').addEventListener('change', function(e
       let importedOrders = [];
       if (content.trim().startsWith('{') || content.trim().startsWith('[')) {
         importedOrders = JSON.parse(content);
-        if (!Array.isArray(importedOrders)) importedOrders = [importedOrders];
+        if (!Array.isArray(importedOrders)) {
+          importedOrders = [importedOrders];
+        }
       } else {
         importedOrders = parseTxtOrders(content);
       }
@@ -1538,7 +1511,7 @@ function renderStats() {
     if (count === 0) continue;
     const percent = (count / maxCount) * 100;
     chartHtml += `
-    <div class="bar-item">
+    <div class="bar-item-chart">
       <div class="bar-label">
         <span>${opNames[key]}</span>
         <span>${count}</span>
@@ -1552,11 +1525,11 @@ function renderStats() {
   document.getElementById('operationsChart').innerHTML = chartHtml || '<p style="color:var(--text-muted); text-align:center;">Нет данных</p>';
 }
 
-// === Переключение через новое воздушное меню ===
-document.querySelectorAll('.menu-item').forEach(item => {
+// === Переключение через новую воздушную плашку (4 иконки) ===
+document.querySelectorAll('.bar-item').forEach(item => {
   item.addEventListener('click', () => {
     // Снять активность со всех
-    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.bar-item').forEach(i => i.classList.remove('active'));
     document.querySelectorAll('.content-block').forEach(c => c.classList.remove('active'));
 
     // Активировать текущий
@@ -1571,19 +1544,6 @@ document.querySelectorAll('.menu-item').forEach(item => {
     else if (target === 'preorders') renderPreorders();
   });
 });
-
-// === Навигация по центральной кнопке "+"
-function navigateTo(tabId) {
-  document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-  document.querySelectorAll('.content-block').forEach(c => c.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-  const item = Array.from(document.querySelectorAll('.menu-item')).find(i => i.dataset.target === tabId);
-  if (item) item.classList.add('active');
-  if (tabId === 'stats') renderStats();
-  else if (tabId === 'main') updateUI();
-  else if (tabId === 'tips') updateTipsUI();
-  else if (tabId === 'preorders') renderPreorders();
-}
 
 // === Инициализация ===
 document.addEventListener('DOMContentLoaded', () => {
