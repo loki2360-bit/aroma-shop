@@ -52,12 +52,12 @@ body {
 
 /* Основной контент */
 .main-content {
-  padding: 72px 16px 90px; /* отступ под шапку + под меню */
+  padding: 72px 16px 90px;
   max-width: 768px;
   margin: 0 auto;
 }
 
-/* === ЕДИНАЯ ВОЗДУШНАЯ ПЛАШКА С МАТОВЫМ СТЕКЛОМ === */
+/* === ЕДИНАЯ МОНОЛИТНАЯ ПЛАШКА БЕЗ РАЗДЕЛИТЕЛЕЙ — МАТОВОЕ СТЕКЛО === */
 .bottom-bar {
   position: fixed;
   bottom: 32px;
@@ -66,21 +66,21 @@ body {
   display: flex;
   border-radius: 20px;
   overflow: hidden;
-  /* ✅ МАТОВОЕ ПОЛУПРОЗРАЧНОЕ СТЕКЛО */
-  background: rgba(58, 58, 58, 0.65); /* полупрозрачный фон */
-  backdrop-filter: blur(14px);          /* эффект размытия фона */
-  -webkit-backdrop-filter: blur(14px);  /* для Safari */
+  /* ✅ Максимальная прозрачность + сильное размытие */
+  background: rgba(30, 30, 30, 0.35); /* почти невидимый фон */
+  backdrop-filter: blur(18px);          /* сильный frosted glass */
+  -webkit-backdrop-filter: blur(18px);
   box-shadow:
-    0 10px 32px rgba(0, 0, 0, 0.35),
-    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+    0 14px 48px rgba(0, 0, 0, 0.45),
+    inset 0 1px 3px rgba(255, 255, 255, 0.04);
   z-index: 200;
-  padding: 0;
+  padding: 0 6px; /* минимальный отступ по краям — не между иконками */
 }
 
 .bar-item {
   flex: 1;
   min-width: 0;
-  padding: 16px 12px;
+  padding: 16px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,19 +89,16 @@ body {
   color: var(--text-muted);
   font-size: 0.8rem;
   cursor: pointer;
-  transition: all 0.25s ease;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   background: transparent;
-}
-
-.bar-item:last-child {
-  border-right: none;
+  /* ❌ НИКАКИХ ГРАНИЦ — ни border, ни margin */
 }
 
 .bar-item:hover,
 .bar-item.active {
   color: var(--accent-yellow);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04); /* едва заметная подсветка */
+  transform: translateY(-1px);
 }
 
 .bar-item i {
@@ -112,10 +109,10 @@ body {
 @media (max-width: 480px) {
   .bottom-bar {
     bottom: 24px;
-    padding: 0;
+    padding: 0 4px;
   }
   .bar-item {
-    padding: 14px 10px;
+    padding: 14px 8px;
     font-size: 0.75rem;
   }
   .bar-item i {
@@ -647,7 +644,7 @@ body {
   </div>
 </div>
 
-<!-- ✅ ЕДИНАЯ НИЖНЯЯ ПЛАШКА С МАТОВЫМ СТЕКЛОМ -->
+<!-- ✅ ЕДИНАЯ МОНОЛИТНАЯ ПЛАШКА — БЕЗ РАЗДЕЛИТЕЛЕЙ, МАТОВОЕ СТЕКЛО -->
 <div class="bottom-bar" id="bottomBar">
   <button class="bar-item active" data-target="main">
     <i class="fas fa-home"></i>
@@ -1123,7 +1120,7 @@ function createMainOrder() {
   orders.push(order);
   saveOrders(orders);
   updateUI();
-  ['orderNum', 'detail', 'qty', 'length', 'width', 'hours'].forEach(id => {
+  ['orderNum','detail','qty', 'length','width','hours'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = (id === 'qty') ? '1' : '';
   });
@@ -1324,9 +1321,7 @@ document.getElementById('jsonImportInput').addEventListener('change', function(e
       let importedOrders = [];
       if (content.trim().startsWith('{') || content.trim().startsWith('[')) {
         importedOrders = JSON.parse(content);
-        if (!Array.isArray(importedOrders)) {
-          importedOrders = [importedOrders];
-        }
+        if (!Array.isArray(importedOrders)) importedOrders = [importedOrders];
       } else {
         importedOrders = parseTxtOrders(content);
       }
@@ -1528,7 +1523,7 @@ function renderStats() {
   document.getElementById('operationsChart').innerHTML = chartHtml || '<p style="color:var(--text-muted); text-align:center;">Нет данных</p>';
 }
 
-// === Переключение через новую воздушную плашку (матовое стекло) ===
+// === Переключение через монолитную плашку (без разделителей) ===
 document.querySelectorAll('.bar-item').forEach(item => {
   item.addEventListener('click', () => {
     // Снять активность со всех
