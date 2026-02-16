@@ -35,88 +35,75 @@ body {
   line-height: 1.4;
 }
 
-/* Шапка */
-.header-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: var(--card);
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
+/* === УДАЛЕНА ШАПКА И ГАМБУРГЕР === */
 
 /* Основной контент */
 .main-content {
-  padding: 72px 16px 90px;
+  padding: 24px 16px 70px; /* отступ под панель */
   max-width: 768px;
   margin: 0 auto;
 }
 
-/* === ЕДИНАЯ МОНОЛИТНАЯ ПЛАШКА БЕЗ РАЗДЕЛИТЕЛЕЙ — МАТОВОЕ СТЕКЛО === */
-.bottom-bar {
+/* === СТЕКЛЯННАЯ ПАНЕЛЬ — ТОНКАЯ, БЕЛАЯ, МАТОВАЯ === */
+.glass-panel {
   position: fixed;
-  bottom: 32px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  border-radius: 20px;
-  overflow: hidden;
-  /* ✅ Максимальная прозрачность + сильное размытие */
-  background: rgba(30, 30, 30, 0.35); /* почти невидимый фон */
-  backdrop-filter: blur(18px);          /* сильный frosted glass */
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow:
-    0 14px 48px rgba(0, 0, 0, 0.45),
-    inset 0 1px 3px rgba(255, 255, 255, 0.04);
+  align-items: center;
+  justify-content: space-around;
+  height: 48px;
+  width: calc(100% - 40px);
+  max-width: 500px;
+  border-radius: 30px;
+  padding: 0 10px;
+  /* ✅ БЕЛАЯ ПОЛУПРОЗРАЧНАЯ МАТОВАЯ ПЛАТФОРМА */
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
   z-index: 200;
-  padding: 0 6px; /* минимальный отступ по краям — не между иконками */
 }
 
-.bar-item {
-  flex: 1;
-  min-width: 0;
-  padding: 16px 10px;
+.panel-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  color: var(--text-muted);
-  font-size: 0.8rem;
+  gap: 2px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.72rem;
+  text-align: center;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  background: transparent;
-  /* ❌ НИКАКИХ ГРАНИЦ — ни border, ни margin */
+  padding: 4px 2px;
+  /* ❌ НИКАКИХ ЭФФЕКТОВ — НИ HOVER, НИ ACTIVE BACKGROUND */
+  user-select: none;
 }
 
-.bar-item:hover,
-.bar-item.active {
-  color: var(--accent-yellow);
-  background: rgba(255, 255, 255, 0.04); /* едва заметная подсветка */
-  transform: translateY(-1px);
+.panel-item i {
+  font-size: 1.2rem;
 }
 
-.bar-item i {
-  font-size: 1.3rem;
+/* Только активный — чисто белый */
+.panel-item.active {
+  color: #ffffff;
 }
 
-/* Адаптация под мобильные */
+/* Адаптация под маленькие экраны */
 @media (max-width: 480px) {
-  .bottom-bar {
-    bottom: 24px;
-    padding: 0 4px;
+  .glass-panel {
+    bottom: 16px;
+    height: 44px;
+    width: calc(100% - 32px);
+    padding: 0 8px;
   }
-  .bar-item {
-    padding: 14px 8px;
-    font-size: 0.75rem;
+  .panel-item {
+    font-size: 0.68rem;
+    gap: 1px;
   }
-  .bar-item i {
-    font-size: 1.2rem;
+  .panel-item i {
+    font-size: 1.15rem;
   }
 }
 
@@ -241,7 +228,7 @@ body {
   margin-bottom: 16px;
   color: var(--accent-yellow);
 }
-.bar-item-chart {
+.bar-item {
   margin: 12px 0;
 }
 .bar-label {
@@ -378,10 +365,6 @@ body {
 </style>
 </head>
 <body>
-<!-- Шапка -->
-<div class="header-bar">
-  <div style="font-weight: 600; font-size: 1.1rem;">Кабинет оператора</div>
-</div>
 
 <!-- Основной контент -->
 <div class="main-content" id="mainContent">
@@ -644,24 +627,24 @@ body {
   </div>
 </div>
 
-<!-- ✅ ЕДИНАЯ МОНОЛИТНАЯ ПЛАШКА — БЕЗ РАЗДЕЛИТЕЛЕЙ, МАТОВОЕ СТЕКЛО -->
-<div class="bottom-bar" id="bottomBar">
-  <button class="bar-item active" data-target="main">
+<!-- ✅ ФИНАЛЬНАЯ СТЕКЛЯННАЯ ПАНЕЛЬ -->
+<div class="glass-panel">
+  <div class="panel-item active" data-target="main">
     <i class="fas fa-home"></i>
     <span>Основное</span>
-  </button>
-  <button class="bar-item" data-target="preorders">
+  </div>
+  <div class="panel-item" data-target="preorders">
     <i class="fas fa-clock"></i>
     <span>Предзаказы</span>
-  </button>
-  <button class="bar-item" data-target="tips">
+  </div>
+  <div class="panel-item" data-target="tips">
     <i class="fas fa-mug-hot"></i>
     <span>Чаевые</span>
-  </button>
-  <button class="bar-item" data-target="stats">
+  </div>
+  <div class="panel-item" data-target="stats">
     <i class="fas fa-chart-bar"></i>
     <span>Статистика</span>
-  </button>
+  </div>
 </div>
 
 <!-- Модальные окна -->
@@ -1120,7 +1103,7 @@ function createMainOrder() {
   orders.push(order);
   saveOrders(orders);
   updateUI();
-  ['orderNum','detail','qty', 'length','width','hours'].forEach(id => {
+  ['orderNum','detail','qty','length','width','hours'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = (id === 'qty') ? '1' : '';
   });
@@ -1158,7 +1141,7 @@ function createPreorder() {
   savePreorders(preorders);
   alert('✅ Предзаказ сохранён!');
   renderPreorders();
-  ['preOrderNum', 'preDetail', 'preQty', 'preLength', 'preWidth', 'preHours'].forEach(id => {
+  ['preOrderNum','preDetail','preQty','preLength','preWidth','preHours'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = (id === 'preQty') ? '1' : '';
   });
@@ -1321,7 +1304,9 @@ document.getElementById('jsonImportInput').addEventListener('change', function(e
       let importedOrders = [];
       if (content.trim().startsWith('{') || content.trim().startsWith('[')) {
         importedOrders = JSON.parse(content);
-        if (!Array.isArray(importedOrders)) importedOrders = [importedOrders];
+        if (!Array.isArray(importedOrders)) {
+          importedOrders = [importedOrders];
+        }
       } else {
         importedOrders = parseTxtOrders(content);
       }
@@ -1509,7 +1494,7 @@ function renderStats() {
     if (count === 0) continue;
     const percent = (count / maxCount) * 100;
     chartHtml += `
-    <div class="bar-item-chart">
+    <div class="bar-item">
       <div class="bar-label">
         <span>${opNames[key]}</span>
         <span>${count}</span>
@@ -1523,19 +1508,15 @@ function renderStats() {
   document.getElementById('operationsChart').innerHTML = chartHtml || '<p style="color:var(--text-muted); text-align:center;">Нет данных</p>';
 }
 
-// === Переключение через монолитную плашку (без разделителей) ===
-document.querySelectorAll('.bar-item').forEach(item => {
+// === Переключение через стеклянную панель ===
+document.querySelectorAll('.panel-item').forEach(item => {
   item.addEventListener('click', () => {
-    // Снять активность со всех
-    document.querySelectorAll('.bar-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.panel-item').forEach(i => i.classList.remove('active'));
     document.querySelectorAll('.content-block').forEach(c => c.classList.remove('active'));
-
-    // Активировать текущий
     item.classList.add('active');
     const target = item.dataset.target;
     document.getElementById(target).classList.add('active');
 
-    // Обновить UI
     if (target === 'stats') renderStats();
     else if (target === 'main') updateUI();
     else if (target === 'tips') updateTipsUI();
