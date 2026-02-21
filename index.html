@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -45,7 +45,6 @@
             justify-content: space-around; 
             padding: 10px 0; 
             z-index: 100; 
-            safe-area-inset-bottom: env(safe-area-inset-bottom);
         }
         .nav-item { 
             font-size: 11px; 
@@ -222,6 +221,14 @@
             padding-top: 20px;
             border-top: 1px solid var(--hint-color);
         }
+        .admin-badge {
+            background: #ff4757;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
     </style>
 </head>
 <body>
@@ -265,12 +272,41 @@
         <p style="font-size: 12px; color: var(--hint-color); margin:0">ID: <span id="user-id-display"></span></p>
     </div>
     
+    <!-- Мои заказы (видны всем) -->
     <div class="admin-section">
-        <h3>🔧 Панель админа</h3>
-        <input type="password" id="admin-pass" placeholder="Пароль админа">
+        <h3>📦 Мои заказы</h3>
+        <button class="main-btn" style="background-color: #3390ec;" onclick="loadMyOrders()">Обновить</button>
+        <div id="my-orders-list" style="margin-top: 15px;"></div>
+    </div>
+    
+    <!-- Кнопка входа для админа -->
+    <div class="admin-section" style="text-align: center; padding: 20px;">
+        <button id="admin-login-btn" class="main-btn" style="background-color: #a4b0be; width: auto; padding: 12px 30px;" onclick="showAdminLogin()">🔐 Вход для админа</button>
+    </div>
+    
+    <!-- Скрытая админ-панель -->
+    <div id="admin-panel" class="admin-section" style="display: none;">
+        <h3>🔧 Панель админа <span class="admin-badge">ADMIN</span></h3>
+        <p style="font-size: 12px; color: var(--hint-color);">Управление балансом пользователей</p>
+        
         <input type="text" id="admin-user-id" placeholder="ID пользователя">
         <input type="number" id="admin-points-amount" placeholder="Сумма (+ начислить, - списать)">
         <button class="main-btn" style="background-color: #ff4757;" onclick="adminAction()">Изменить баланс</button>
+        
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--hint-color);">
+        
+        <h3>📋 Все заказы магазина</h3>
+        <button class="main-btn" style="background-color: #2ed573;" onclick="loadAllOrders()">Обновить список</button>
+        <div id="all-orders-list" style="margin-top: 15px;"></div>
+        
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--hint-color);">
+        
+        <h3>⚙️ Настройки уведомлений</h3>
+        <input type="text" id="bot-token" placeholder="Telegram Bot Token">
+        <input type="text" id="seller-chat-id" placeholder="Chat ID продавца">
+        <button class="main-btn" style="background-color: #3390ec;" onclick="saveNotificationSettings()">Сохранить</button>
+        
+        <button class="main-btn" style="background-color: #a4b0be; margin-top: 20px;" onclick="hideAdminPanel()">🔒 Выйти из админки</button>
     </div>
 </div>
 
@@ -293,13 +329,15 @@
 
 <script>
     // ========== КОНФИГУРАЦИЯ ==========
-    // ⚠️ ВСТАВЬТЕ СЮДА ВАШИ ДАННЫЕ SUPABASE
+    // ⚠️ ВСТАВЬТЕ СЮДА ВАШИ ДАННЫЕ
     const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppdGRla2VyZmpvY2J1bG1mdXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxODA0ODksImV4cCI6MjA4NDc1NjQ4OX0.PHET6UIg-PqspgeHUQMATXmYV7tBV7UhH6u27oacPM8';
-    const ADMIN_PASS = '1234';
+    const ADMIN_PASS = '1234'; // Измените пароль!
+    const ADMIN_SESSION_KEY = 'admin_authenticated';
     
     // ========== ИНИЦИАЛИЗАЦИЯ SUPABASE ==========
     let supabaseClient = null;
+    let isSupabaseReady = false;
     
     function initSupabase() {
         if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_KEY === 'YOUR_SUPABASE_KEY') {
@@ -322,7 +360,7 @@
         }
     }
     
-    const isSupabaseReady = initSupabase();
+    isSupabaseReady = initSupabase();
 
     // ========== TELEGRAM WEBAPP ==========
     let tg = window.Telegram.WebApp;
@@ -335,6 +373,7 @@
     let userId = tg.initDataUnsafe?.user?.id || 99999;
     let userName = tg.initDataUnsafe?.user?.first_name || 'Гость';
     let userUsername = tg.initDataUnsafe?.user?.username || 'unknown';
+    let isAdminAuthenticated = false;
 
     document.getElementById('user-name').innerText = userName;
     document.getElementById('user-id-display').innerText = userId;
@@ -356,10 +395,12 @@
         showLoader(true);
         
         try {
+            // Проверка сессии админа
+            checkAdminSession();
+            
             if (isSupabaseReady) {
                 await loadUserBalance();
             } else {
-                // Демо-режим с localStorage
                 const savedPoints = localStorage.getItem('userPoints_' + userId);
                 userPoints = savedPoints ? parseInt(savedPoints) : 0;
             }
@@ -374,6 +415,43 @@
             showError('⚠️ Ошибка загрузки: ' + e.message);
             showLoader(false);
         }
+    }
+
+    // ========== АДМИН ПАНЕЛЬ ==========
+    function checkAdminSession() {
+        const isAuth = localStorage.getItem(ADMIN_SESSION_KEY);
+        if (isAuth === 'true') {
+            isAdminAuthenticated = true;
+            showAdminPanel();
+        }
+    }
+
+    function showAdminLogin() {
+        const pass = prompt('🔐 Введите пароль админа:');
+        
+        if (pass === null) return;
+        
+        if (pass === ADMIN_PASS) {
+            isAdminAuthenticated = true;
+            localStorage.setItem(ADMIN_SESSION_KEY, 'true');
+            showAdminPanel();
+            alert('✅ Вход выполнен успешно!');
+        } else {
+            alert('❌ Неверный пароль!');
+        }
+    }
+
+    function showAdminPanel() {
+        document.getElementById('admin-panel').style.display = 'block';
+        document.getElementById('admin-login-btn').style.display = 'none';
+        loadAllOrders();
+    }
+
+    function hideAdminPanel() {
+        document.getElementById('admin-panel').style.display = 'none';
+        document.getElementById('admin-login-btn').style.display = 'block';
+        isAdminAuthenticated = false;
+        localStorage.removeItem(ADMIN_SESSION_KEY);
     }
 
     // ========== РАБОТА С БАЗОЙ ДАННЫХ ==========
@@ -427,9 +505,9 @@
 
     async function createOrder(totalRaw, pointsUsed) {
         if (!supabaseClient) {
-            // Сохраняем заказ в localStorage для демо
             const orders = JSON.parse(localStorage.getItem('orders_' + userId) || '[]');
             orders.push({
+                id: Date.now(),
                 date: new Date().toISOString(),
                 items: cart.map(i => i.name).join(', '),
                 total: totalRaw,
@@ -489,21 +567,26 @@
         showLoader(true);
         
         try {
-            // Создаем заказ
             const orderSuccess = await createOrder(totalRaw, pointsUsed);
             if (!orderSuccess) throw new Error('Не удалось создать заказ');
 
-            // Начисляем баллы (10% от суммы)
             const pointsEarned = Math.floor(totalRaw * 0.1);
             const newBalance = userPoints - pointsUsed + pointsEarned;
 
-            // Сохраняем новый баланс
             const saveSuccess = await saveUserBalance(newBalance);
             if (!saveSuccess) throw new Error('Не удалось сохранить баланс');
 
             userPoints = newBalance;
             
-            // Очищаем корзину
+            // Отправка уведомления продавцу
+            await sendOrderNotification({
+                username: userUsername,
+                user_id: userId,
+                items: cart.map(i => i.name).join(', '),
+                total_amount: totalRaw,
+                points_used: pointsUsed
+            });
+            
             cart = [];
             updateBadge();
             renderCart();
@@ -520,16 +603,17 @@
         }
     }
 
-    // ========== АДМИН ПАНЕЛЬ ==========
+    // ========== АДМИН ДЕЙСТВИЯ ==========
     async function adminAction() {
-        const pass = document.getElementById('admin-pass').value;
+        if (!isAdminAuthenticated) {
+            alert('❌ Требуется авторизация админа');
+            showAdminLogin();
+            return;
+        }
+        
         const targetId = document.getElementById('admin-user-id').value;
         const amount = parseInt(document.getElementById('admin-points-amount').value);
 
-        if (pass !== ADMIN_PASS) {
-            alert('❌ Неверный пароль админа');
-            return;
-        }
         if (!targetId || isNaN(amount)) {
             alert('⚠️ Заполните ID пользователя и сумму');
             return;
@@ -539,7 +623,6 @@
         
         try {
             if (!supabaseClient) {
-                // Демо-режим
                 alert('ℹ️ В демо-режиме изменение баланса других пользователей недоступно');
                 showLoader(false);
                 return;
@@ -579,6 +662,134 @@
             alert('❌ Ошибка: ' + e.message);
         } finally {
             showLoader(false);
+        }
+    }
+
+    // ========== ЗАГРУЗКА ЗАКАЗОВ ==========
+    async function loadMyOrders() {
+        const container = document.getElementById('my-orders-list');
+        container.innerHTML = '<p style="text-align:center">Загрузка...</p>';
+        
+        try {
+            if (!supabaseClient) {
+                const orders = JSON.parse(localStorage.getItem('orders_' + userId) || '[]');
+                renderOrdersList(orders, container);
+                return;
+            }
+            
+            let {  orders } = await supabaseClient
+                .from('orders')
+                .select('*')
+                .eq('user_id', userId)
+                .order('created_at', { ascending: false });
+            
+            renderOrdersList(orders, container);
+        } catch (e) {
+            container.innerHTML = '<p style="color:red">Ошибка: ' + e.message + '</p>';
+        }
+    }
+
+    async function loadAllOrders() {
+        if (!isAdminAuthenticated) {
+            alert('❌ Требуется авторизация админа');
+            showAdminLogin();
+            return;
+        }
+        
+        const container = document.getElementById('all-orders-list');
+        container.innerHTML = '<p style="text-align:center">Загрузка...</p>';
+        
+        try {
+            if (!supabaseClient) {
+                container.innerHTML = '<p style="text-align:center; color:var(--hint-color)">В демо-режиме недоступно</p>';
+                return;
+            }
+            
+            let {  orders } = await supabaseClient
+                .from('orders')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(50);
+            
+            renderOrdersList(orders, container);
+        } catch (e) {
+            container.innerHTML = '<p style="color:red">Ошибка: ' + e.message + '</p>';
+        }
+    }
+
+    function renderOrdersList(orders, container) {
+        if (!orders || orders.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:var(--hint-color)">Заказов нет</p>';
+            return;
+        }
+        
+        container.innerHTML = orders.map(order => `
+            <div style="background:var(--secondary-bg); padding:12px; border-radius:8px; margin-bottom:10px; font-size:13px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <strong>📦 #${order.id}</strong>
+                    <span style="color:var(--hint-color)">${new Date(order.created_at).toLocaleString('ru-RU')}</span>
+                </div>
+                <div>👤 ${order.username}</div>
+                <div>📋 ${order.items}</div>
+                <div style="display:flex; justify-content:space-between; margin-top:8px;">
+                    <span>💰 ${order.total_amount} ₽</span>
+                    <span>🎁 ${order.points_used} бал.</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ========== УВЕДОМЛЕНИЯ ==========
+    function saveNotificationSettings() {
+        const botToken = document.getElementById('bot-token').value;
+        const chatId = document.getElementById('seller-chat-id').value;
+        
+        if (botToken && chatId) {
+            localStorage.setItem('telegram_bot_token', botToken);
+            localStorage.setItem('seller_chat_id', chatId);
+            alert('✅ Настройки сохранены!');
+        } else {
+            alert('⚠️ Заполните все поля');
+        }
+    }
+
+    async function sendOrderNotification(orderData) {
+        const botToken = localStorage.getItem('telegram_bot_token');
+        const chatId = localStorage.getItem('seller_chat_id');
+        
+        if (!botToken || !chatId) {
+            console.warn('⚠️ Telegram уведомления не настроены');
+            return;
+        }
+        
+        const message = `
+🛒 <b>НОВЫЙ ЗАКАЗ!</b>
+
+👤 <b>Клиент:</b> ${orderData.username}
+🆔 <b>ID:</b> ${orderData.user_id}
+
+📋 <b>Товары:</b>
+${orderData.items}
+
+💰 <b>Сумма:</b> ${orderData.total_amount} ₽
+🎁 <b>Списано баллов:</b> ${orderData.points_used}
+
+📅 <b>Время:</b> ${new Date().toLocaleString('ru-RU')}
+        `.trim();
+        
+        try {
+            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            });
+            console.log('✅ Уведомление отправлено');
+        } catch (e) {
+            console.error('❌ Ошибка отправки уведомления:', e);
         }
     }
 
