@@ -1,74 +1,382 @@
+ <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AromaShop - Эфирные масла</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #ffffff);
+            --text-color: var(--tg-theme-text-color, #000000);
+            --hint-color: var(--tg-theme-hint-color, #999999);
+            --button-color: var(--tg-theme-button-color, #3390ec);
+            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
+            --secondary-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
+        }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            margin: 0; 
+            padding: 0;
+            padding-bottom: 80px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .error-message {
+            color: #ff4757;
+            padding: 15px;
+            text-align: center;
+            display: none;
+            background: #ffeaa7;
+            margin: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .nav { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            background: var(--bg-color); 
+            border-top: 1px solid var(--hint-color); 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 10px 0; 
+            z-index: 100; 
+            safe-area-inset-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item { 
+            font-size: 11px; 
+            text-align: center; 
+            color: var(--hint-color); 
+            cursor: pointer; 
+            flex: 1;
+        }
+        .nav-item.active { 
+            color: var(--button-color); 
+            font-weight: bold; 
+        }
+        .nav-icon { 
+            font-size: 22px; 
+            display: block; 
+            margin-bottom: 3px; 
+        }
+        .page { 
+            display: none; 
+            padding: 15px; 
+        }
+        .page.active { 
+            display: block; 
+        }
+        h2 { margin-top: 0; font-size: 22px; }
+        .product-card { 
+            display: flex; 
+            background: var(--secondary-bg); 
+            border-radius: 12px; 
+            padding: 12px; 
+            margin-bottom: 12px; 
+            align-items: center; 
+        }
+        .product-img { 
+            width: 70px; 
+            height: 70px; 
+            background: #ddd; 
+            border-radius: 10px; 
+            margin-right: 15px; 
+            object-fit: cover; 
+        }
+        .product-info { 
+            flex: 1; 
+        }
+        .product-title { 
+            font-weight: bold; 
+            font-size: 16px; 
+            margin-bottom: 4px; 
+        }
+        .product-desc { 
+            font-size: 12px; 
+            color: var(--hint-color); 
+            margin-bottom: 6px; 
+        }
+        .product-price { 
+            font-weight: bold; 
+            color: var(--button-color); 
+            font-size: 16px;
+        }
+        .add-btn { 
+            background: var(--button-color); 
+            color: var(--button-text-color); 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            font-size: 13px; 
+            cursor: pointer; 
+            font-weight: 500;
+        }
+        .add-btn:active { opacity: 0.8; }
+        .cart-item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 12px 0; 
+            border-bottom: 1px solid var(--secondary-bg); 
+        }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 10px; 
+            border: 1px solid var(--hint-color); 
+            border-radius: 10px; 
+            background: var(--secondary-bg); 
+            color: var(--text-color); 
+            font-size: 14px;
+        }
+        input:focus { outline: 2px solid var(--button-color); border-color: transparent; }
+        .main-btn { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--button-color); 
+            color: var(--button-text-color); 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-top: 15px; 
+            cursor: pointer; 
+        }
+        .main-btn:active { opacity: 0.8; }
+        .hidden { display: none; }
+        .badge { 
+            background: #ff4757; 
+            color: white; 
+            border-radius: 50%; 
+            padding: 3px 7px; 
+            font-size: 11px; 
+            position: absolute; 
+            top: -5px; 
+            right: 10px; 
+            font-weight: bold;
+        }
+        .nav-item { position: relative; }
+        
+        #loader { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(255,255,255,0.95); 
+            display: none;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            z-index: 200; 
+        }
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--secondary-bg);
+            border-top: 4px solid var(--button-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loader-text {
+            margin-top: 15px;
+            font-size: 15px;
+            color: var(--hint-color);
+        }
+        
+        .profile-card {
+            background: var(--secondary-bg); 
+            padding: 20px; 
+            border-radius: 12px; 
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .points-display {
+            font-size: 36px;
+            color: var(--button-color);
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 13px;
+            margin: 10px 0;
+        }
+        .checkbox-label input {
+            width: auto;
+            margin: 0 8px;
+        }
+        .total-row {
+            text-align: right;
+            font-size: 16px;
+            margin: 15px 0;
+        }
+        .admin-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--hint-color);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Загрузка...</div>
+</div>
+
+<!-- Error Box -->
+<div id="error-box" class="error-message"></div>
+
+<!-- КАТАЛОГ -->
+<div id="page-catalog" class="page active">
+    <h2>🌿 Эфирные масла</h2>
+    <div id="products-list"></div>
+</div>
+
+<!-- КОРЗИНА -->
+<div id="page-cart" class="page">
+    <h2>🛒 Корзина</h2>
+    <div id="cart-items"></div>
+    <div class="total-row">
+        <p>Итого: <strong id="cart-total">0</strong> ₽</p>
+        <p>Ваши баллы: <strong id="cart-points" style="color:var(--button-color)">0</strong></p>
+        <label class="checkbox-label">
+            <input type="checkbox" id="use-points" onchange="renderCart()"> 
+            Использовать баллы (1 балл = 1₽)
+        </label>
+    </div>
+    <button class="main-btn" onclick="checkout()">Оформить заказ</button>
+</div>
+
+<!-- ПРОФИЛЬ -->
+<div id="page-profile" class="page">
+    <h2>👤 Личный кабинет</h2>
+    <div class="profile-card">
+        <h3 id="user-name" style="margin:0">Гость</h3>
+        <div class="points-display"><span id="profile-points">0</span> баллов</div>
+        <p style="font-size: 12px; color: var(--hint-color); margin:0">ID: <span id="user-id-display"></span></p>
+    </div>
+    
+    <div class="admin-section">
+        <h3>🔧 Панель админа</h3>
+        <input type="password" id="admin-pass" placeholder="Пароль админа">
+        <input type="text" id="admin-user-id" placeholder="ID пользователя">
+        <input type="number" id="admin-points-amount" placeholder="Сумма (+ начислить, - списать)">
+        <button class="main-btn" style="background-color: #ff4757;" onclick="adminAction()">Изменить баланс</button>
+    </div>
+</div>
+
+<!-- НАВИГАЦИЯ -->
+<div class="nav">
+    <div class="nav-item active" onclick="switchPage('catalog')">
+        <span class="nav-icon">🌿</span>
+        Каталог
+    </div>
+    <div class="nav-item" onclick="switchPage('cart')">
+        <span class="nav-icon">🛒</span>
+        Корзина
+        <span id="cart-badge" class="badge hidden">0</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('profile')">
+        <span class="nav-icon">👤</span>
+        Профиль
+    </div>
+</div>
+
 <script>
     // ========== КОНФИГУРАЦИЯ ==========
-    const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co'; // ВСТАВЬТЕ ССЫЛКУ
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppdGRla2VyZmpvY2J1bG1mdXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxODA0ODksImV4cCI6MjA4NDc1NjQ4OX0.PHET6UIg-PqspgeHUQMATXmYV7tBV7UhH6u27oacPM8'; // ВСТАВЬТЕ КЛЮЧ
+    // ⚠️ ВСТАВЬТЕ СЮДА ВАШИ ДАННЫЕ SUPABASE
+    const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppdGRla2VyZmpvY2J1bG1mdXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxODA0ODksImV4cCI6MjA4NDc1NjQ4OX0.PHET6UIg-PqspgeHUQMATXmYV7tBV7UhH6u27oacPM8';
     const ADMIN_PASS = '1234';
     
-    // Проверка конфигурации
-    if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_KEY === 'YOUR_SUPABASE_KEY') {
-        console.error('⚠️ Не настроены Supabase URL и KEY!');
-        alert('⚠️ Приложение не настроено! Нужно вставить Supabase URL и KEY в код');
-    }
-
-    // Инициализация Supabase
-    let supabaseClient;
-    try {
-        if (window.supabase) {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log('✅ Supabase подключен');
-        } else {
-            throw new Error('Supabase CDN не загрузился');
+    // ========== ИНИЦИАЛИЗАЦИЯ SUPABASE ==========
+    let supabaseClient = null;
+    
+    function initSupabase() {
+        if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_KEY === 'YOUR_SUPABASE_KEY') {
+            console.warn('⚠️ Supabase не настроен! Работаем в демо-режиме');
+            return false;
         }
-    } catch (e) {
-        console.error('❌ Ошибка Supabase:', e);
-        alert('❌ Ошибка подключения к базе данных: ' + e.message);
+        
+        try {
+            if (typeof window.supabase !== 'undefined') {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                console.log('✅ Supabase подключен');
+                return true;
+            } else {
+                console.error('❌ Supabase CDN не загрузился');
+                return false;
+            }
+        } catch (e) {
+            console.error('❌ Ошибка Supabase:', e);
+            return false;
+        }
     }
+    
+    const isSupabaseReady = initSupabase();
 
-    // Telegram WebApp
+    // ========== TELEGRAM WEBAPP ==========
     let tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.ready();
+    
+    // ========== ДАННЫЕ ПРИЛОЖЕНИЯ ==========
     let cart = [];
     let userPoints = 0;
     let userId = tg.initDataUnsafe?.user?.id || 99999;
     let userName = tg.initDataUnsafe?.user?.first_name || 'Гость';
     let userUsername = tg.initDataUnsafe?.user?.username || 'unknown';
 
-    // Товары
-    const products = [
-        { id: 1, name: 'Лаванда', price: 450, desc: 'Успокаивающее, 10мл', img: 'https://via.placeholder.com/60/9090ff/ffffff?text=Lav' },
-        { id: 2, name: 'Чайное дерево', price: 390, desc: 'Антисептик, 10мл', img: 'https://via.placeholder.com/60/90ff90/ffffff?text=Tea' },
-        { id: 3, name: 'Гидролат Розы', price: 600, desc: 'Увлажнение, 100мл', img: 'https://via.placeholder.com/60/ff9090/ffffff?text=Rose' },
-        { id: 4, name: 'Апельсин', price: 300, desc: 'Тонус, 10мл', img: 'https://via.placeholder.com/60/ffaa00/ffffff?text=Ora' },
-    ];
-
-    // Инициализация
-    tg.expand();
-    tg.ready();
-    
     document.getElementById('user-name').innerText = userName;
     document.getElementById('user-id-display').innerText = userId;
 
-    // Запуск приложения
+    // ========== ТОВАРЫ ==========
+    const products = [
+        { id: 1, name: 'Лаванда', price: 450, desc: 'Успокаивающее, 10мл', img: 'https://via.placeholder.com/70/9090ff/ffffff?text=Lav' },
+        { id: 2, name: 'Чайное дерево', price: 390, desc: 'Антисептик, 10мл', img: 'https://via.placeholder.com/70/90ff90/ffffff?text=Tea' },
+        { id: 3, name: 'Гидролат Розы', price: 600, desc: 'Увлажнение, 100мл', img: 'https://via.placeholder.com/70/ff9090/ffffff?text=Rose' },
+        { id: 4, name: 'Апельсин', price: 300, desc: 'Тонус, 10мл', img: 'https://via.placeholder.com/70/ffaa00/ffffff?text=Ora' },
+        { id: 5, name: 'Мята', price: 350, desc: 'Освежающее, 10мл', img: 'https://via.placeholder.com/70/90ffcc/ffffff?text=Mint' },
+        { id: 6, name: 'Эвкалипт', price: 380, desc: 'Для дыхания, 10мл', img: 'https://via.placeholder.com/70/ccff90/ffffff?text=Euc' },
+    ];
+
+    // ========== ЗАПУСК ПРИЛОЖЕНИЯ ==========
     initApp();
 
     async function initApp() {
+        showLoader(true);
+        
         try {
-            if (supabaseClient) {
+            if (isSupabaseReady) {
                 await loadUserBalance();
             } else {
-                console.warn('Supabase не доступен, работаем без базы');
-                userPoints = 0;
+                // Демо-режим с localStorage
+                const savedPoints = localStorage.getItem('userPoints_' + userId);
+                userPoints = savedPoints ? parseInt(savedPoints) : 0;
             }
+            
             renderCatalog();
             updatePointsUI();
-            document.getElementById('loader').style.display = 'none';
+            updateBadge();
+            
+            showLoader(false);
         } catch (e) {
             console.error('Ошибка инициализации:', e);
-            alert('❌ Ошибка загрузки приложения: ' + e.message);
-            document.getElementById('loader').style.display = 'none';
+            showError('⚠️ Ошибка загрузки: ' + e.message);
+            showLoader(false);
         }
     }
 
-    // Загрузка баланса
+    // ========== РАБОТА С БАЗОЙ ДАННЫХ ==========
     async function loadUserBalance() {
         if (!supabaseClient) return;
         
@@ -80,7 +388,6 @@
                 .single();
 
             if (error || !user) {
-                // Создаем нового пользователя
                 await supabaseClient.from('users').insert([{ 
                     id: userId, 
                     username: userUsername, 
@@ -90,14 +397,66 @@
             } else {
                 userPoints = user.balance;
             }
-            console.log('✅ Баланс загружен:', userPoints);
+            
+            console.log('✅ Баланс:', userPoints);
         } catch (e) {
             console.error('❌ Ошибка загрузки баланса:', e);
-            alert('⚠️ Не удалось загрузить баланс');
+            showError('⚠️ Не удалось загрузить баланс');
         }
     }
 
-    // Оформление заказа
+    async function saveUserBalance(newBalance) {
+        if (!supabaseClient) {
+            localStorage.setItem('userPoints_' + userId, newBalance);
+            return true;
+        }
+        
+        try {
+            const { error } = await supabaseClient
+                .from('users')
+                .update({ balance: newBalance })
+                .eq('id', userId);
+            
+            if (error) throw error;
+            return true;
+        } catch (e) {
+            console.error('❌ Ошибка сохранения:', e);
+            return false;
+        }
+    }
+
+    async function createOrder(totalRaw, pointsUsed) {
+        if (!supabaseClient) {
+            // Сохраняем заказ в localStorage для демо
+            const orders = JSON.parse(localStorage.getItem('orders_' + userId) || '[]');
+            orders.push({
+                date: new Date().toISOString(),
+                items: cart.map(i => i.name).join(', '),
+                total: totalRaw,
+                pointsUsed: pointsUsed
+            });
+            localStorage.setItem('orders_' + userId, JSON.stringify(orders));
+            return true;
+        }
+        
+        try {
+            const { error } = await supabaseClient.from('orders').insert([{
+                user_id: userId,
+                username: userUsername,
+                items: cart.map(i => i.name).join(', '),
+                total_amount: totalRaw,
+                points_used: pointsUsed
+            }]);
+            
+            if (error) throw error;
+            return true;
+        } catch (e) {
+            console.error('❌ Ошибка создания заказа:', e);
+            return false;
+        }
+    }
+
+    // ========== ОФОРМЛЕНИЕ ЗАКАЗА ==========
     async function checkout() {
         if (cart.length === 0) {
             alert('🛒 Корзина пуста!');
@@ -120,61 +479,48 @@
         }
 
         const confirmMsg = `📦 Оформление заказа\n\n` +
-                          `💰 Сумма: ${finalPrice} ₽\n` +
-                          `🎁 Использовать баллов: ${pointsUsed}\n\n` +
+                          `💰 К оплате: ${finalPrice} ₽\n` +
+                          `🎁 Списано баллов: ${pointsUsed}\n` +
+                          `📋 Товаров: ${cart.length}\n\n` +
                           `Продолжить?`;
         
-        if (confirm(confirmMsg)) {
-            // Показываем loader
-            document.getElementById('loader').style.display = 'flex';
-            document.querySelector('.loader-text').innerText = 'Обработка заказа...';
+        if (!confirm(confirmMsg)) return;
+        
+        showLoader(true);
+        
+        try {
+            // Создаем заказ
+            const orderSuccess = await createOrder(totalRaw, pointsUsed);
+            if (!orderSuccess) throw new Error('Не удалось создать заказ');
+
+            // Начисляем баллы (10% от суммы)
+            const pointsEarned = Math.floor(totalRaw * 0.1);
+            const newBalance = userPoints - pointsUsed + pointsEarned;
+
+            // Сохраняем новый баланс
+            const saveSuccess = await saveUserBalance(newBalance);
+            if (!saveSuccess) throw new Error('Не удалось сохранить баланс');
+
+            userPoints = newBalance;
             
-            try {
-                if (!supabaseClient) throw new Error('База данных не подключена');
-                
-                // Создаем заказ
-                const { error: orderError } = await supabaseClient.from('orders').insert([{
-                    user_id: userId,
-                    username: userUsername,
-                    items: cart.map(i => i.name).join(', '),
-                    total_amount: totalRaw,
-                    points_used: pointsUsed
-                }]);
-
-                if (orderError) throw orderError;
-
-                // Обновляем баланс
-                const pointsEarned = Math.floor(totalRaw * 0.1);
-                const newBalance = userPoints - pointsUsed + pointsEarned;
-
-                const { error: updateError } = await supabaseClient
-                    .from('users')
-                    .update({ balance: newBalance })
-                    .eq('id', userId);
-
-                if (updateError) throw updateError;
-
-                userPoints = newBalance;
-                cart = [];
-                updateBadge();
-                renderCart();
-                updatePointsUI();
-                
-                alert('✅ Заказ успешно оформлен!\n\nНачислено баллов: ' + pointsEarned + '\nВаш новый баланс: ' + newBalance);
-                switchPage('catalog');
-                
-            } catch (e) {
-                console.error(e);
-                alert('❌ Ошибка при оформлении: ' + e.message);
-            } finally {
-                // Скрываем loader
-                document.getElementById('loader').style.display = 'none';
-                document.querySelector('.loader-text').innerText = 'Загрузка...';
-            }
+            // Очищаем корзину
+            cart = [];
+            updateBadge();
+            renderCart();
+            updatePointsUI();
+            
+            alert(`✅ Заказ оформлен!\n\n🎁 Начислено баллов: ${pointsEarned}\n💎 Ваш баланс: ${newBalance}`);
+            switchPage('catalog');
+            
+        } catch (e) {
+            console.error(e);
+            alert('❌ Ошибка: ' + e.message);
+        } finally {
+            showLoader(false);
         }
     }
 
-    // Админка
+    // ========== АДМИН ПАНЕЛЬ ==========
     async function adminAction() {
         const pass = document.getElementById('admin-pass').value;
         const targetId = document.getElementById('admin-user-id').value;
@@ -185,16 +531,19 @@
             return;
         }
         if (!targetId || isNaN(amount)) {
-            alert('⚠️ Заполните все поля');
+            alert('⚠️ Заполните ID пользователя и сумму');
             return;
         }
 
-        // Показываем loader
-        document.getElementById('loader').style.display = 'flex';
-        document.querySelector('.loader-text').innerText = 'Обработка...';
+        showLoader(true);
         
         try {
-            if (!supabaseClient) throw new Error('База данных не подключена');
+            if (!supabaseClient) {
+                // Демо-режим
+                alert('ℹ️ В демо-режиме изменение баланса других пользователей недоступно');
+                showLoader(false);
+                return;
+            }
             
             let {  userData } = await supabaseClient
                 .from('users')
@@ -219,7 +568,7 @@
                 .update({ balance: newBalance })
                 .eq('id', targetId);
 
-            alert(`✅ Баланс изменен!\n\nПользователь: ${targetId}\nБыло: ${currentBalance}\nСтало: ${newBalance}`);
+            alert(`✅ Баланс изменен!\n\n👤 Пользователь: ${targetId}\n💰 Было: ${currentBalance}\n💰 Стало: ${newBalance}`);
             
             if (targetId == userId) {
                 userPoints = newBalance;
@@ -229,13 +578,25 @@
         } catch (e) {
             alert('❌ Ошибка: ' + e.message);
         } finally {
-            // Скрываем loader
-            document.getElementById('loader').style.display = 'none';
-            document.querySelector('.loader-text').innerText = 'Загрузка...';
+            showLoader(false);
         }
     }
 
-    // Интерфейс
+    // ========== ИНТЕРФЕЙС ==========
+    function showLoader(show) {
+        const loader = document.getElementById('loader');
+        loader.style.display = show ? 'flex' : 'none';
+    }
+
+    function showError(message) {
+        const errorBox = document.getElementById('error-box');
+        errorBox.innerHTML = message;
+        errorBox.style.display = 'block';
+        setTimeout(() => {
+            errorBox.style.display = 'none';
+        }, 8000);
+    }
+
     function updatePointsUI() {
         document.getElementById('profile-points').innerText = userPoints;
         document.getElementById('cart-points').innerText = userPoints;
@@ -245,7 +606,7 @@
         const container = document.getElementById('products-list');
         container.innerHTML = products.map(p => `
             <div class="product-card">
-                <img src="${p.img}" class="product-img">
+                <img src="${p.img}" class="product-img" alt="${p.name}">
                 <div class="product-info">
                     <div class="product-title">${p.name}</div>
                     <div class="product-desc">${p.desc}</div>
@@ -261,10 +622,14 @@
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         
         document.getElementById(`page-${pageId}`).classList.add('active');
-        const icons = {'catalog': 0, 'cart': 1, 'profile': 2};
-        document.querySelectorAll('.nav-item')[icons[pageId]].classList.add('active');
-
-        if(pageId === 'cart') renderCart();
+        
+        const navItems = document.querySelectorAll('.nav-item');
+        if (pageId === 'catalog') navItems[0].classList.add('active');
+        if (pageId === 'cart') {
+            navItems[1].classList.add('active');
+            renderCart();
+        }
+        if (pageId === 'profile') navItems[2].classList.add('active');
     }
 
     function addToCart(id) {
@@ -282,9 +647,10 @@
 
     function renderCart() {
         const container = document.getElementById('cart-items');
+        
         if (cart.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:#999; margin-top:20px">Корзина пуста 😔</p>';
-            document.getElementById('cart-total').innerText = 0;
+            container.innerHTML = '<p style="text-align:center; color:var(--hint-color); margin-top:40px; font-size:16px">🛒 Корзина пуста</p>';
+            document.getElementById('cart-total').innerText = '0';
             return;
         }
 
@@ -294,7 +660,10 @@
             return `
             <div class="cart-item">
                 <span>${item.name}</span>
-                <span>${item.price} ₽ <b style="color:red; cursor:pointer; margin-left:10px" onclick="removeFromCart(${index})">×</b></span>
+                <span>
+                    ${item.price} ₽ 
+                    <b style="color:#ff4757; cursor:pointer; margin-left:10px; font-size:18px;" onclick="removeFromCart(${index})">×</b>
+                </span>
             </div>`;
         }).join('');
 
@@ -305,5 +674,9 @@
         cart.splice(index, 1);
         renderCart();
         updateBadge();
+        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     }
 </script>
+
+</body>
+</html>
