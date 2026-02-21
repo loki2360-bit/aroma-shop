@@ -1,232 +1,3 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AromaShop</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <style>
-        :root {
-            --bg-color: var(--tg-theme-bg-color, #ffffff);
-            --text-color: var(--tg-theme-text-color, #000000);
-            --button-color: var(--tg-theme-button-color, #3390ec);
-            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
-            --secondary-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
-        }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            margin: 0; 
-            padding: 0;
-            padding-bottom: 80px;
-        }
-        .error-message {
-            color: red;
-            padding: 20px;
-            text-align: center;
-            display: none;
-        }
-        .nav { 
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-            background: var(--bg-color); 
-            border-top: 1px solid #ddd; 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 10px 0; 
-            z-index: 100; 
-        }
-        .nav-item { 
-            font-size: 12px; 
-            text-align: center; 
-            color: #999; 
-            cursor: pointer; 
-        }
-        .nav-item.active { 
-            color: var(--button-color); 
-            font-weight: bold; 
-        }
-        .nav-icon { 
-            font-size: 20px; 
-            display: block; 
-            margin-bottom: 2px; 
-        }
-        .page { 
-            display: none; 
-            padding: 15px; 
-        }
-        .page.active { 
-            display: block; 
-        }
-        .product-card { 
-            display: flex; 
-            background: var(--secondary-bg); 
-            border-radius: 12px; 
-            padding: 10px; 
-            margin-bottom: 15px; 
-            align-items: center; 
-        }
-        .product-img { 
-            width: 60px; 
-            height: 60px; 
-            background: #ddd; 
-            border-radius: 8px; 
-            margin-right: 15px; 
-            object-fit: cover; 
-        }
-        .product-info { 
-            flex: 1; 
-        }
-        .product-title { 
-            font-weight: bold; 
-            font-size: 16px; 
-            margin-bottom: 4px; 
-        }
-        .product-desc { 
-            font-size: 12px; 
-            color: #999; 
-            margin-bottom: 6px; 
-        }
-        .product-price { 
-            font-weight: bold; 
-            color: var(--button-color); 
-        }
-        .add-btn { 
-            background: var(--button-color); 
-            color: var(--button-text-color); 
-            border: none; 
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            font-size: 12px; 
-            cursor: pointer; 
-        }
-        .cart-item { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 10px 0; 
-            border-bottom: 1px solid var(--secondary-bg); 
-        }
-        input { 
-            width: 100%; 
-            padding: 10px; 
-            margin-bottom: 10px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            background: var(--secondary-bg); 
-            color: var(--text-color); 
-            box-sizing: border-box; 
-        }
-        .main-btn { 
-            width: 100%; 
-            padding: 15px; 
-            background: var(--button-color); 
-            color: var(--button-text-color); 
-            border: none; 
-            border-radius: 12px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            margin-top: 10px; 
-            cursor: pointer; 
-        }
-        .hidden { 
-            display: none; 
-        }
-        .badge { 
-            background: red; 
-            color: white; 
-            border-radius: 50%; 
-            padding: 2px 6px; 
-            font-size: 10px; 
-            position: absolute; 
-            top: -5px; 
-            right: -5px; 
-        }
-        .nav-item { 
-            position: relative; 
-        }
-        #loader { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(255,255,255,0.95); 
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            z-index: 200; 
-        }
-        .loader-text {
-            margin-top: 20px;
-            font-size: 16px;
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-
-<div id="loader">
-    <div style="font-size: 40px;">⏳</div>
-    <div class="loader-text">Загрузка...</div>
-</div>
-
-<div id="error-box" class="error-message"></div>
-
-<!-- КАТАЛОГ -->
-<div id="page-catalog" class="page">
-    <h2>🌿 Эфирные масла</h2>
-    <div id="products-list"></div>
-</div>
-
-<!-- КОРЗИНА -->
-<div id="page-cart" class="page">
-    <h2>🛒 Корзина</h2>
-    <div id="cart-items"></div>
-    <div style="margin-top: 20px; text-align: right;">
-        <p>Итого: <span id="cart-total">0</span> ₽</p>
-        <p>Ваши баллы: <span id="cart-points" style="color:var(--button-color)">0</span></p>
-        <label style="font-size: 12px; display:flex; align-items:center; justify-content:flex-end;">
-            <input type="checkbox" id="use-points" onchange="renderCart()" style="width:auto; margin:0 5px;"> 
-            Использовать баллы (1 балл = 1₽)
-        </label>
-    </div>
-    <button class="main-btn" onclick="checkout()">Оформить заказ</button>
-</div>
-
-<!-- ПРОФИЛЬ -->
-<div id="page-profile" class="page">
-    <h2>👤 Личный кабинет</h2>
-    <div style="background: var(--secondary-bg); padding: 15px; border-radius: 12px; text-align: center;">
-        <h3 id="user-name">Гость</h3>
-        <h1 style="color: var(--button-color); margin: 10px 0;"><span id="profile-points">0</span> баллов</h1>
-        <p style="font-size: 12px; color: #999;">ID: <span id="user-id-display"></span></p>
-    </div>
-    
-    <h3 style="margin-top: 25px; border-top: 1px solid #ddd; padding-top:15px;">🔧 Панель админа</h3>
-    <input type="password" id="admin-pass" placeholder="Пароль админа (1234)">
-    <input type="text" id="admin-user-id" placeholder="ID пользователя">
-    <input type="number" id="admin-points-amount" placeholder="Сумма (+ или -)">
-    <button class="main-btn" style="background-color: #ff4757;" onclick="adminAction()">Изменить баланс</button>
-</div>
-
-<!-- НАВИГАЦИЯ -->
-<div class="nav">
-    <div class="nav-item active" onclick="switchPage('catalog')">
-        <span class="nav-icon">🌿</span>Каталог
-    </div>
-    <div class="nav-item" onclick="switchPage('cart')">
-        <span class="nav-icon">🛒</span>Корзина
-        <span id="cart-badge" class="badge hidden">0</span>
-    </div>
-    <div class="nav-item" onclick="switchPage('profile')">
-        <span class="nav-icon">👤</span>Профиль
-    </div>
-</div>
-
 <script>
     // ========== КОНФИГУРАЦИЯ ==========
     const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co'; // ВСТАВЬТЕ ССЫЛКУ
@@ -234,9 +5,9 @@
     const ADMIN_PASS = '1234';
     
     // Проверка конфигурации
-    if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_KEY === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZmF4dGRzdWdzdnBrb2xjZGx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODAyMDcsImV4cCI6MjA4NzI1NjIwN30.njaHSLnYhJaz35Da3gHnKibtrH22OElmF1JP6wxuk78') {
+    if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_KEY === 'YOUR_SUPABASE_KEY') {
         console.error('⚠️ Не настроены Supabase URL и KEY!');
-        showError('⚠️ Приложение не настроено!<br>Нужно вставить Supabase URL и KEY в код');
+        alert('⚠️ Приложение не настроено! Нужно вставить Supabase URL и KEY в код');
     }
 
     // Инициализация Supabase
@@ -250,7 +21,7 @@
         }
     } catch (e) {
         console.error('❌ Ошибка Supabase:', e);
-        showError('❌ Ошибка подключения к базе данных:<br>' + e.message);
+        alert('❌ Ошибка подключения к базе данных: ' + e.message);
     }
 
     // Telegram WebApp
@@ -292,18 +63,9 @@
             document.getElementById('loader').style.display = 'none';
         } catch (e) {
             console.error('Ошибка инициализации:', e);
-            showError('❌ Ошибка загрузки приложения:<br>' + e.message);
+            alert('❌ Ошибка загрузки приложения: ' + e.message);
             document.getElementById('loader').style.display = 'none';
         }
-    }
-
-    function showError(message) {
-        const errorBox = document.getElementById('error-box');
-        errorBox.innerHTML = message;
-        errorBox.style.display = 'block';
-        setTimeout(() => {
-            errorBox.style.display = 'none';
-        }, 10000);
     }
 
     // Загрузка баланса
@@ -331,13 +93,16 @@
             console.log('✅ Баланс загружен:', userPoints);
         } catch (e) {
             console.error('❌ Ошибка загрузки баланса:', e);
-            showError('⚠️ Не удалось загрузить баланс');
+            alert('⚠️ Не удалось загрузить баланс');
         }
     }
 
     // Оформление заказа
     async function checkout() {
-        if (cart.length === 0) return alert('Корзина пуста');
+        if (cart.length === 0) {
+            alert('🛒 Корзина пуста!');
+            return;
+        }
         
         const usePoints = document.getElementById('use-points').checked;
         let totalRaw = cart.reduce((sum, item) => sum + item.price, 0);
@@ -354,52 +119,59 @@
             }
         }
 
-        const confirmMsg = `Оплатить ${finalPrice} ₽?\nБудет использовано баллов: ${pointsUsed}`;
+        const confirmMsg = `📦 Оформление заказа\n\n` +
+                          `💰 Сумма: ${finalPrice} ₽\n` +
+                          `🎁 Использовать баллов: ${pointsUsed}\n\n` +
+                          `Продолжить?`;
         
-        tg.showConfirm(confirmMsg, async (confirm) => {
-            if (confirm) {
-                tg.showLoading();
-                try {
-                    if (!supabaseClient) throw new Error('База данных не подключена');
-                    
-                    // Создаем заказ
-                    const { error: orderError } = await supabaseClient.from('orders').insert([{
-                        user_id: userId,
-                        username: userUsername,
-                        items: cart.map(i => i.name).join(', '),
-                        total_amount: totalRaw,
-                        points_used: pointsUsed
-                    }]);
+        if (confirm(confirmMsg)) {
+            // Показываем loader
+            document.getElementById('loader').style.display = 'flex';
+            document.querySelector('.loader-text').innerText = 'Обработка заказа...';
+            
+            try {
+                if (!supabaseClient) throw new Error('База данных не подключена');
+                
+                // Создаем заказ
+                const { error: orderError } = await supabaseClient.from('orders').insert([{
+                    user_id: userId,
+                    username: userUsername,
+                    items: cart.map(i => i.name).join(', '),
+                    total_amount: totalRaw,
+                    points_used: pointsUsed
+                }]);
 
-                    if (orderError) throw orderError;
+                if (orderError) throw orderError;
 
-                    // Обновляем баланс
-                    const pointsEarned = Math.floor(totalRaw * 0.1);
-                    const newBalance = userPoints - pointsUsed + pointsEarned;
+                // Обновляем баланс
+                const pointsEarned = Math.floor(totalRaw * 0.1);
+                const newBalance = userPoints - pointsUsed + pointsEarned;
 
-                    const { error: updateError } = await supabaseClient
-                        .from('users')
-                        .update({ balance: newBalance })
-                        .eq('id', userId);
+                const { error: updateError } = await supabaseClient
+                    .from('users')
+                    .update({ balance: newBalance })
+                    .eq('id', userId);
 
-                    if (updateError) throw updateError;
+                if (updateError) throw updateError;
 
-                    userPoints = newBalance;
-                    cart = [];
-                    updateBadge();
-                    renderCart();
-                    updatePointsUI();
-                    alert('✅ Заказ оформлен!');
-                    switchPage('catalog');
-                    
-                } catch (e) {
-                    console.error(e);
-                    alert('❌ Ошибка: ' + e.message);
-                } finally {
-                    tg.hideLoading();
-                }
+                userPoints = newBalance;
+                cart = [];
+                updateBadge();
+                renderCart();
+                updatePointsUI();
+                
+                alert('✅ Заказ успешно оформлен!\n\nНачислено баллов: ' + pointsEarned + '\nВаш новый баланс: ' + newBalance);
+                switchPage('catalog');
+                
+            } catch (e) {
+                console.error(e);
+                alert('❌ Ошибка при оформлении: ' + e.message);
+            } finally {
+                // Скрываем loader
+                document.getElementById('loader').style.display = 'none';
+                document.querySelector('.loader-text').innerText = 'Загрузка...';
             }
-        });
+        }
     }
 
     // Админка
@@ -408,10 +180,19 @@
         const targetId = document.getElementById('admin-user-id').value;
         const amount = parseInt(document.getElementById('admin-points-amount').value);
 
-        if (pass !== ADMIN_PASS) return alert('Неверный пароль');
-        if (!targetId || isNaN(amount)) return alert('Заполните все поля');
+        if (pass !== ADMIN_PASS) {
+            alert('❌ Неверный пароль админа');
+            return;
+        }
+        if (!targetId || isNaN(amount)) {
+            alert('⚠️ Заполните все поля');
+            return;
+        }
 
-        tg.showLoading();
+        // Показываем loader
+        document.getElementById('loader').style.display = 'flex';
+        document.querySelector('.loader-text').innerText = 'Обработка...';
+        
         try {
             if (!supabaseClient) throw new Error('База данных не подключена');
             
@@ -438,7 +219,7 @@
                 .update({ balance: newBalance })
                 .eq('id', targetId);
 
-            alert(`✅ Баланс изменен!\nБыло: ${currentBalance}\nСтало: ${newBalance}`);
+            alert(`✅ Баланс изменен!\n\nПользователь: ${targetId}\nБыло: ${currentBalance}\nСтало: ${newBalance}`);
             
             if (targetId == userId) {
                 userPoints = newBalance;
@@ -448,7 +229,9 @@
         } catch (e) {
             alert('❌ Ошибка: ' + e.message);
         } finally {
-            tg.hideLoading();
+            // Скрываем loader
+            document.getElementById('loader').style.display = 'none';
+            document.querySelector('.loader-text').innerText = 'Загрузка...';
         }
     }
 
@@ -524,6 +307,3 @@
         updateBadge();
     }
 </script>
-
-</body>
-</html>
