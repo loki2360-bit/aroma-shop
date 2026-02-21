@@ -229,21 +229,21 @@
 
 <script>
     // ========== КОНФИГУРАЦИЯ ==========
-    const SUPABASE_URL = 'https://npfaxtdsugsvpkolcdlx.supabase.co'; // ВСТАВЬТЕ ССЫЛКУ
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZmF4dGRzdWdzdnBrb2xjZGx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODAyMDcsImV4cCI6MjA4NzI1NjIwN30.njaHSLnYhJaz35Da3gHnKibtrH22OElmF1JP6wxuk78'; // ВСТАВЬТЕ КЛЮЧ
+    const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co'; // ВСТАВЬТЕ ССЫЛКУ
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppdGRla2VyZmpvY2J1bG1mdXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxODA0ODksImV4cCI6MjA4NDc1NjQ4OX0.PHET6UIg-PqspgeHUQMATXmYV7tBV7UhH6u27oacPM8'; // ВСТАВЬТЕ КЛЮЧ
     const ADMIN_PASS = '1234';
     
     // Проверка конфигурации
-    if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_KEY === 'YOUR_SUPABASE_KEY') {
+    if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_KEY === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZmF4dGRzdWdzdnBrb2xjZGx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODAyMDcsImV4cCI6MjA4NzI1NjIwN30.njaHSLnYhJaz35Da3gHnKibtrH22OElmF1JP6wxuk78') {
         console.error('⚠️ Не настроены Supabase URL и KEY!');
         showError('⚠️ Приложение не настроено!<br>Нужно вставить Supabase URL и KEY в код');
     }
 
     // Инициализация Supabase
-    let supabase;
+    let supabaseClient;
     try {
         if (window.supabase) {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             console.log('✅ Supabase подключен');
         } else {
             throw new Error('Supabase CDN не загрузился');
@@ -281,7 +281,7 @@
 
     async function initApp() {
         try {
-            if (supabase) {
+            if (supabaseClient) {
                 await loadUserBalance();
             } else {
                 console.warn('Supabase не доступен, работаем без базы');
@@ -308,10 +308,10 @@
 
     // Загрузка баланса
     async function loadUserBalance() {
-        if (!supabase) return;
+        if (!supabaseClient) return;
         
         try {
-            let { data: user, error } = await supabase
+            let {  user, error } = await supabaseClient
                 .from('users')
                 .select('balance')
                 .eq('id', userId)
@@ -319,7 +319,7 @@
 
             if (error || !user) {
                 // Создаем нового пользователя
-                await supabase.from('users').insert([{ 
+                await supabaseClient.from('users').insert([{ 
                     id: userId, 
                     username: userUsername, 
                     balance: 0 
@@ -360,10 +360,10 @@
             if (confirm) {
                 tg.showLoading();
                 try {
-                    if (!supabase) throw new Error('База данных не подключена');
+                    if (!supabaseClient) throw new Error('База данных не подключена');
                     
                     // Создаем заказ
-                    const { error: orderError } = await supabase.from('orders').insert([{
+                    const { error: orderError } = await supabaseClient.from('orders').insert([{
                         user_id: userId,
                         username: userUsername,
                         items: cart.map(i => i.name).join(', '),
@@ -377,7 +377,7 @@
                     const pointsEarned = Math.floor(totalRaw * 0.1);
                     const newBalance = userPoints - pointsUsed + pointsEarned;
 
-                    const { error: updateError } = await supabase
+                    const { error: updateError } = await supabaseClient
                         .from('users')
                         .update({ balance: newBalance })
                         .eq('id', userId);
@@ -413,9 +413,9 @@
 
         tg.showLoading();
         try {
-            if (!supabase) throw new Error('База данных не подключена');
+            if (!supabaseClient) throw new Error('База данных не подключена');
             
-            let { data: userData } = await supabase
+            let {  userData } = await supabaseClient
                 .from('users')
                 .select('balance')
                 .eq('id', targetId)
@@ -424,7 +424,7 @@
             let currentBalance = userData ? userData.balance : 0;
             
             if (!userData) {
-                await supabase.from('users').insert([{ 
+                await supabaseClient.from('users').insert([{ 
                     id: targetId, 
                     username: 'admin_created', 
                     balance: 0 
@@ -433,7 +433,7 @@
 
             const newBalance = currentBalance + amount;
 
-            await supabase
+            await supabaseClient
                 .from('users')
                 .update({ balance: newBalance })
                 .eq('id', targetId);
