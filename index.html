@@ -2,977 +2,412 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AromaShop - Эфирные масла</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор Раскроя (GitHub App)</title>
     <style>
         :root {
-            --bg-color: var(--tg-theme-bg-color, #ffffff);
-            --text-color: var(--tg-theme-text-color, #000000);
-            --hint-color: var(--tg-theme-hint-color, #999999);
-            --button-color: var(--tg-theme-button-color, #3390ec);
-            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
-            --secondary-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text: #1e293b;
         }
-        * { box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            margin: 0; 
-            padding: 0;
-            padding-bottom: 80px;
-        }
-        .error-message {
-            color: #ff4757;
-            padding: 15px;
-            text-align: center;
-            display: none;
-            background: #ffeaa7;
-            margin: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        .nav { 
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-            background: var(--bg-color); 
-            border-top: 1px solid var(--hint-color); 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 10px 0; 
-            z-index: 100; 
-        }
-        .nav-item { 
-            font-size: 11px; 
-            text-align: center; 
-            color: var(--hint-color); 
-            cursor: pointer; 
-            flex: 1;
-        }
-        .nav-item.active { 
-            color: var(--button-color); 
-            font-weight: bold; 
-        }
-        .nav-icon { 
-            font-size: 22px; 
-            display: block; 
-            margin-bottom: 3px; 
-        }
-        .page { 
-            display: none; 
-            padding: 15px; 
-        }
-        .page.active { 
-            display: block; 
-        }
-        h2 { margin-top: 0; font-size: 22px; }
-        .product-card { 
-            display: flex; 
-            background: var(--secondary-bg); 
-            border-radius: 12px; 
-            padding: 12px; 
-            margin-bottom: 12px; 
-            align-items: center; 
-        }
-        .product-img { 
-            width: 70px; 
-            height: 70px; 
-            background: #ddd; 
-            border-radius: 10px; 
-            margin-right: 15px; 
-            object-fit: cover; 
-        }
-        .product-info { 
-            flex: 1; 
-        }
-        .product-title { 
-            font-weight: bold; 
-            font-size: 16px; 
-            margin-bottom: 4px; 
-        }
-        .product-desc { 
-            font-size: 12px; 
-            color: var(--hint-color); 
-            margin-bottom: 6px; 
-        }
-        .product-price { 
-            font-weight: bold; 
-            color: var(--button-color); 
-            font-size: 16px;
-        }
-        .add-btn { 
-            background: var(--button-color); 
-            color: var(--button-text-color); 
-            border: none; 
-            padding: 8px 16px; 
-            border-radius: 8px; 
-            font-size: 13px; 
-            cursor: pointer; 
-            font-weight: 500;
-        }
-        .cart-item { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 12px 0; 
-            border-bottom: 1px solid var(--secondary-bg); 
-        }
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            margin-bottom: 10px; 
-            border: 1px solid var(--hint-color); 
-            border-radius: 10px; 
-            background: var(--secondary-bg); 
-            color: var(--text-color); 
-            font-size: 14px;
-        }
-        .main-btn { 
-            width: 100%; 
-            padding: 16px; 
-            background: var(--button-color); 
-            color: var(--button-text-color); 
-            border: none; 
-            border-radius: 12px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            margin-top: 15px; 
-            cursor: pointer; 
-        }
-        .hidden { display: none; }
-        .badge { 
-            background: #ff4757; 
-            color: white; 
-            border-radius: 50%; 
-            padding: 3px 7px; 
-            font-size: 11px; 
-            position: absolute; 
-            top: -5px; 
-            right: 10px; 
-        }
-        .nav-item { position: relative; }
-        
-        #loader { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(255,255,255,0.95); 
-            display: none;
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            z-index: 200; 
-        }
-        .loader-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--secondary-bg);
-            border-top: 4px solid var(--button-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .profile-card {
-            background: var(--secondary-bg); 
-            padding: 20px; 
-            border-radius: 12px; 
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .points-display {
-            font-size: 36px;
-            color: var(--button-color);
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .checkbox-label {
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: flex-end;
-            font-size: 13px;
-            margin: 10px 0;
         }
-        .checkbox-label input { width: auto; margin: 0 8px; }
-        .total-row { text-align: right; font-size: 16px; margin: 15px 0; }
-        .admin-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--hint-color);
-        }
-        .admin-badge {
-            background: #ff4757;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            margin-left: 8px;
-        }
-        
-        /* Таблица заказов */
-        .orders-table {
+
+        .container {
+            max-width: 1200px;
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 13px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
         }
-        .orders-table th {
-            background: var(--secondary-bg);
-            padding: 10px;
-            text-align: left;
-            font-weight: bold;
-            border-bottom: 2px solid var(--hint-color);
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
         }
-        .orders-table td {
-            padding: 10px;
-            border-bottom: 1px solid var(--secondary-bg);
+
+        .panel {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .orders-table tr:last-child td { border-bottom: none; }
+
+        h1, h2 { margin-top: 0; font-size: 1.25rem; margin-bottom: 1rem; }
         
-        .debug-box {
-            font-size: 12px;
-            color: #3390ec;
-            margin-top: 10px;
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: 500; }
+        input {
+            width: 100%;
             padding: 8px;
-            background: #f0f7ff;
-            border-radius: 6px;
-            display: none;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
         }
+        
+        .row { display: flex; gap: 10px; }
+        .row > * { flex: 1; }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+        button.secondary { background-color: #64748b; margin-top: 5px; }
+        button.danger { background-color: #ef4444; padding: 5px 10px; width: auto; font-size: 0.8rem;}
+
+        /* Parts List */
+        #parts-list {
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .part-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        /* Visualization Area */
+        .canvas-container {
+            overflow: auto;
+            border: 1px solid var(--border);
+            background: #eee;
+            min-height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        canvas {
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Results Summary */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .stat-item { font-size: 0.9rem; }
+        .stat-value { font-weight: bold; font-size: 1.1rem; }
+        .highlight { color: var(--primary); }
+
     </style>
 </head>
 <body>
 
-<div id="loader">
-    <div class="loader-spinner"></div>
-    <div style="margin-top: 15px; color: var(--hint-color);">Загрузка...</div>
-</div>
+    <h1>📐 Калькулятор Раскроя</h1>
 
-<div id="error-box" class="error-message"></div>
-
-<!-- КАТАЛОГ -->
-<div id="page-catalog" class="page active">
-    <h2>🌿 Эфирные масла</h2>
-    <div id="products-list"></div>
-</div>
-
-<!-- КОРЗИНА -->
-<div id="page-cart" class="page">
-    <h2>🛒 Корзина</h2>
-    <div id="cart-items"></div>
-    <div class="total-row">
-        <p>Итого: <strong id="cart-total">0</strong> ₽</p>
-        <p>Ваши баллы: <strong id="cart-points" style="color:var(--button-color)">0</strong></p>
-        <label class="checkbox-label">
-            <input type="checkbox" id="use-points" onchange="renderCart()"> 
-            Использовать баллы (1 балл = 1₽)
-        </label>
-    </div>
-    <button class="main-btn" onclick="checkout()">Оформить заказ</button>
-</div>
-
-<!-- ПРОФИЛЬ -->
-<div id="page-profile" class="page">
-    <h2>👤 Личный кабинет</h2>
-    <div class="profile-card">
-        <h3 id="user-name" style="margin:0">Гость</h3>
-        <div class="points-display"><span id="profile-points">0</span> баллов</div>
-        <p style="font-size: 12px; color: var(--hint-color); margin:0">ID: <span id="user-id-display"></span></p>
-    </div>
-    
-    <!-- Мои заказы -->
-    <div class="admin-section">
-        <h3>📦 Мои заказы</h3>
-        <button class="main-btn" style="background-color: #3390ec;" onclick="loadMyOrders()">🔄 Обновить</button>
-        <div id="my-orders-debug" class="debug-box"></div>
-        <div style="overflow-x: auto;">
-            <table class="orders-table" id="my-orders-table">
-                <thead>
-                    <tr>
-                        <th>№</th>
-                        <th>Дата</th>
-                        <th>Товары</th>
-                        <th>Сумма</th>
-                        <th>Баллы</th>
-                    </tr>
-                </thead>
-                <tbody id="my-orders-body">
-                    <tr><td colspan="5" style="text-align:center; color:var(--hint-color);">Нажмите "Обновить"</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
-    <!-- Вход для админа -->
-    <div class="admin-section" style="text-align: center; padding: 20px;">
-        <button id="admin-login-btn" class="main-btn" style="background-color: #a4b0be; width: auto; padding: 12px 30px;" onclick="showAdminLogin()">🔐 Вход для админа</button>
-    </div>
-    
-    <!-- Админ панель -->
-    <div id="admin-panel" class="admin-section" style="display: none;">
-        <h3>🔧 Панель админа <span class="admin-badge">ADMIN</span></h3>
-        
-        <input type="text" id="admin-user-id" placeholder="ID пользователя">
-        <input type="number" id="admin-points-amount" placeholder="Сумма (+ начислить, - списать)">
-        <button class="main-btn" style="background-color: #ff4757;" onclick="adminAction()">Изменить баланс</button>
-        
-        <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--hint-color);">
-        
-        <h3>📋 Все заказы магазина</h3>
-        <button class="main-btn" style="background-color: #2ed573;" onclick="loadAllOrders()">🔄 Обновить</button>
-        <div id="all-orders-debug" class="debug-box"></div>
-        <div style="overflow-x: auto; margin-top: 15px;">
-            <table class="orders-table" id="all-orders-table">
-                <thead>
-                    <tr>
-                        <th>№</th>
-                        <th>Клиент</th>
-                        <th>Товары</th>
-                        <th>Сумма</th>
-                        <th>Баллы</th>
-                        <th>Время</th>
-                    </tr>
-                </thead>
-                <tbody id="all-orders-body">
-                    <tr><td colspan="6" style="text-align:center; color:var(--hint-color);">Нажмите "Обновить"</td></tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <button class="main-btn" style="background-color: #a4b0be; margin-top: 20px;" onclick="hideAdminPanel()">🔒 Выйти</button>
-    </div>
-</div>
-
-<!-- НАВИГАЦИЯ -->
-<div class="nav">
-    <div class="nav-item active" onclick="switchPage('catalog')">
-        <span class="nav-icon">🌿</span>Каталог
-    </div>
-    <div class="nav-item" onclick="switchPage('cart')">
-        <span class="nav-icon">🛒</span>Корзина
-        <span id="cart-badge" class="badge hidden">0</span>
-    </div>
-    <div class="nav-item" onclick="switchPage('profile')">
-        <span class="nav-icon">👤</span>Профиль
-    </div>
-</div>
-
-<script>
-    // ========== КОНФИГУРАЦИЯ ==========
-    const SUPABASE_URL = 'https://zitdekerfjocbulmfuyo.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppdGRla2VyZmpvY2J1bG1mdXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxODA0ODksImV4cCI6MjA4NDc1NjQ4OX0.PHET6UIg-PqspgeHUQMATXmYV7tBV7UhH6u27oacPM8';
-    const ADMIN_PASS = '1234';
-    const ADMIN_SESSION_KEY = 'admin_authenticated';
-    
-    // ========== SUPABASE ==========
-    let supabaseClient = null;
-    let isSupabaseReady = false;
-    
-    function initSupabase() {
-        if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_KEY === 'YOUR_SUPABASE_KEY') {
-            console.warn('⚠️ Supabase не настроен');
-            return false;
-        }
-        try {
-            if (typeof window.supabase !== 'undefined') {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                console.log('✅ Supabase подключен:', SUPABASE_URL);
-                testConnection();
-                return true;
-            }
-            return false;
-        } catch (e) {
-            console.error('❌ Ошибка Supabase:', e);
-            return false;
-        }
-    }
-    
-    isSupabaseReady = initSupabase();
-
-    async function testConnection() {
-        try {
-            const { count, error } = await supabaseClient
-                .from('orders')
-                .select('*', { count: 'exact', head: true });
-            
-            if (error) {
-                console.error('❌ Ошибка подключения:', error);
-                showDebug('my-orders-debug', '❌ ' + error.message);
-            } else {
-                console.log('✅ Таблица orders доступна');
-                showDebug('my-orders-debug', '✅ База подключена');
-            }
-        } catch (e) {
-            console.error('❌ Тест не прошёл:', e);
-        }
-    }
-
-    // ========== TELEGRAM ==========
-    let tg = window.Telegram.WebApp;
-    tg.expand();
-    tg.ready();
-    
-    // ========== ДАННЫЕ ==========
-    let cart = [];
-    let userPoints = 0;
-    let userId = tg.initDataUnsafe?.user?.id || 99999;
-    let userName = tg.initDataUnsafe?.user?.first_name || 'Гость';
-    let userUsername = tg.initDataUnsafe?.user?.username || 'unknown';
-    let isAdminAuthenticated = false;
-
-    document.getElementById('user-name').innerText = userName;
-    document.getElementById('user-id-display').innerText = userId;
-    console.log('👤 User ID:', userId);
-
-    // ========== ТОВАРЫ ==========
-    const products = [
-        { id: 1, name: 'Лаванда', price: 450, desc: 'Успокаивающее, 10мл', img: 'https://via.placeholder.com/70/9090ff/ffffff?text=Lav' },
-        { id: 2, name: 'Чайное дерево', price: 390, desc: 'Антисептик, 10мл', img: 'https://via.placeholder.com/70/90ff90/ffffff?text=Tea' },
-        { id: 3, name: 'Гидролат Розы', price: 600, desc: 'Увлажнение, 100мл', img: 'https://via.placeholder.com/70/ff9090/ffffff?text=Rose' },
-        { id: 4, name: 'Апельсин', price: 300, desc: 'Тонус, 10мл', img: 'https://via.placeholder.com/70/ffaa00/ffffff?text=Ora' },
-        { id: 5, name: 'Мята', price: 350, desc: 'Освежающее, 10мл', img: 'https://via.placeholder.com/70/90ffcc/ffffff?text=Mint' },
-        { id: 6, name: 'Эвкалипт', price: 380, desc: 'Для дыхания, 10мл', img: 'https://via.placeholder.com/70/ccff90/ffffff?text=Euc' },
-    ];
-
-    // ========== ЗАПУСК ==========
-    initApp();
-
-    async function initApp() {
-        showLoader(true);
-        try {
-            checkAdminSession();
-            if (isSupabaseReady) {
-                await loadUserBalance();
-            } else {
-                userPoints = parseInt(localStorage.getItem('userPoints_' + userId)) || 0;
-            }
-            renderCatalog();
-            updatePointsUI();
-            updateBadge();
-            showLoader(false);
-        } catch (e) {
-            console.error(e);
-            showError('⚠️ Ошибка: ' + e.message);
-            showLoader(false);
-        }
-    }
-
-    // ========== ОТЛАДКА ==========
-    function showDebug(elementId, message) {
-        const el = document.getElementById(elementId);
-        if (el) {
-            el.style.display = 'block';
-            el.innerHTML = message;
-        }
-        console.log('[DEBUG]', message);
-    }
-
-    // ========== АДМИН ==========
-    function checkAdminSession() {
-        if (localStorage.getItem(ADMIN_SESSION_KEY) === 'true') {
-            isAdminAuthenticated = true;
-            showAdminPanel();
-        }
-    }
-
-    function showAdminLogin() {
-        const pass = prompt('🔐 Пароль админа:');
-        if (pass === ADMIN_PASS) {
-            isAdminAuthenticated = true;
-            localStorage.setItem(ADMIN_SESSION_KEY, 'true');
-            showAdminPanel();
-            alert('✅ Вход выполнен!');
-        } else if (pass !== null) {
-            alert('❌ Неверный пароль!');
-        }
-    }
-
-    function showAdminPanel() {
-        document.getElementById('admin-panel').style.display = 'block';
-        document.getElementById('admin-login-btn').style.display = 'none';
-        loadAllOrders();
-    }
-
-    function hideAdminPanel() {
-        document.getElementById('admin-panel').style.display = 'none';
-        document.getElementById('admin-login-btn').style.display = 'block';
-        isAdminAuthenticated = false;
-        localStorage.removeItem(ADMIN_SESSION_KEY);
-    }
-
-    // ========== БАЗА ДАННЫХ ==========
-    async function loadUserBalance() {
-        if (!supabaseClient) return;
-        try {
-            console.log('🔍 Загрузка баланса для userId:', userId);
-            
-            let {  user, error } = await supabaseClient
-                .from('users')
-                .select('balance')
-                .eq('id', userId)
-                .single();
-
-            console.log('📊 Результат:', { user, error });
-
-            if (error && error.code !== 'PGRST116') {
-                throw error;
-            }
-            
-            if (!user) {
-                console.log('📝 Создаём нового пользователя');
-                await supabaseClient
-                    .from('users')
-                    .insert([{ id: userId, username: userUsername, balance: 0 }]);
-                userPoints = 0;
-            } else {
-                userPoints = user.balance;
-            }
-            
-            console.log('✅ Баланс:', userPoints);
-            showDebug('my-orders-debug', '✅ Баланс: ' + userPoints + ' баллов');
-        } catch (e) {
-            console.error('❌ Ошибка баланса:', e);
-            showDebug('my-orders-debug', '❌ ' + e.message);
-        }
-    }
-
-    async function saveUserBalance(newBalance) {
-        if (!supabaseClient) {
-            localStorage.setItem('userPoints_' + userId, newBalance);
-            return true;
-        }
-        try {
-            console.log('💾 Сохранение баланса:', newBalance);
-            await supabaseClient
-                .from('users')
-                .update({ balance: newBalance })
-                .eq('id', userId);
-            return true;
-        } catch (e) {
-            console.error('❌ Ошибка сохранения:', e);
-            return false;
-        }
-    }
-
-    async function createOrder(totalRaw, pointsUsed) {
-        const orderData = {
-            user_id: parseInt(userId),
-            username: userUsername,
-            items: cart.map(i => i.name).join(', '),
-            total_amount: totalRaw,
-            points_used: pointsUsed
-        };
-        
-        console.log('📦 Создание заказа:', orderData);
-        
-        if (!supabaseClient) {
-            const orders = JSON.parse(localStorage.getItem('orders_' + userId) || '[]');
-            orders.push({ ...orderData, id: Date.now(), created_at: new Date().toISOString() });
-            localStorage.setItem('orders_' + userId, JSON.stringify(orders));
-            return true;
-        }
-        
-        try {
-            const {  orderResult, error } = await supabaseClient
-                .from('orders')
-                .insert([orderData])
-                .select();
-            
-            console.log('📦 Результат:', { orderResult, error });
-            if (error) throw error;
-            
-            return true;
-        } catch (e) {
-            console.error('❌ Ошибка заказа:', e);
-            throw e;
-        }
-    }
-
-    // ========== ЗАКАЗЫ ==========
-    async function checkout() {
-        if (cart.length === 0) {
-            alert('🛒 Корзина пуста!');
-            return;
-        }
-        
-        const usePoints = document.getElementById('use-points').checked;
-        let totalRaw = cart.reduce((sum, item) => sum + item.price, 0);
-        let pointsUsed = 0;
-        let finalPrice = totalRaw;
-
-        if (usePoints && userPoints > 0) {
-            if (userPoints >= totalRaw) {
-                pointsUsed = totalRaw;
-                finalPrice = 0;
-            } else {
-                pointsUsed = userPoints;
-                finalPrice = totalRaw - userPoints;
-            }
-        }
-
-        if (!confirm(`📦 Заказ\n💰 ${finalPrice} ₽\n🎁 Баллов: ${pointsUsed}\n\nПродолжить?`)) return;
-        
-        showLoader(true);
-        
-        try {
-            await createOrder(totalRaw, pointsUsed);
-            const pointsEarned = Math.floor(totalRaw * 0.1);
-            const newBalance = userPoints - pointsUsed + pointsEarned;
-            await saveUserBalance(newBalance);
-            userPoints = newBalance;
-            
-            await sendOrderNotification({
-                username: userUsername,
-                user_id: userId,
-                items: cart.map(i => i.name).join(', '),
-                total_amount: totalRaw,
-                points_used: pointsUsed
-            });
-            
-            cart = [];
-            updateBadge();
-            renderCart();
-            updatePointsUI();
-            
-            alert(`✅ Заказ оформлен!\n🎁 +${pointsEarned} баллов\n💎 Баланс: ${newBalance}`);
-            
-            setTimeout(() => {
-                loadMyOrders();
-            }, 500);
-            
-            switchPage('catalog');
-            
-        } catch (e) {
-            console.error(e);
-            alert('❌ Ошибка: ' + e.message);
-        } finally {
-            showLoader(false);
-        }
-    }
-
-    async function adminAction() {
-        if (!isAdminAuthenticated) {
-            alert('❌ Требуется авторизация');
-            showAdminLogin();
-            return;
-        }
-        
-        const targetId = document.getElementById('admin-user-id').value;
-        const amount = parseInt(document.getElementById('admin-points-amount').value);
-
-        if (!targetId || isNaN(amount)) {
-            alert('⚠️ Заполните поля');
-            return;
-        }
-
-        showLoader(true);
-        
-        try {
-            if (!supabaseClient) {
-                alert('ℹ️ В демо-режиме недоступно');
-                showLoader(false);
-                return;
-            }
-            
-            let {  userData } = await supabaseClient
-                .from('users')
-                .select('balance')
-                .eq('id', targetId)
-                .single();
-            
-            let currentBalance = userData ? userData.balance : 0;
-            
-            if (!userData) {
-                await supabaseClient.from('users').insert([{ 
-                    id: targetId, 
-                    username: 'admin', 
-                    balance: 0 
-                }]);
-            }
-
-            const newBalance = currentBalance + amount;
-
-            await supabaseClient
-                .from('users')
-                .update({ balance: newBalance })
-                .eq('id', targetId);
-
-            alert(`✅ Баланс: ${currentBalance} → ${newBalance}`);
-            
-            if (targetId == userId) {
-                userPoints = newBalance;
-                updatePointsUI();
-            }
-
-        } catch (e) {
-            alert('❌ Ошибка: ' + e.message);
-        } finally {
-            showLoader(false);
-        }
-    }
-
-    // ========== ИСТОРИЯ ЗАКАЗОВ ==========
-    async function loadMyOrders() {
-        const tbody = document.getElementById('my-orders-body');
-        const debugEl = document.getElementById('my-orders-debug');
-        
-        console.log('🔍 loadMyOrders вызван для userId:', userId);
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">⏳ Загрузка...</td></tr>';
-        if (debugEl) {
-            debugEl.style.display = 'block';
-            debugEl.innerHTML = '📡 Запрос к базе...';
-        }
-        
-        try {
-            if (!supabaseClient) {
-                console.log('⚠️ Демо-режим');
-                const orders = JSON.parse(localStorage.getItem('orders_' + userId) || '[]');
-                console.log('📊 Заказы из localStorage:', orders);
-                renderOrdersTable(orders, tbody, false);
-                if (debugEl) debugEl.innerHTML = '📊 Найдено: ' + orders.length;
-                return;
-            }
-            
-            const {  orders, error } = await supabaseClient
-                .from('orders')
-                .select('*')
-                .eq('user_id', userId)
-                .order('created_at', { ascending: false });
-            
-            console.log('📊 Ответ от базы:', { orders, error });
-            
-            if (error) {
-                console.error('❌ Ошибка загрузки:', error);
-                if (debugEl) debugEl.innerHTML = '❌ ' + error.message;
-                tbody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">${error.message}</td></tr>`;
-                return;
-            }
-            
-            if (!orders || orders.length === 0) {
-                console.log('⚠️ Заказов нет');
-                if (debugEl) debugEl.innerHTML = '⚠️ Заказов нет';
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--hint-color);">Заказов нет</td></tr>';
-                return;
-            }
-            
-            console.log('✅ Найдено заказов:', orders.length);
-            if (debugEl) debugEl.innerHTML = '✅ Найдено: ' + orders.length;
-            renderOrdersTable(orders, tbody, false);
-            
-        } catch (e) {
-            console.error('❌ Исключение:', e);
-            if (debugEl) debugEl.innerHTML = '❌ ' + e.message;
-            tbody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">${e.message}</td></tr>`;
-        }
-    }
-
-    async function loadAllOrders() {
-        if (!isAdminAuthenticated) {
-            alert('❌ Требуется авторизация');
-            showAdminLogin();
-            return;
-        }
-        
-        const tbody = document.getElementById('all-orders-body');
-        const debugEl = document.getElementById('all-orders-debug');
-        
-        console.log('🔍 loadAllOrders вызван');
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">⏳ Загрузка...</td></tr>';
-        if (debugEl) {
-            debugEl.style.display = 'block';
-            debugEl.innerHTML = '📡 Запрос...';
-        }
-        
-        try {
-            if (!supabaseClient) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--hint-color);">Демо-режим</td></tr>';
-                return;
-            }
-            
-            const {  orders, error } = await supabaseClient
-                .from('orders')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(50);
-            
-            console.log('📊 Все заказы:', { orders, error });
-            
-            if (error) {
-                if (debugEl) debugEl.innerHTML = '❌ ' + error.message;
-                tbody.innerHTML = `<tr><td colspan="6" style="color:red; text-align:center;">${error.message}</td></tr>`;
-                return;
-            }
-            
-            if (!orders || orders.length === 0) {
-                if (debugEl) debugEl.innerHTML = '⚠️ Заказов нет';
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--hint-color);">Заказов нет</td></tr>';
-                return;
-            }
-            
-            if (debugEl) debugEl.innerHTML = '✅ Найдено: ' + orders.length;
-            renderOrdersTable(orders, tbody, true);
-            
-        } catch (e) {
-            if (debugEl) debugEl.innerHTML = '❌ ' + e.message;
-            tbody.innerHTML = `<tr><td colspan="6" style="color:red; text-align:center;">${e.message}</td></tr>`;
-        }
-    }
-
-    function renderOrdersTable(orders, tbody, showUser) {
-        console.log('📋 renderOrdersTable:', orders.length, 'заказов');
-        
-        if (!orders || orders.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="' + (showUser ? '6' : '5') + '" style="text-align:center; color:var(--hint-color);">Заказов нет</td></tr>';
-            return;
-        }
-        
-        const html = orders.map(order => {
-            const date = order.created_at ? new Date(order.created_at).toLocaleDateString('ru-RU') : 'N/A';
-            const time = order.created_at ? new Date(order.created_at).toLocaleTimeString('ru-RU', {hour: '2-digit', minute:'2-digit'}) : '';
-            
-            return `
-                <tr>
-                    ${showUser ? `<td>${order.id}</td><td>${order.username || 'N/A'}</td>` : `<td>#${order.id}</td>`}
-                    <td>${date}</td>
-                    <td>${order.items || 'N/A'}</td>
-                    <td><b>${order.total_amount || 0} ₽</b></td>
-                    <td>${order.points_used || 0}</td>
-                    ${showUser ? `<td>${time}</td>` : ''}
-                </tr>
-            `;
-        }).join('');
-        
-        tbody.innerHTML = html;
-        console.log('✅ Таблица отрисована');
-    }
-
-    // ========== УВЕДОМЛЕНИЯ ==========
-    function saveNotificationSettings() {
-        const botToken = document.getElementById('bot-token').value;
-        const chatId = document.getElementById('seller-chat-id').value;
-        if (botToken && chatId) {
-            localStorage.setItem('telegram_bot_token', botToken);
-            localStorage.setItem('seller_chat_id', chatId);
-            alert('✅ Сохранено!');
-        } else {
-            alert('⚠️ Заполните поля');
-        }
-    }
-
-    async function sendOrderNotification(orderData) {
-        const botToken = localStorage.getItem('telegram_bot_token');
-        const chatId = localStorage.getItem('seller_chat_id');
-        
-        if (!botToken || !chatId) return;
-        
-        const message = `🛒 <b>НОВЫЙ ЗАКАЗ!</b>\n\n👤 ${orderData.username}\n📋 ${orderData.items}\n💰 ${orderData.total_amount} ₽`;
-        
-        try {
-            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'HTML'
-                })
-            });
-        } catch (e) {
-            console.error('❌ Ошибка уведомления:', e);
-        }
-    }
-
-    // ========== ИНТЕРФЕЙС ==========
-    function showLoader(show) {
-        document.getElementById('loader').style.display = show ? 'flex' : 'none';
-    }
-
-    function showError(message) {
-        const el = document.getElementById('error-box');
-        el.innerHTML = message;
-        el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 8000);
-    }
-
-    function updatePointsUI() {
-        document.getElementById('profile-points').innerText = userPoints;
-        document.getElementById('cart-points').innerText = userPoints;
-    }
-
-    function renderCatalog() {
-        document.getElementById('products-list').innerHTML = products.map(p => `
-            <div class="product-card">
-                <img src="${p.img}" class="product-img">
-                <div class="product-info">
-                    <div class="product-title">${p.name}</div>
-                    <div class="product-desc">${p.desc}</div>
-                    <div class="product-price">${p.price} ₽</div>
+    <div class="container">
+        <!-- Sidebar Controls -->
+        <div class="panel">
+            <h2>1. Параметры листа</h2>
+            <div class="row">
+                <div class="form-group">
+                    <label>Ширина (мм)</label>
+                    <input type="number" id="sheetW" value="2080">
                 </div>
-                <button class="add-btn" onclick="addToCart(${p.id})">В корзину</button>
+                <div class="form-group">
+                    <label>Высота (мм)</label>
+                    <input type="number" id="sheetH" value="2070">
+                </div>
             </div>
-        `).join('');
-    }
+            <div class="form-group">
+                <label>Цена листа (₽)</label>
+                <input type="number" id="sheetPrice" value="5000">
+            </div>
 
-    function switchPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        
-        document.getElementById(`page-${pageId}`).classList.add('active');
-        
-        const navItems = document.querySelectorAll('.nav-item');
-        if (pageId === 'catalog') navItems[0].classList.add('active');
-        if (pageId === 'cart') {
-            navItems[1].classList.add('active');
-            renderCart();
+            <h2>2. Добавить деталь</h2>
+            <div class="row">
+                <div class="form-group">
+                    <label>Ширина</label>
+                    <input type="number" id="partW" placeholder="мм">
+                </div>
+                <div class="form-group">
+                    <label>Высота</label>
+                    <input type="number" id="partH" placeholder="мм">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Количество</label>
+                <input type="number" id="partQty" value="1">
+            </div>
+            <button onclick="addPart()">Добавить в список</button>
+
+            <div id="parts-list">
+                <!-- Parts will appear here -->
+            </div>
+
+            <button onclick="calculateLayout()" style="margin-top: 20px; font-size: 1.1rem;">РАССЧИТАТЬ РАСКРОЙ</button>
+        </div>
+
+        <!-- Main Visualization -->
+        <div class="panel">
+            <h2>Карта раскроя</h2>
+            <div class="canvas-container">
+                <canvas id="layoutCanvas"></canvas>
+            </div>
+
+            <div class="summary-grid" id="summary">
+                <div class="stat-item">Деталей размещено: <span class="stat-value" id="placedCount">0</span></div>
+                <div class="stat-item">Использовано: <span class="stat-value" id="usedArea">0%</span></div>
+                <div class="stat-item">Стоимость деталей: <span class="stat-value" id="costDetails">0 ₽</span></div>
+                <div class="stat-item">Отходы: <span class="stat-value" id="wasteArea">0%</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let parts = [];
+        const EDGE_MARGIN = 10; // 10mm margin
+        const KERF = 3;         // 3mm gap between parts
+
+        function addPart() {
+            const w = parseInt(document.getElementById('partW').value);
+            const h = parseInt(document.getElementById('partH').value);
+            const qty = parseInt(document.getElementById('partQty').value);
+
+            if (!w || !h || !qty) {
+                alert("Пожалуйста, заполните все поля размеров и количества.");
+                return;
+            }
+
+            parts.push({ w, h, qty, id: Date.now() });
+            renderPartsList();
+            
+            // Clear inputs
+            document.getElementById('partW').value = '';
+            document.getElementById('partH').value = '';
+            document.getElementById('partQty').value = '1';
         }
-        if (pageId === 'profile') {
-            navItems[2].classList.add('active');
-            setTimeout(() => loadMyOrders(), 100);
-        }
-    }
 
-    function addToCart(id) {
-        cart.push(products.find(p => p.id === id));
-        updateBadge();
-        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    }
-
-    function updateBadge() {
-        const badge = document.getElementById('cart-badge');
-        badge.innerText = cart.length;
-        badge.classList.toggle('hidden', cart.length === 0);
-    }
-
-    function renderCart() {
-        const container = document.getElementById('cart-items');
-        
-        if (cart.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:var(--hint-color); margin-top:40px;">🛒 Пусто</p>';
-            document.getElementById('cart-total').innerText = '0';
-            return;
+        function removePart(id) {
+            parts = parts.filter(p => p.id !== id);
+            renderPartsList();
         }
 
-        let total = 0;
-        container.innerHTML = cart.map((item, index) => {
-            total += item.price;
-            return `<div class="cart-item">
-                <span>${item.name}</span>
-                <span>${item.price} ₽ <b style="color:#ff4757; cursor:pointer; margin-left:10px;" onclick="removeFromCart(${index})">×</b></span>
-            </div>`;
-        }).join('');
+        function renderPartsList() {
+            const list = document.getElementById('parts-list');
+            list.innerHTML = '';
+            parts.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'part-item';
+                div.innerHTML = `
+                    <span>${p.w}x${p.h} мм — <b>${p.qty} шт.</b></span>
+                    <button class="danger" onclick="removePart(${p.id})">X</button>
+                `;
+                list.appendChild(div);
+            });
+        }
 
-        document.getElementById('cart-total').innerText = total;
-    }
+        // --- Packing Algorithm (Guillotine / Shelf Strategy) ---
+        function calculateLayout() {
+            const sheetW = parseInt(document.getElementById('sheetW').value);
+            const sheetH = parseInt(document.getElementById('sheetH').value);
+            const price = parseFloat(document.getElementById('sheetPrice').value) || 0;
 
-    function removeFromCart(index) {
-        cart.splice(index, 1);
-        renderCart();
-        updateBadge();
-    }
-</script>
+            // 1. Expand parts list based on quantity
+            let flatParts = [];
+            parts.forEach(p => {
+                for(let i=0; i<p.qty; i++) {
+                    flatParts.push({ w: p.w, h: p.h, originalId: p.id });
+                }
+            });
 
+            // Sort parts: Largest area first (usually better for packing)
+            flatParts.sort((a, b) => (b.w * b.h) - (a.w * a.h));
+
+            // 2. Initialize Sheet
+            // We create a grid of "free spaces". Initially, one big space inside margins.
+            const usableW = sheetW - (EDGE_MARGIN * 2);
+            const usableH = sheetH - (EDGE_MARGIN * 2);
+
+            if (usableW <= 0 || usableH <= 0) {
+                alert("Размеры листа слишком малы для заданных отступов!");
+                return;
+            }
+
+            // Simple Shelf Packing Algorithm
+            let placedParts = [];
+            let currentX = EDGE_MARGIN;
+            let currentY = EDGE_MARGIN;
+            let rowHeight = 0;
+
+            // Helper to check if fits in current row
+            // Note: This is a simplified "Next Fit" heuristic. 
+            // For complex optimization, a recursive guillotine algorithm is needed, 
+            // but this is sufficient for a lightweight web app.
+            
+            // Let's try a slightly smarter approach: "Best Fit" or simple shelf
+            // We will try to place parts in rows.
+            
+            // Reset variables for the loop
+            let tempParts = [...flatParts];
+            let remainingParts = [];
+            
+            // We need to track where we place things for drawing
+            let layoutItems = [];
+
+            // Simple Shelf Algorithm Implementation
+            let x = EDGE_MARGIN;
+            let y = EDGE_MARGIN;
+            let maxHeightInRow = 0;
+
+            for (let i = 0; i < tempParts.length; i++) {
+                let part = tempParts[i];
+                
+                // Check if part fits in width
+                if (x + part.w <= sheetW - EDGE_MARGIN) {
+                    // Place it
+                    layoutItems.push({
+                        x: x,
+                        y: y,
+                        w: part.w,
+                        h: part.h
+                    });
+                    
+                    x += part.w + KERF;
+                    if (part.h > maxHeightInRow) {
+                        maxHeightInRow = part.h;
+                    }
+                } else {
+                    // Move to next row
+                    x = EDGE_MARGIN;
+                    y += maxHeightInRow + KERF;
+                    maxHeightInRow = 0; // Reset for new row
+
+                    // Try again in new row
+                    if (x + part.w <= sheetW - EDGE_MARGIN && y + part.h <= sheetH - EDGE_MARGIN) {
+                         layoutItems.push({
+                            x: x,
+                            y: y,
+                            w: part.w,
+                            h: part.h
+                        });
+                        x += part.w + KERF;
+                        maxHeightInRow = part.h;
+                    } else {
+                        // Cannot fit at all
+                        remainingParts.push(part);
+                    }
+                }
+            }
+
+            // 3. Draw Results
+            drawCanvas(sheetW, sheetH, layoutItems);
+            updateStats(layoutItems, flatParts.length, sheetW, sheetH, price);
+        }
+
+        function drawCanvas(sheetW, sheetH, items) {
+            const canvas = document.getElementById('layoutCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Scale to fit screen if sheet is huge
+            const maxDisplayWidth = 800;
+            const scale = Math.min(maxDisplayWidth / sheetW, 1);
+
+            canvas.width = sheetW * scale;
+            canvas.height = sheetH * scale;
+
+            // Clear
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Sheet Border
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Margin Area (Visual guide)
+            ctx.fillStyle = "#f0f0f0";
+            ctx.fillRect(
+                EDGE_MARGIN * scale, 
+                EDGE_MARGIN * scale, 
+                (sheetW - EDGE_MARGIN*2) * scale, 
+                (sheetH - EDGE_MARGIN*2) * scale
+            );
+
+            // Draw Parts
+            ctx.font = `${12 * scale}px Arial`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            items.forEach((item, index) => {
+                // Fill
+                ctx.fillStyle = "#bfdbfe"; // Light blue
+                ctx.fillRect(item.x * scale, item.y * scale, item.w * scale, item.h * scale);
+                
+                // Border
+                ctx.strokeStyle = "#1e40af";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(item.x * scale, item.y * scale, item.w * scale, item.h * scale);
+
+                // Text (Dimensions + ID)
+                ctx.fillStyle = "#1e3a8a";
+                // Only draw text if box is big enough
+                if (item.w * scale > 30 && item.h * scale > 20) {
+                    ctx.fillText(`${item.w}x${item.h}`, item.x * scale + (item.w * scale)/2, item.y * scale + (item.h * scale)/2);
+                }
+            });
+        }
+
+        function updateStats(placedItems, totalPartsCount, sheetW, sheetH, sheetPrice) {
+            const totalSheetArea = sheetW * sheetH;
+            let usedArea = 0;
+
+            placedItems.forEach(item => {
+                usedArea += (item.w * item.h);
+            });
+
+            const usedPercent = ((usedArea / totalSheetArea) * 100).toFixed(1);
+            const wastePercent = (100 - usedPercent).toFixed(1);
+            
+            // Cost calculation logic: 
+            // Proportional cost based on area used
+            const costUsed = (usedArea / totalSheetArea) * sheetPrice;
+
+            document.getElementById('placedCount').innerText = `${placedItems.length} / ${totalPartsCount}`;
+            document.getElementById('usedArea').innerText = `${usedPercent}%`;
+            document.getElementById('wasteArea').innerText = `${wastePercent}%`;
+            document.getElementById('costDetails').innerText = `${Math.round(costUsed)} ₽`;
+
+            // Color coding for waste
+            const wasteEl = document.getElementById('wasteArea');
+            if (wastePercent > 30) wasteEl.style.color = "red";
+            else wasteEl.style.color = "green";
+        }
+
+    </script>
 </body>
 </html>
