@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор Раскроя (GitHub App)</title>
+    <title>Профессиональный Раскрой</title>
     <style>
         :root {
             --primary: #2563eb;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --surface: #ffffff;
-            --border: #e2e8f0;
-            --text: #1e293b;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --danger: #ef4444;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
@@ -25,38 +26,39 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
             display: grid;
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: 380px 1fr;
             gap: 20px;
         }
 
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 1000px) {
+            .container { grid-template-columns: 1fr; }
         }
 
         .panel {
             background: var(--surface);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        h1, h2 { margin-top: 0; font-size: 1.25rem; margin-bottom: 1rem; }
+        h2 { margin-top: 0; color: #334155; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
         
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: 500; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #475569; }
+        
         input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid var(--border);
-            border-radius: 4px;
+            border-radius: 6px;
+            font-size: 1rem;
             box-sizing: border-box;
         }
-        
+        input:focus { outline: 2px solid var(--primary); border-color: transparent; }
+
         .row { display: flex; gap: 10px; }
         .row > * { flex: 1; }
 
@@ -64,72 +66,91 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
+            padding: 12px;
+            border-radius: 6px;
             cursor: pointer;
             width: 100%;
-            font-weight: 600;
-            transition: opacity 0.2s;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.2s;
         }
-        button:hover { opacity: 0.9; }
-        button.secondary { background-color: #64748b; margin-top: 5px; }
-        button.danger { background-color: #ef4444; padding: 5px 10px; width: auto; font-size: 0.8rem;}
+        button:hover { background-color: #1d4ed8; transform: translateY(-1px); }
+        
+        button.secondary { background-color: #64748b; margin-top: 10px; }
+        button.danger { background-color: #fee2e2; color: var(--danger); width: auto; padding: 4px 8px; font-size: 0.8rem; }
 
         /* Parts List */
         #parts-list {
             margin-top: 20px;
-            border-top: 1px solid var(--border);
-            max-height: 300px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            max-height: 350px;
             overflow-y: auto;
         }
         .part-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9rem;
+            padding: 10px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            background: #fff;
         }
+        .part-item:last-child { border-bottom: none; }
+        .part-info { font-weight: 500; }
+        .part-qty { color: #64748b; font-size: 0.9rem; }
 
-        /* Visualization Area */
-        .canvas-container {
+        /* Canvas Area */
+        .canvas-wrapper {
             overflow: auto;
-            border: 1px solid var(--border);
-            background: #eee;
-            min-height: 500px;
+            border: 2px solid #e2e8f0;
+            background: #94a3b8; /* Darker bg to show sheet clearly */
+            border-radius: 8px;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
             padding: 20px;
+            min-height: 600px;
         }
 
         canvas {
             background: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        /* Results Summary */
-        .summary-grid {
+        /* Stats */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
             margin-top: 20px;
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 6px;
         }
-        .stat-item { font-size: 0.9rem; }
-        .stat-value { font-weight: bold; font-size: 1.1rem; }
-        .highlight { color: var(--primary); }
+        .stat-card {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .stat-val { font-size: 1.4rem; font-weight: 800; color: var(--primary); display: block; }
+        .stat-label { font-size: 0.85rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
 
+        .alert-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
 
-    <h1>📐 Калькулятор Раскроя</h1>
+    <h1>📐 Калькулятор Раскроя (Гильотинный)</h1>
 
     <div class="container">
-        <!-- Sidebar Controls -->
+        <!-- Controls -->
         <div class="panel">
             <h2>1. Параметры листа</h2>
             <div class="row">
@@ -144,10 +165,15 @@
             </div>
             <div class="form-group">
                 <label>Цена листа (₽)</label>
-                <input type="number" id="sheetPrice" value="5000">
+                <input type="number" id="sheetPrice" value="6000">
+            </div>
+            <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 15px;">
+                * Отступ от края: 10мм, Пропил: 3мм
             </div>
 
-            <h2>2. Добавить деталь</h2>
+            <h2>2. Детали</h2>
+            <div id="error-msg" class="alert-box"></div>
+
             <div class="row">
                 <div class="form-group">
                     <label>Ширина</label>
@@ -162,54 +188,91 @@
                 <label>Количество</label>
                 <input type="number" id="partQty" value="1">
             </div>
-            <button onclick="addPart()">Добавить в список</button>
+            <button onclick="addPart()">Добавить деталь</button>
 
             <div id="parts-list">
-                <!-- Parts will appear here -->
+                <!-- List -->
             </div>
 
-            <button onclick="calculateLayout()" style="margin-top: 20px; font-size: 1.1rem;">РАССЧИТАТЬ РАСКРОЙ</button>
+            <button onclick="calculateLayout()" style="margin-top: 20px; background-color: #059669;">РАССЧИТАТЬ РАСКРОЙ</button>
+            <button class="secondary" onclick="clearAll()">Очистить всё</button>
         </div>
 
-        <!-- Main Visualization -->
+        <!-- Visualization -->
         <div class="panel">
             <h2>Карта раскроя</h2>
-            <div class="canvas-container">
+            <div class="canvas-wrapper">
                 <canvas id="layoutCanvas"></canvas>
             </div>
 
-            <div class="summary-grid" id="summary">
-                <div class="stat-item">Деталей размещено: <span class="stat-value" id="placedCount">0</span></div>
-                <div class="stat-item">Использовано: <span class="stat-value" id="usedArea">0%</span></div>
-                <div class="stat-item">Стоимость деталей: <span class="stat-value" id="costDetails">0 ₽</span></div>
-                <div class="stat-item">Отходы: <span class="stat-value" id="wasteArea">0%</span></div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-val" id="placedCount">0</span>
+                    <span class="stat-label">Размещено</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-val" id="usedPercent">0%</span>
+                    <span class="stat-label">Использование</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-val" id="costVal">0 ₽</span>
+                    <span class="stat-label">Стоимость</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-val" id="wasteVal">0%</span>
+                    <span class="stat-label">Отходы</span>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Global State
+        const EDGE_MARGIN = 10; 
+        const KERF = 3;
         let parts = [];
-        const EDGE_MARGIN = 10; // 10mm margin
-        const KERF = 3;         // 3mm gap between parts
+
+        function showError(msg) {
+            const el = document.getElementById('error-msg');
+            el.innerText = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
 
         function addPart() {
             const w = parseInt(document.getElementById('partW').value);
             const h = parseInt(document.getElementById('partH').value);
             const qty = parseInt(document.getElementById('partQty').value);
+            
+            const sheetW = parseInt(document.getElementById('sheetW').value);
+            const sheetH = parseInt(document.getElementById('sheetH').value);
+
+            // Проверка на валидность
+            const usableW = sheetW - (EDGE_MARGIN * 2);
+            const usableH = sheetH - (EDGE_MARGIN * 2);
 
             if (!w || !h || !qty) {
-                alert("Пожалуйста, заполните все поля размеров и количества.");
+                showError("Введите корректные размеры и количество.");
                 return;
             }
 
-            parts.push({ w, h, qty, id: Date.now() });
+            // Проверка: влезает ли деталь хотя бы теоретически
+            // Учитываем, что деталь можно повернуть, но для простоты проверки проверяем оба варианта
+            const fitsNormal = (w <= usableW && h <= usableH);
+            const fitsRotated = (h <= usableW && w <= usableH);
+
+            if (!fitsNormal && !fitsRotated) {
+                showError(`Деталь ${w}x${h} НЕ ВЛЕЗАЕТ в полезную область листа (${usableW}x${usableH})!`);
+                return;
+            }
+
+            parts.push({ w, h, qty, id: Date.now() + Math.random() });
             renderPartsList();
             
-            // Clear inputs
+            // Сброс полей
             document.getElementById('partW').value = '';
             document.getElementById('partH').value = '';
             document.getElementById('partQty').value = '1';
+            document.getElementById('partW').focus();
         }
 
         function removePart(id) {
@@ -217,197 +280,227 @@
             renderPartsList();
         }
 
+        function clearAll() {
+            parts = [];
+            renderPartsList();
+            const ctx = document.getElementById('layoutCanvas').getContext('2d');
+            ctx.clearRect(0, 0, 800, 600);
+            document.getElementById('placedCount').innerText = '0';
+            document.getElementById('usedPercent').innerText = '0%';
+        }
+
         function renderPartsList() {
             const list = document.getElementById('parts-list');
             list.innerHTML = '';
+            if(parts.length === 0) {
+                list.innerHTML = '<div style="padding:15px; text-align:center; color:#94a3b8">Список пуст</div>';
+                return;
+            }
             parts.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'part-item';
                 div.innerHTML = `
-                    <span>${p.w}x${p.h} мм — <b>${p.qty} шт.</b></span>
-                    <button class="danger" onclick="removePart(${p.id})">X</button>
+                    <div>
+                        <div class="part-info">${p.w} × ${p.h} мм</div>
+                        <div class="part-qty">${p.qty} шт.</div>
+                    </div>
+                    <button class="danger" onclick="removePart(${p.id})">Удалить</button>
                 `;
                 list.appendChild(div);
             });
         }
 
-        // --- Packing Algorithm (Guillotine / Shelf Strategy) ---
+        // --- ГУЛЬОТИННЫЙ АЛГОРИТМ (Guillotine Packing) ---
+        
+        class GuillotinePacker {
+            constructor(w, h) {
+                this.root = { x: 0, y: 0, w: w, h: h };
+            }
+
+            fit(blocks) {
+                let n, node, block;
+                for (n = 0; n < blocks.length; n++) {
+                    block = blocks[n];
+                    if (node = this.findNode(this.root, block.w, block.h))
+                        block.fit = this.splitNode(node, block.w, block.h);
+                    else 
+                        block.fit = this.growDown(block.w, block.h);
+                }
+            }
+
+            findNode(root, w, h) {
+                if (root.used)
+                    return this.findNode(root.right, w, h) || this.findNode(root.down, w, h);
+                else if ((w <= root.w) && (h <= root.h))
+                    return root;
+                else
+                    return null;
+            }
+
+            splitNode(node, w, h) {
+                node.used = true;
+                // Логика разреза: отрезаем справа и снизу
+                // Остаток справа
+                node.down  = { x: node.x,         y: node.y + h + KERF, w: node.w,         h: node.h - h - KERF };
+                // Остаток снизу (под деталью)
+                node.right = { x: node.x + w + KERF, y: node.y,         w: node.w - w - KERF, h: h };
+                return node;
+            }
+
+            growDown(w, h) {
+                // Если не влезло в текущие свободные блоки, пытаемся расширить (в данном простом варианте просто возвращаем null, 
+                // так как размер листа фиксирован).
+                // В сложных алгоритмах здесь лист увеличивают, но нам это не нужно.
+                return null; 
+            }
+        }
+
         function calculateLayout() {
             const sheetW = parseInt(document.getElementById('sheetW').value);
             const sheetH = parseInt(document.getElementById('sheetH').value);
             const price = parseFloat(document.getElementById('sheetPrice').value) || 0;
 
-            // 1. Expand parts list based on quantity
-            let flatParts = [];
-            parts.forEach(p => {
-                for(let i=0; i<p.qty; i++) {
-                    flatParts.push({ w: p.w, h: p.h, originalId: p.id });
-                }
-            });
-
-            // Sort parts: Largest area first (usually better for packing)
-            flatParts.sort((a, b) => (b.w * b.h) - (a.w * a.h));
-
-            // 2. Initialize Sheet
-            // We create a grid of "free spaces". Initially, one big space inside margins.
             const usableW = sheetW - (EDGE_MARGIN * 2);
             const usableH = sheetH - (EDGE_MARGIN * 2);
 
-            if (usableW <= 0 || usableH <= 0) {
-                alert("Размеры листа слишком малы для заданных отступов!");
-                return;
-            }
-
-            // Simple Shelf Packing Algorithm
-            let placedParts = [];
-            let currentX = EDGE_MARGIN;
-            let currentY = EDGE_MARGIN;
-            let rowHeight = 0;
-
-            // Helper to check if fits in current row
-            // Note: This is a simplified "Next Fit" heuristic. 
-            // For complex optimization, a recursive guillotine algorithm is needed, 
-            // but this is sufficient for a lightweight web app.
-            
-            // Let's try a slightly smarter approach: "Best Fit" or simple shelf
-            // We will try to place parts in rows.
-            
-            // Reset variables for the loop
-            let tempParts = [...flatParts];
-            let remainingParts = [];
-            
-            // We need to track where we place things for drawing
-            let layoutItems = [];
-
-            // Simple Shelf Algorithm Implementation
-            let x = EDGE_MARGIN;
-            let y = EDGE_MARGIN;
-            let maxHeightInRow = 0;
-
-            for (let i = 0; i < tempParts.length; i++) {
-                let part = tempParts[i];
-                
-                // Check if part fits in width
-                if (x + part.w <= sheetW - EDGE_MARGIN) {
-                    // Place it
-                    layoutItems.push({
-                        x: x,
-                        y: y,
-                        w: part.w,
-                        h: part.h
+            // 1. Создаем плоский список всех деталей
+            let allParts = [];
+            parts.forEach(p => {
+                for(let i=0; i<p.qty; i++) {
+                    allParts.push({ 
+                        w: p.w, h: p.h, 
+                        originalId: p.id,
+                        index: i + 1,
+                        totalQty: p.qty
                     });
-                    
-                    x += part.w + KERF;
-                    if (part.h > maxHeightInRow) {
-                        maxHeightInRow = part.h;
-                    }
-                } else {
-                    // Move to next row
-                    x = EDGE_MARGIN;
-                    y += maxHeightInRow + KERF;
-                    maxHeightInRow = 0; // Reset for new row
-
-                    // Try again in new row
-                    if (x + part.w <= sheetW - EDGE_MARGIN && y + part.h <= sheetH - EDGE_MARGIN) {
-                         layoutItems.push({
-                            x: x,
-                            y: y,
-                            w: part.w,
-                            h: part.h
-                        });
-                        x += part.w + KERF;
-                        maxHeightInRow = part.h;
-                    } else {
-                        // Cannot fit at all
-                        remainingParts.push(part);
-                    }
                 }
+            });
+
+            // 2. Сортировка: Сначала большие площади (Best Fit Decreasing)
+            // Это критически важно для компактности
+            allParts.sort((a, b) => (b.w * b.h) - (a.w * a.h));
+
+            // 3. Запуск упаковщика
+            // Мы работаем в координатах "внутри margins", т.е. от 0 до usableW
+            const packer = new GuillotinePacker(usableW, usableH);
+            packer.fit(allParts);
+
+            // 4. Сбор результатов
+            let placed = [];
+            let notPlaced = [];
+
+            allParts.forEach(p => {
+                if (p.fit) {
+                    // p.fit содержит {x, y, w, h, used: true}
+                    // Координаты p.fit.x/y относительные (внутри margins). 
+                    // При отрисовке добавим EDGE_MARGIN.
+                    placed.push({
+                        x: p.fit.x + EDGE_MARGIN,
+                        y: p.fit.y + EDGE_MARGIN,
+                        w: p.w,
+                        h: p.h,
+                        num: p.index,
+                        total: p.totalQty
+                    });
+                } else {
+                    notPlaced.push(p);
+                }
+            });
+
+            if (notPlaced.length > 0) {
+                alert(`Внимание! Не удалось разместить ${notPlaced.length} деталей из-за нехватки места.`);
             }
 
-            // 3. Draw Results
-            drawCanvas(sheetW, sheetH, layoutItems);
-            updateStats(layoutItems, flatParts.length, sheetW, sheetH, price);
+            drawCanvas(sheetW, sheetH, placed);
+            updateStats(placed, allParts.length, sheetW, sheetH, price);
         }
 
         function drawCanvas(sheetW, sheetH, items) {
             const canvas = document.getElementById('layoutCanvas');
             const ctx = canvas.getContext('2d');
 
-            // Scale to fit screen if sheet is huge
-            const maxDisplayWidth = 800;
-            const scale = Math.min(maxDisplayWidth / sheetW, 1);
+            // Масштабирование для экрана
+            const maxWidth = 1000;
+            const scale = Math.min(maxWidth / sheetW, 1);
 
             canvas.width = sheetW * scale;
             canvas.height = sheetH * scale;
 
-            // Clear
+            // Фон
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Sheet Border
+            // Границы листа
             ctx.strokeStyle = "#000";
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Margin Area (Visual guide)
-            ctx.fillStyle = "#f0f0f0";
-            ctx.fillRect(
-                EDGE_MARGIN * scale, 
-                EDGE_MARGIN * scale, 
-                (sheetW - EDGE_MARGIN*2) * scale, 
-                (sheetH - EDGE_MARGIN*2) * scale
-            );
+            // Зона отступов (визуально затемняем края)
+            ctx.fillStyle = "rgba(0,0,0,0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Очищаем рабочую зону (чтобы было видно, что там можно резать)
+            ctx.clearRect(EDGE_MARGIN * scale, EDGE_MARGIN * scale, (sheetW - EDGE_MARGIN*2) * scale, (sheetH - EDGE_MARGIN*2) * scale);
+            
+            // Рисуем рамку рабочей зоны
+            ctx.strokeStyle = "#cbd5e1";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(EDGE_MARGIN * scale, EDGE_MARGIN * scale, (sheetW - EDGE_MARGIN*2) * scale, (sheetH - EDGE_MARGIN*2) * scale);
+            ctx.setLineDash([]);
 
-            // Draw Parts
-            ctx.font = `${12 * scale}px Arial`;
+            // Настройки текста
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
 
-            items.forEach((item, index) => {
-                // Fill
-                ctx.fillStyle = "#bfdbfe"; // Light blue
-                ctx.fillRect(item.x * scale, item.y * scale, item.w * scale, item.h * scale);
-                
-                // Border
-                ctx.strokeStyle = "#1e40af";
-                ctx.lineWidth = 1;
-                ctx.strokeRect(item.x * scale, item.y * scale, item.w * scale, item.h * scale);
+            items.forEach((item, idx) => {
+                const x = item.x * scale;
+                const y = item.y * scale;
+                const w = item.w * scale;
+                const h = item.h * scale;
 
-                // Text (Dimensions + ID)
-                ctx.fillStyle = "#1e3a8a";
-                // Only draw text if box is big enough
-                if (item.w * scale > 30 && item.h * scale > 20) {
-                    ctx.fillText(`${item.w}x${item.h}`, item.x * scale + (item.w * scale)/2, item.y * scale + (item.h * scale)/2);
+                // Цвет детали (чередование для наглядности)
+                ctx.fillStyle = (idx % 2 === 0) ? "#dbeafe" : "#e0e7ff"; 
+                ctx.fillRect(x, y, w, h);
+
+                // Контур
+                ctx.strokeStyle = "#1e40af";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, w, h);
+
+                // Текст (Крупный)
+                // Если деталь слишком мелкая для текста, не пишем или пишем мелко
+                if (w > 40 && h > 30) {
+                    ctx.fillStyle = "#1e3a8a";
+                    ctx.font = `bold ${Math.max(14, Math.min(w, h) * 0.3)}px Arial`;
+                    
+                    // Номер
+                    ctx.fillText(`#${item.num}`, x + w/2, y + h/2 - 10);
+                    
+                    // Размеры
+                    ctx.font = `${Math.max(10, Math.min(w, h) * 0.2)}px Arial`;
+                    ctx.fillText(`${item.w}x${item.h}`, x + w/2, y + h/2 + 15);
                 }
             });
         }
 
-        function updateStats(placedItems, totalPartsCount, sheetW, sheetH, sheetPrice) {
-            const totalSheetArea = sheetW * sheetH;
+        function updateStats(placed, total, sheetW, sheetH, price) {
+            const totalArea = sheetW * sheetH;
             let usedArea = 0;
+            placed.forEach(p => usedArea += (p.w * p.h));
 
-            placedItems.forEach(item => {
-                usedArea += (item.w * item.h);
-            });
+            const percent = ((usedArea / totalArea) * 100).toFixed(1);
+            const waste = (100 - percent).toFixed(1);
+            const cost = Math.round((usedArea / totalArea) * price);
 
-            const usedPercent = ((usedArea / totalSheetArea) * 100).toFixed(1);
-            const wastePercent = (100 - usedPercent).toFixed(1);
-            
-            // Cost calculation logic: 
-            // Proportional cost based on area used
-            const costUsed = (usedArea / totalSheetArea) * sheetPrice;
+            document.getElementById('placedCount').innerText = `${placed.length} / ${total}`;
+            document.getElementById('usedPercent').innerText = `${percent}%`;
+            document.getElementById('wasteVal').innerText = `${waste}%`;
+            document.getElementById('costVal').innerText = `${cost} ₽`;
 
-            document.getElementById('placedCount').innerText = `${placedItems.length} / ${totalPartsCount}`;
-            document.getElementById('usedArea').innerText = `${usedPercent}%`;
-            document.getElementById('wasteArea').innerText = `${wastePercent}%`;
-            document.getElementById('costDetails').innerText = `${Math.round(costUsed)} ₽`;
-
-            // Color coding for waste
-            const wasteEl = document.getElementById('wasteArea');
-            if (wastePercent > 30) wasteEl.style.color = "red";
-            else wasteEl.style.color = "green";
+            // Цвета статистики
+            document.getElementById('wasteVal').style.color = waste > 20 ? '#ef4444' : '#059669';
         }
-
     </script>
 </body>
 </html>
