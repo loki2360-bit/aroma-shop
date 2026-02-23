@@ -12,6 +12,7 @@
             --border: #cbd5e1;
             --text: #0f172a;
             --danger: #ef4444;
+            --highlight: #fbbf24;
         }
 
         body {
@@ -94,16 +95,31 @@
             padding: 10px 15px;
             border-bottom: 1px solid #f1f5f9;
             background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         .part-item:last-child { border-bottom: none; }
+        .part-item:hover { background: #f0f9ff; }
+        .part-item.active { 
+            background: #fef3c7; 
+            border-left: 4px solid var(--highlight);
+        }
         .part-info { font-weight: 500; }
         .part-qty { color: #64748b; font-size: 0.9rem; }
+        .part-number { 
+            background: var(--primary); 
+            color: white; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-weight: bold;
+            margin-right: 8px;
+        }
 
         /* Canvas Area */
         .canvas-wrapper {
             overflow: auto;
             border: 2px solid #e2e8f0;
-            background: #94a3b8; /* Darker bg to show sheet clearly */
+            background: #94a3b8;
             border-radius: 8px;
             display: flex;
             justify-content: center;
@@ -114,6 +130,7 @@
         canvas {
             background: white;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
 
         /* Stats */
@@ -142,6 +159,15 @@
             margin-bottom: 15px;
             display: none;
             font-size: 0.9rem;
+        }
+
+        .hover-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fef3c7;
+            border-radius: 6px;
+            font-weight: 600;
+            display: none;
         }
     </style>
 </head>
@@ -193,6 +219,9 @@
             <div id="parts-list">
                 <!-- List -->
             </div>
+            <div id="hover-info" class="hover-info">
+                Наведите на деталь для просмотра
+            </div>
 
             <button onclick="calculateLayout()" style="margin-top: 20px; background-color: #059669;">РАССЧИТАТЬ РАСКРОЙ</button>
             <button class="secondary" onclick="clearAll()">Очистить всё</button>
@@ -230,6 +259,8 @@
         const EDGE_MARGIN = 10; 
         const KERF = 3;
         let parts = [];
+        let placedItems = []; // Store placed items for interaction
+        let hoveredItem = null;
 
         function showError(msg) {
             const el = document.getElementById('error-msg');
@@ -246,7 +277,6 @@
             const sheetW = parseInt(document.getElementById('sheetW').value);
             const sheetH = parseInt(document.getElementById('sheetH').value);
 
-            // Проверка на валидность
             const usableW = sheetW - (EDGE_MARGIN * 2);
             const usableH = sheetH - (EDGE_MARGIN * 2);
 
@@ -255,8 +285,6 @@
                 return;
             }
 
-            // Проверка: влезает ли деталь хотя бы теоретически
-            // Учитываем, что деталь можно повернуть, но для простоты проверки проверяем оба варианта
             const fitsNormal = (w <= usableW && h <= usableH);
             const fitsRotated = (h <= usableW && w <= usableH);
 
@@ -268,7 +296,6 @@
             parts.push({ w, h, qty, id: Date.now() + Math.random() });
             renderPartsList();
             
-            // Сброс полей
             document.getElementById('partW').value = '';
             document.getElementById('partH').value = '';
             document.getElementById('partQty').value = '1';
@@ -282,11 +309,13 @@
 
         function clearAll() {
             parts = [];
+            placedItems = [];
             renderPartsList();
             const ctx = document.getElementById('layoutCanvas').getContext('2d');
             ctx.clearRect(0, 0, 800, 600);
             document.getElementById('placedCount').innerText = '0';
             document.getElementById('usedPercent').innerText = '0%';
+            document.getElementById('hover-info').style.display = 'none';
         }
 
         function renderPartsList() {
@@ -296,22 +325,27 @@
                 list.innerHTML = '<div style="padding:15px; text-align:center; color:#94a3b8">Список пуст</div>';
                 return;
             }
+            
+            let globalNum = 1;
             parts.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'part-item';
-                div.innerHTML = `
-                    <div>
-                        <div class="part-info">${p.w} × ${p.h} мм</div>
-                        <div class="part-qty">${p.qty} шт.</div>
-                    </div>
-                    <button class="danger" onclick="removePart(${p.id})">Удалить</button>
-                `;
-                list.appendChild(div);
+                for(let i = 0; i < p.qty; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'part-item';
+                    div.dataset.id = globalNum;
+                    div.innerHTML = `
+                        <div>
+                            <span class="part-number">#${globalNum}</span>
+                            <span class="part-info">${p.w} × ${p.h} мм</span>
+                        </div>
+                    `;
+                    div.onmouseenter = () => highlightItem(globalNum);
+                    div.onmouseleave = () => unhighlightItem();
+                    list.appendChild(div);
+                    globalNum++;
+                }
             });
         }
 
-        // --- ГУЛЬОТИННЫЙ АЛГОРИТМ (Guillotine Packing) ---
-        
         class GuillotinePacker {
             constructor(w, h) {
                 this.root = { x: 0, y: 0, w: w, h: h };
@@ -339,18 +373,12 @@
 
             splitNode(node, w, h) {
                 node.used = true;
-                // Логика разреза: отрезаем справа и снизу
-                // Остаток справа
                 node.down  = { x: node.x,         y: node.y + h + KERF, w: node.w,         h: node.h - h - KERF };
-                // Остаток снизу (под деталью)
                 node.right = { x: node.x + w + KERF, y: node.y,         w: node.w - w - KERF, h: h };
                 return node;
             }
 
             growDown(w, h) {
-                // Если не влезло в текущие свободные блоки, пытаемся расширить (в данном простом варианте просто возвращаем null, 
-                // так как размер листа фиксирован).
-                // В сложных алгоритмах здесь лист увеличивают, но нам это не нужно.
                 return null; 
             }
         }
@@ -363,44 +391,34 @@
             const usableW = sheetW - (EDGE_MARGIN * 2);
             const usableH = sheetH - (EDGE_MARGIN * 2);
 
-            // 1. Создаем плоский список всех деталей
             let allParts = [];
             parts.forEach(p => {
                 for(let i=0; i<p.qty; i++) {
                     allParts.push({ 
                         w: p.w, h: p.h, 
                         originalId: p.id,
-                        index: i + 1,
+                        index: allParts.length + 1,
                         totalQty: p.qty
                     });
                 }
             });
 
-            // 2. Сортировка: Сначала большие площади (Best Fit Decreasing)
-            // Это критически важно для компактности
             allParts.sort((a, b) => (b.w * b.h) - (a.w * a.h));
 
-            // 3. Запуск упаковщика
-            // Мы работаем в координатах "внутри margins", т.е. от 0 до usableW
             const packer = new GuillotinePacker(usableW, usableH);
             packer.fit(allParts);
 
-            // 4. Сбор результатов
-            let placed = [];
+            placedItems = [];
             let notPlaced = [];
 
             allParts.forEach(p => {
                 if (p.fit) {
-                    // p.fit содержит {x, y, w, h, used: true}
-                    // Координаты p.fit.x/y относительные (внутри margins). 
-                    // При отрисовке добавим EDGE_MARGIN.
-                    placed.push({
+                    placedItems.push({
+                        num: p.index,
                         x: p.fit.x + EDGE_MARGIN,
                         y: p.fit.y + EDGE_MARGIN,
                         w: p.w,
                         h: p.h,
-                        num: p.index,
-                        total: p.totalQty
                     });
                 } else {
                     notPlaced.push(p);
@@ -411,76 +429,148 @@
                 alert(`Внимание! Не удалось разместить ${notPlaced.length} деталей из-за нехватки места.`);
             }
 
-            drawCanvas(sheetW, sheetH, placed);
-            updateStats(placed, allParts.length, sheetW, sheetH, price);
+            drawCanvas(sheetW, sheetH, placedItems);
+            updateStats(placedItems, allParts.length, sheetW, sheetH, price);
+            renderPartsList();
         }
 
         function drawCanvas(sheetW, sheetH, items) {
             const canvas = document.getElementById('layoutCanvas');
             const ctx = canvas.getContext('2d');
 
-            // Масштабирование для экрана
             const maxWidth = 1000;
             const scale = Math.min(maxWidth / sheetW, 1);
 
             canvas.width = sheetW * scale;
             canvas.height = sheetH * scale;
 
-            // Фон
+            canvas.onmousemove = (e) => handleCanvasMouseMove(e, items, scale);
+            canvas.onmouseleave = () => {
+                hoveredItem = null;
+                drawCanvas(sheetW, sheetH, items);
+                document.getElementById('hover-info').style.display = 'none';
+                clearListHighlight();
+            };
+
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Границы листа
             ctx.strokeStyle = "#000";
             ctx.lineWidth = 3;
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-            // Зона отступов (визуально затемняем края)
             ctx.fillStyle = "rgba(0,0,0,0.05)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Очищаем рабочую зону (чтобы было видно, что там можно резать)
             ctx.clearRect(EDGE_MARGIN * scale, EDGE_MARGIN * scale, (sheetW - EDGE_MARGIN*2) * scale, (sheetH - EDGE_MARGIN*2) * scale);
             
-            // Рисуем рамку рабочей зоны
             ctx.strokeStyle = "#cbd5e1";
             ctx.lineWidth = 1;
             ctx.setLineDash([5, 5]);
             ctx.strokeRect(EDGE_MARGIN * scale, EDGE_MARGIN * scale, (sheetW - EDGE_MARGIN*2) * scale, (sheetH - EDGE_MARGIN*2) * scale);
             ctx.setLineDash([]);
 
-            // Настройки текста
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
 
-            items.forEach((item, idx) => {
+            items.forEach((item) => {
                 const x = item.x * scale;
                 const y = item.y * scale;
                 const w = item.w * scale;
                 const h = item.h * scale;
 
-                // Цвет детали (чередование для наглядности)
-                ctx.fillStyle = (idx % 2 === 0) ? "#dbeafe" : "#e0e7ff"; 
+                const isHovered = hoveredItem && hoveredItem.num === item.num;
+                
+                ctx.fillStyle = isHovered ? "#fbbf24" : (item.num % 2 === 0 ? "#dbeafe" : "#e0e7ff");
                 ctx.fillRect(x, y, w, h);
 
-                // Контур
-                ctx.strokeStyle = "#1e40af";
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = isHovered ? "#f59e0b" : "#1e40af";
+                ctx.lineWidth = isHovered ? 4 : 2;
                 ctx.strokeRect(x, y, w, h);
 
-                // Текст (Крупный)
-                // Если деталь слишком мелкая для текста, не пишем или пишем мелко
-                if (w > 40 && h > 30) {
-                    ctx.fillStyle = "#1e3a8a";
-                    ctx.font = `bold ${Math.max(14, Math.min(w, h) * 0.3)}px Arial`;
+                if (w > 50 && h > 50) {
+                    // Номер детали (сверху)
+                    ctx.fillStyle = isHovered ? "#92400e" : "#1e3a8a";
+                    ctx.font = `bold ${Math.max(16, Math.min(w, h) * 0.25)}px Arial`;
+                    ctx.fillText(`#${item.num}`, x + w/2, y + h * 0.3);
                     
-                    // Номер
-                    ctx.fillText(`#${item.num}`, x + w/2, y + h/2 - 10);
-                    
-                    // Размеры
-                    ctx.font = `${Math.max(10, Math.min(w, h) * 0.2)}px Arial`;
-                    ctx.fillText(`${item.w}x${item.h}`, x + w/2, y + h/2 + 15);
+                    // Размеры (снизу)
+                    ctx.font = `${Math.max(12, Math.min(w, h) * 0.2)}px Arial`;
+                    ctx.fillText(`${item.w}×${item.h}`, x + w/2, y + h * 0.65);
                 }
+            });
+        }
+
+        function handleCanvasMouseMove(e, items, scale) {
+            const canvas = document.getElementById('layoutCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (e.clientX - rect.left) / scale;
+            const mouseY = (e.clientY - rect.top) / scale;
+
+            let found = null;
+            for (let item of items) {
+                if (mouseX >= item.x && mouseX <= item.x + item.w &&
+                    mouseY >= item.y && mouseY <= item.y + item.h) {
+                    found = item;
+                    break;
+                }
+            }
+
+            if (found !== hoveredItem) {
+                hoveredItem = found;
+                const sheetW = parseInt(document.getElementById('sheetW').value);
+                const sheetH = parseInt(document.getElementById('sheetH').value);
+                drawCanvas(sheetW, sheetH, items);
+                
+                if (found) {
+                    highlightListItem(found.num);
+                    const hoverInfo = document.getElementById('hover-info');
+                    hoverInfo.innerHTML = `Деталь #${found.num}<br>Размеры: ${found.w} × ${found.h} мм`;
+                    hoverInfo.style.display = 'block';
+                } else {
+                    clearListHighlight();
+                    document.getElementById('hover-info').style.display = 'none';
+                }
+            }
+        }
+
+        function highlightItem(num) {
+            hoveredItem = placedItems.find(i => i.num === num);
+            const sheetW = parseInt(document.getElementById('sheetW').value);
+            const sheetH = parseInt(document.getElementById('sheetH').value);
+            drawCanvas(sheetW, sheetH, placedItems);
+            highlightListItem(num);
+            
+            const hoverInfo = document.getElementById('hover-info');
+            if (hoveredItem) {
+                hoverInfo.innerHTML = `Деталь #${hoveredItem.num}<br>Размеры: ${hoveredItem.w} × ${hoveredItem.h} мм`;
+                hoverInfo.style.display = 'block';
+            }
+        }
+
+        function unhighlightItem() {
+            hoveredItem = null;
+            const sheetW = parseInt(document.getElementById('sheetW').value);
+            const sheetH = parseInt(document.getElementById('sheetH').value);
+            drawCanvas(sheetW, sheetH, placedItems);
+            clearListHighlight();
+            document.getElementById('hover-info').style.display = 'none';
+        }
+
+        function highlightListItem(num) {
+            clearListHighlight();
+            const items = document.querySelectorAll('.part-item');
+            items.forEach(item => {
+                if (parseInt(item.dataset.id) === num) {
+                    item.classList.add('active');
+                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        }
+
+        function clearListHighlight() {
+            document.querySelectorAll('.part-item').forEach(item => {
+                item.classList.remove('active');
             });
         }
 
@@ -498,7 +588,6 @@
             document.getElementById('wasteVal').innerText = `${waste}%`;
             document.getElementById('costVal').innerText = `${cost} ₽`;
 
-            // Цвета статистики
             document.getElementById('wasteVal').style.color = waste > 20 ? '#ef4444' : '#059669';
         }
     </script>
