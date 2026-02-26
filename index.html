@@ -400,7 +400,7 @@
                 </button>
                 <button class="btn btn-export" onclick="exportToCSV()">
                     📥 Экспорт в CSV
-                </button>
+            </button>
                 <button class="btn btn-clear" onclick="clearAll()">
                     🗑️ Очистить всё
                 </button>
@@ -520,7 +520,7 @@
             // Пробуем извлечь дату из имени файла (заказы_09.02.2026(2).txt)
             const filenameMatch = filename.match(/(\d{2}\.\d{2}\.\d{4})/);
             if (filenameMatch) {
-                return filenameMatch[1);
+                return filenameMatch[1];
             }
 
             // Пробуем извлечь дату из содержимого (ЗАКАЗЫ ЗА 09.02.2026)
@@ -549,19 +549,19 @@
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i].trim();
 
-                if (line.match(/^№\d+\./)) {
+                if (line.match(/^№\d+/)) {
                     if (inOrder && currentOrder.number) {
                         orders.push({...currentOrder});
                     }
                     currentOrder = {date: date};
                     inOrder = true;
                     
-                    const numberMatch = line.match(/^№(\d+)\./);
+                    const numberMatch = line.match(/^№(\d+)/);
                     if (numberMatch) {
                         currentOrder.number = numberMatch[1];
                     }
                     
-                    const codeMatch = line.match(/№\d+\.\s*(.+?)\./);
+                    const codeMatch = line.match(/№\d+\.\s*([^\s]+)/);
                     if (codeMatch) {
                         currentOrder.code = codeMatch[1].trim();
                     }
@@ -570,7 +570,7 @@
 
                 if (!inOrder) continue;
 
-                if (!currentOrder.name && line && !line.includes(':') && !line.includes('---') && !line.includes('ЗАКАЗЫ')) {
+                if (!currentOrder.name && line && !line.includes(':') && !line.includes('---') && !line.includes('ЗАКАЗЫ') && !line.includes('ИТОГО') && !line.includes('Общая') && !line.includes('Экспорт')) {
                     currentOrder.name = line;
                     continue;
                 }
