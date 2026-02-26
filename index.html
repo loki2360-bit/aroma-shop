@@ -3,259 +3,590 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мебельный Конструктор Lite</title>
+    <title>Парсер Заказов</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        h1 { color: #333; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
         .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            max-width: 1200px;
-            width: 100%;
-            justify-content: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .upload-section {
+            background: #f8f9fa;
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: #764ba2;
+            background: #f0f1ff;
+        }
+
+        .upload-section.dragover {
+            border-color: #764ba2;
+            background: #e8e9ff;
+            transform: scale(1.02);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-info {
+            margin-top: 15px;
+            color: #666;
+            font-size: 0.9em;
         }
 
         .controls {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .preview {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            flex: 2;
-            min-width: 300px;
             display: flex;
-            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
             align-items: center;
         }
 
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        
-        button {
-            width: 100%;
-            padding: 12px;
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-copy {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background: #218838;
+        }
+
+        .btn-clear {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #c82333;
+        }
+
+        .btn-export {
             background: #007bff;
             color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.3s;
         }
-        button:hover { background: #0056b3; }
 
-        canvas { border: 1px solid #eee; background: #fff; max-width: 100%; }
-        
-        .parts-list { margin-top: 20px; width: 100%; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #f8f8f8; }
+        .btn-export:hover {
+            background: #0056b3;
+        }
+
+        .summary {
+            background: #e8f4fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            color: #333;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <h1>🛠️ Конструктор Шкафа</h1>
-
     <div class="container">
-        <!-- Панель управления -->
-        <div class="controls">
-            <h3>Параметры</h3>
-            <div class="input-group">
-                <label>Общая Ширина (мм):</label>
-                <input type="number" id="width" value="800">
-            </div>
-            <div class="input-group">
-                <label>Общая Высота (мм):</label>
-                <input type="number" id="height" value="2000">
-            </div>
-            <div class="input-group">
-                <label>Глубина (мм):</label>
-                <input type="number" id="depth" value="600">
-            </div>
-            <div class="input-group">
-                <label>Толщина материала (мм):</label>
-                <input type="number" id="thickness" value="16">
-            </div>
-            <div class="input-group">
-                <label>Количество полок:</label>
-                <input type="number" id="shelves" value="3" min="0">
-            </div>
-            <button onclick="calculateAndDraw()">Рассчитать и Начертить</button>
-
-            <div class="parts-list" id="partsList">
-                <!-- Сюда попадет таблица деталей -->
-            </div>
+        <h1>📋 Парсер Заказов</h1>
+        
+        <div class="upload-section" id="dropZone">
+            <input type="file" id="fileInput" accept=".txt">
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                📁 Выбрать файл
+            </button>
+            <p class="file-info">или перетащите файл сюда</p>
+            <p class="file-info" style="font-size: 0.8em; color: #999;">
+                Поддерживаемый формат: .txt
+            </p>
         </div>
 
-        <!-- Область чертежа -->
-        <div class="preview">
-            <h3>Схема (Фронтальный вид)</h3>
-            <canvas id="canvas" width="600" height="400"></canvas>
-            <p style="color: #777; font-size: 12px;">*Чертеж схематичный, вид спереди</p>
+        <div id="status" class="status"></div>
+
+        <div id="results" class="hidden">
+            <div class="summary" id="summary"></div>
+            
+            <div class="controls">
+                <button class="btn btn-copy" onclick="copyToClipboard()">
+                    📋 Копировать в буфер
+                </button>
+                <button class="btn btn-export" onclick="exportToCSV()">
+                    📥 Экспорт в CSV
+                </button>
+                <button class="btn btn-clear" onclick="clearAll()">
+                    🗑️ Очистить
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Код заказа</th>
+                            <th>Наименование</th>
+                            <th>Тип работы</th>
+                            <th>Длина (м)</th>
+                            <th>Ширина (м)</th>
+                            <th>Кол-во</th>
+                            <th>Объем</th>
+                            <th>Сумма (₽)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const partsListDiv = document.getElementById('partsList');
+        let parsedData = [];
+        let summaryData = {};
 
-        function calculateAndDraw() {
-            // 1. Получаем данные
-            const W = parseFloat(document.getElementById('width').value);
-            const H = parseFloat(document.getElementById('height').value);
-            const D = parseFloat(document.getElementById('depth').value);
-            const T = parseFloat(document.getElementById('thickness').value);
-            const shelvesCount = parseInt(document.getElementById('shelves').value);
+        // Drag and Drop
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
 
-            // 2. Логика расчета (Типичная сборка: полки между стенками)
-            // Боковины (Левая и Правая)
-            const sideHeight = H;
-            const sideDepth = D;
-            
-            // Горизонтальные детали (Крыша, Дно, Полки)
-            // Ширина внутренней = Общая ширина - 2 толщины стенок
-            const innerWidth = W - (2 * T); 
-            const horizDepth = D; // Глубина обычно такая же или меньше на толщину кромки/дверей, оставим D для простоты
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
 
-            // Высота одной секции (для полок)
-            // Считаем, что крыша и дно тоже есть. 
-            // Полезное пространство по высоте = H - (Толщина крыши) - (Толщина дна)
-            // Но в простой схеме часто дно стоит на полу, а крыша сверху.
-            // Упростим: Полки делят пространство между дном и крышкой.
-            const spaceForShelves = H - (2 * T); 
-            const shelfStep = shelvesCount > 0 ? spaceForShelves / (shelvesCount + 1) : 0;
-
-            // Список деталей для таблицы
-            let parts = [
-                { name: "Боковина Левая", qty: 1, w: T, h: sideHeight, d: sideDepth },
-                { name: "Боковина Правая", qty: 1, w: T, h: sideHeight, d: sideDepth },
-                { name: "Крыша", qty: 1, w: innerWidth, h: T, d: horizDepth },
-                { name: "Дно", qty: 1, w: innerWidth, h: T, d: horizDepth }
-            ];
-
-            for(let i=0; i<shelvesCount; i++) {
-                parts.push({ name: `Полка ${i+1}`, qty: 1, w: innerWidth, h: T, d: horizDepth });
-            }
-
-            // 3. Отрисовка таблицы
-            let html = `<h4>Список деталей (раскрой):</h4>
-                        <table>
-                            <thead><tr><th>Деталь</th><th>Кол-во</th><th>Длина (мм)</th><th>Ширина (мм)</th><th>Глубина (мм)</th></tr></thead>
-                            <tbody>`;
-            
-            parts.forEach(p => {
-                // В таблице обычно Длина - это большая сторона, Ширина - меньшая (для станка)
-                // Но для наглядности выведем как есть относительно чертежа
-                html += `<tr><td>${p.name}</td><td>${p.qty}</td><td>${p.w}</td><td>${p.h}</td><td>${p.d}</td></tr>`;
-            });
-            html += `</tbody></table>`;
-            partsListDiv.innerHTML = html;
-
-            // 4. Отрисовка на Canvas
-            drawCabinet(W, H, T, shelvesCount, shelfStep);
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
 
-        function drawCabinet(W, H, T, shelvesCount, shelfStep) {
-            // Очистка
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Настройка масштаба, чтобы влезло в канвас
-            const padding = 40;
-            const availW = canvas.width - (padding * 2);
-            const availH = canvas.height - (padding * 2);
-            
-            const scaleX = availW / W;
-            const scaleY = availH / H;
-            const scale = Math.min(scaleX, scaleY); // Берем меньший масштаб, чтобы влезло целиком
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
 
-            const startX = padding + (availW - (W * scale)) / 2;
-            const startY = padding + (availH - (H * scale)) / 2;
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
 
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = '#333';
-            ctx.font = '12px Arial';
-            ctx.fillStyle = '#000';
+        dropZone.addEventListener('drop', handleDrop, false);
+        fileInput.addEventListener('change', handleFileSelect, false);
 
-            // Функция рисования прямоугольника с размерами
-            function drawRect(x, y, w, h, labelW, labelH) {
-                const rx = startX + x * scale;
-                const ry = startY + y * scale;
-                const rw = w * scale;
-                const rh = h * scale;
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length) {
+                processFile(files[0]);
+            }
+        }
 
-                ctx.strokeRect(rx, ry, rw, rh);
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            if (files.length) {
+                processFile(files[0]);
+            }
+        }
 
-                // Подписи размеров (упрощенно внутри детали, если влезает)
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                
-                if (rw > 40 && rh > 20) {
-                     ctx.fillText(`${Math.round(w)}x${Math.round(h)}`, rx + rw/2, ry + rh/2);
+        function processFile(file) {
+            if (!file.name.endsWith('.txt')) {
+                showStatus('Пожалуйста, выберите файл .txt', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                parseData(e.target.result);
+            };
+            reader.onerror = function() {
+                showStatus('Ошибка чтения файла', 'error');
+            };
+            reader.readAsText(file, 'utf-8');
+        }
+
+        function parseData(text) {
+            try {
+                parsedData = [];
+                const lines = text.split('\n');
+                let currentOrder = {};
+                let inOrder = false;
+
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i].trim();
+
+                    // Начало нового заказа
+                    if (line.match(/^№\d+\./)) {
+                        if (inOrder && currentOrder.number) {
+                            parsedData.push({...currentOrder});
+                        }
+                        currentOrder = {};
+                        inOrder = true;
+                        
+                        // Извлекаем номер заказа
+                        const numberMatch = line.match(/^№(\d+)\./);
+                        if (numberMatch) {
+                            currentOrder.number = numberMatch[1];
+                        }
+                        
+                        // Извлекаем код заказа (после номера)
+                        const codeMatch = line.match(/№\d+\.\s*(.+?)\./);
+                        if (codeMatch) {
+                            currentOrder.code = codeMatch[1].trim();
+                        }
+                        continue;
+                    }
+
+                    if (!inOrder) continue;
+
+                    // Наименование (первая строка после номера)
+                    if (!currentOrder.name && line && !line.includes(':') && !line.includes('---')) {
+                        currentOrder.name = line;
+                        continue;
+                    }
+
+                    // Тип работы (в скобках)
+                    const typeMatch = line.match(/\(([^)]+)\)/);
+                    if (typeMatch && !currentOrder.workType) {
+                        currentOrder.workType = typeMatch[1];
+                    }
+
+                    // Длина
+                    const lengthMatch = line.match(/Длина:\s*([\d.,]+)\s*м/);
+                    if (lengthMatch) {
+                        currentOrder.length = lengthMatch[1].replace(',', '.');
+                    }
+
+                    // Ширина
+                    const widthMatch = line.match(/Ширина:\s*([\d.,]+)\s*м/);
+                    if (widthMatch) {
+                        currentOrder.width = widthMatch[1].replace(',', '.');
+                    }
+
+                    // Количество
+                    const qtyMatch = line.match(/Кол-во:\s*(\d+)/);
+                    if (qtyMatch) {
+                        currentOrder.quantity = qtyMatch[1];
+                    }
+
+                    // Объем
+                    const volumeMatch = line.match(/Объем:\s*([\d.,]+)\s*(м²|пог\.?\s*м|часы?)/);
+                    if (volumeMatch) {
+                        currentOrder.volume = volumeMatch[1].replace(',', '.') + ' ' + volumeMatch[2];
+                    }
+
+                    // Сумма
+                    const sumMatch = line.match(/Сумма:\s*([\d.,]+)\s*₽/);
+                    if (sumMatch) {
+                        currentOrder.sum = sumMatch[1].replace(',', '.');
+                    }
+
+                    // Конец заказа
+                    if (line === '---') {
+                        if (currentOrder.number) {
+                            parsedData.push({...currentOrder});
+                        }
+                        currentOrder = {};
+                        inOrder = false;
+                    }
                 }
+
+                // Последний заказ
+                if (inOrder && currentOrder.number) {
+                    parsedData.push({...currentOrder});
+                }
+
+                // Извлекаем итоги
+                const totalMatch = text.match(/ИТОГО:\s*([\d.,]+)\s*₽/);
+                const areaMatch = text.match(/Общая площадь:\s*([\d.,]+)\s*м²/);
+                const lengthMatch = text.match(/Общая длина:\s*([\d.,]+)\s*пог\.?\s*м/);
+                const timeMatch = text.match(/Общее время:\s*([\d.,]+)\s*ч/);
+
+                summaryData = {
+                    total: totalMatch ? totalMatch[1].replace(',', '.') : '0',
+                    area: areaMatch ? areaMatch[1].replace(',', '.') : '0',
+                    length: lengthMatch ? lengthMatch[1].replace(',', '.') : '0',
+                    time: timeMatch ? timeMatch[1].replace(',', '.') : '0'
+                };
+
+                displayResults();
+                showStatus(`Успешно обработано ${parsedData.length} заказов`, 'success');
+
+            } catch (error) {
+                console.error(error);
+                showStatus('Ошибка парсинга: ' + error.message, 'error');
             }
-
-            // --- РИСУЕМ ДЕТАЛИ ---
-
-            // 1. Левая стенка
-            // Координаты: x=0, y=0. Ширина=T, Высота=H
-            drawRect(0, 0, T, H, "Стенка Л", "Высота");
-
-            // 2. Правая стенка
-            // Координаты: x=W-T, y=0
-            drawRect(W - T, 0, T, H, "Стенка П", "Высота");
-
-            // 3. Крыша (между стенками)
-            // x=T, y=0. Ширина=Inner, Высота=T
-            drawRect(T, 0, W - 2*T, T, "Крыша", "Толщ");
-
-            // 4. Дно (между стенками)
-            // x=T, y=H-T
-            drawRect(T, H - T, W - 2*T, T, "Дно", "Толщ");
-
-            // 5. Полки
-            for(let i=0; i<shelvesCount; i++) {
-                // Позиция Y: отступаем от верха (Толщина крыши) + шаг * (номер полки + 1)
-                // Но у нас полки считаются снизу вверх обычно, или сверху. 
-                // Пусть будут равномерно.
-                // Y = T (крыша) + (i+1) * шаг
-                const shelfY = T + ((i + 1) * shelfStep);
-                drawRect(T, shelfY - (T/2), W - 2*T, T, `Полка ${i+1}`, "");
-            }
-
-            // --- ОБЩИЕ ГАБАРИТЫ (Выноски) ---
-            ctx.strokeStyle = '#007bff';
-            ctx.lineWidth = 1;
-            
-            // Ширина общая
-            ctx.beginPath();
-            ctx.moveTo(startX, startY + H*scale + 20);
-            ctx.lineTo(startX + W*scale, startY + H*scale + 20);
-            ctx.stroke();
-            ctx.fillStyle = '#007bff';
-            ctx.fillText(`Ширина: ${W}мм`, startX + (W*scale)/2, startY + H*scale + 35);
-
-            // Высота общая
-            ctx.beginPath();
-            ctx.moveTo(startX - 20, startY);
-            ctx.lineTo(startX - 20, startY + H*scale);
-            ctx.stroke();
-            ctx.fillText(`Высота: ${H}мм`, startX - 50, startY + (H*scale)/2);
         }
 
-        // Запуск при загрузке
-        calculateAndDraw();
+        function displayResults() {
+            const tableBody = document.getElementById('tableBody');
+            const summary = document.getElementById('summary');
+            const results = document.getElementById('results');
+
+            // Заполняем таблицу
+            tableBody.innerHTML = parsedData.map(order => `
+                <tr>
+                    <td>${order.number || ''}</td>
+                    <td>${order.code || ''}</td>
+                    <td>${order.name || ''}</td>
+                    <td>${order.workType || ''}</td>
+                    <td>${order.length || ''}</td>
+                    <td>${order.width || ''}</td>
+                    <td>${order.quantity || ''}</td>
+                    <td>${order.volume || ''}</td>
+                    <td>${order.sum || ''}</td>
+                </tr>
+            `).join('');
+
+            // Заполняем сводку
+            summary.innerHTML = `
+                <div class="summary-item">
+                    <div class="summary-label">Всего заказов</div>
+                    <div class="summary-value">${parsedData.length}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Общая сумма</div>
+                    <div class="summary-value">${summaryData.total} ₽</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Общая площадь</div>
+                    <div class="summary-value">${summaryData.area} м²</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Общая длина</div>
+                    <div class="summary-value">${summaryData.length} пог. м</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Общее время</div>
+                    <div class="summary-value">${summaryData.time} ч</div>
+                </div>
+            `;
+
+            results.classList.remove('hidden');
+        }
+
+        function copyToClipboard() {
+            if (parsedData.length === 0) {
+                showStatus('Нет данных для копирования', 'error');
+                return;
+            }
+
+            // Формируем данные для Google Sheets (табуляция между колонками)
+            let clipboardData = '№\tКод заказа\tНаименование\tТип работы\tДлина (м)\tШирина (м)\tКол-во\tОбъем\tСумма (₽)\n';
+            
+            parsedData.forEach(order => {
+                clipboardData += `${order.number || ''}\t${order.code || ''}\t${order.name || ''}\t${order.workType || ''}\t${order.length || ''}\t${order.width || ''}\t${order.quantity || ''}\t${order.volume || ''}\t${order.sum || ''}\n`;
+            });
+
+            // Добавляем итоги
+            clipboardData += `\nИТОГО:\t\t\t\t\t\t\t\t${summaryData.total} ₽\n`;
+            clipboardData += `Площадь:\t\t\t\t\t\t\t\t${summaryData.area} м²\n`;
+            clipboardData += `Длина:\t\t\t\t\t\t\t\t${summaryData.length} пог. м\n`;
+            clipboardData += `Время:\t\t\t\t\t\t\t\t${summaryData.time} ч`;
+
+            navigator.clipboard.writeText(clipboardData).then(() => {
+                showStatus('Данные скопированы в буфер обмена! Можно вставлять в Google Sheets', 'success');
+            }).catch(err => {
+                // Fallback для старых браузеров
+                const textarea = document.createElement('textarea');
+                textarea.value = clipboardData;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showStatus('Данные скопированы в буфер обмена!', 'success');
+            });
+        }
+
+        function exportToCSV() {
+            if (parsedData.length === 0) {
+                showStatus('Нет данных для экспорта', 'error');
+                return;
+            }
+
+            let csvContent = '\uFEFF'; // BOM для UTF-8
+            csvContent += '№;Код заказа;Наименование;Тип работы;Длина (м);Ширина (м);Кол-во;Объем;Сумма (₽)\n';
+            
+            parsedData.forEach(order => {
+                csvContent += `${order.number || ''};${order.code || ''};${(order.name || '').replace(/;/g, ',')};${order.workType || ''};${order.length || ''};${order.width || ''};${order.quantity || ''};${order.volume || ''};${order.sum || ''}\n`;
+            });
+
+            csvContent += `\nИТОГО;;;;;;;;${summaryData.total} ₽\n`;
+            csvContent += `Площадь;;;;;;;;${summaryData.area} м²\n`;
+            csvContent += `Длина;;;;;;;;${summaryData.length} пог. м\n`;
+            csvContent += `Время;;;;;;;;${summaryData.time} ч`;
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `заказы_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function clearAll() {
+            parsedData = [];
+            summaryData = {};
+            document.getElementById('tableBody').innerHTML = '';
+            document.getElementById('summary').innerHTML = '';
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('fileInput').value = '';
+            document.getElementById('status').className = 'status';
+            document.getElementById('status').style.display = 'none';
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
     </script>
 </body>
 </html>
