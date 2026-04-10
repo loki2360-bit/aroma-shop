@@ -90,19 +90,35 @@
     .inv-meta { font-size:0.7rem; color:var(--muted); }
     .stock-badge { padding:2px 6px; border-radius:4px; font-size:0.7rem; font-weight:600; white-space:nowrap; }
     .stock-ok { background:#dcfce7; color:#166534; } .stock-low { background:#fef3c7; color:#92400e; } .stock-none { background:#fee2e2; color:#991b1b; }
-    
-    /* Checkbox styling */
     .checkbox-wrap { display:flex; align-items:center; padding-right:8px; }
     .checkbox-wrap input[type="checkbox"] { width:18px; height:18px; margin:0; cursor:pointer; accent-color:var(--primary); flex-shrink:0; }
     
-    /* Multi-select bar */
-    .sel-bar { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; border-radius:8px; margin-bottom:10px; box-shadow:0 2px 8px rgba(37,99,235,0.2); }
+    .sel-bar { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; border-radius:8px; margin-bottom:10px; }
     .sel-bar .sel-count { font-weight:700; font-size:0.95rem; }
     .sel-bar .sel-actions { display:flex; gap:8px; }
     .sel-bar .btn { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:#fff; }
-    .sel-bar .btn:active { background:rgba(255,255,255,0.3); }
     .sel-bar .btn-confirm { background:#10b981; border-color:#10b981; font-weight:700; }
     
+    /* Calculator */
+    .calc-toggle { width:100%; padding:8px; background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#fff; border:none; border-radius:8px; font-weight:700; font-size:0.85rem; margin:10px 0 0; cursor:pointer; }
+    .calc-toggle:active { opacity:0.85; }
+    .calc-wrap { display:none; background:var(--bg); padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid var(--border); }
+    .calc-wrap.show { display:block; animation:slideD 0.2s ease; }
+    @keyframes slideD { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .calc-display { background:#0f172a; color:#fbbf24; padding:10px 12px; border-radius:8px; text-align:right; margin-bottom:8px; font-family:monospace; min-height:44px; display:flex; flex-direction:column; justify-content:center; }
+    .calc-expr { font-size:0.75rem; color:#64748b; margin-bottom:2px; min-height:18px; word-break:break-all; }
+    .calc-res { font-size:1.3rem; font-weight:700; }
+    .calc-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+    .calc-btn { padding:10px; border:none; border-radius:8px; font-size:1.05rem; font-weight:600; cursor:pointer; transition:transform 0.1s; background:var(--card); border:1px solid var(--border); color:var(--text); }
+    .calc-btn:active { transform:scale(0.94); }
+    .calc-btn.op { background:#f1f5f9; color:var(--primary); font-weight:700; }
+    .calc-btn.eq { background:var(--success); color:#fff; }
+    .calc-btn.clear { background:var(--danger); color:#fff; }
+    .calc-insert { margin-top:8px; display:flex; gap:6px; }
+    .calc-insert button { flex:1; padding:6px; border:1px solid var(--border); border-radius:6px; background:var(--card); font-size:0.75rem; cursor:pointer; font-weight:600; color:var(--muted); }
+    .calc-insert button:active { background:var(--primary); color:#fff; border-color:var(--primary); }
+    
+    /* Other */
     .modal { position:fixed; inset:0; background:rgba(15,23,42,0.5); display:none; justify-content:center; align-items:flex-end; z-index:100; padding:0; }
     .modal.active { display:flex; }
     @media(min-width:640px) { .modal { align-items:center; padding:16px; } }
@@ -124,7 +140,6 @@
     .part-row input, .part-row select { padding:7px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; background:#fff; }
     
     .detail-header { background:var(--bg); padding:10px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
-    .detail-row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed var(--border); font-size:0.9rem; }
     .detail-part { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
     .tags-wrap { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
     .tag-item { display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:600; color:#fff; }
@@ -152,7 +167,9 @@
     }
     [data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea { background:#0f172a; color:#f1f5f9; border-color:#475569; }
     [data-theme="dark"] th { background:#1e293b; }
-    [data-theme="dark"] .stat-card,[data-theme="dark"] .controls,[data-theme="dark"] .table-wrap,[data-theme="dark"] .modal-box,[data-theme="dark"] .parts-sec { background:var(--card); }
+    [data-theme="dark"] .stat-card,[data-theme="dark"] .controls,[data-theme="dark"] .table-wrap,[data-theme="dark"] .modal-box,[data-theme="dark"] .parts-sec,[data-theme="dark"] .calc-wrap { background:var(--card); }
+    [data-theme="dark"] .calc-btn { background:#334155; border-color:#475569; color:#f1f5f9; }
+    [data-theme="dark"] .calc-btn.op { background:#475569; color:#93c5fd; }
   </style>
 </head>
 <body>
@@ -162,7 +179,7 @@
         <svg class="brand-logo" viewBox="0 0 44 44" fill="none"><defs><linearGradient id="g" x1="0" y1="0" x2="44" y2="44"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs><rect width="44" height="44" rx="12" fill="url(#g)"/><path d="M8 32V20L16 24V16L24 20V12L32 16V32H8Z" stroke="#fff" stroke-width="2.2"/><path d="M12 32V28H20V32M24 32V24H32V32" stroke="#fff" stroke-width="2.2"/><circle cx="22" cy="34" r="3" fill="#97CF26"/></svg>
         <div class="brand-text">
           <div class="brand-title">ПРОИЗВОДСТВО</div>
-          <div class="brand-sub">Lite • <span class="badge">v8.2</span></div>
+          <div class="brand-sub">Lite • <span class="badge">v8.3</span></div>
         </div>
       </div>
       <div class="header-actions">
@@ -207,12 +224,12 @@
     </div>
   </div>
 
-  <!-- Modals -->
+  <!-- Order Modal -->
   <div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="modal-box">
     <div class="modal-header"><h2 id="modalTitle">Новый заказ</h2><button class="close" onclick="closeModal()">&times;</button></div>
     <form id="orderForm"><input type="hidden" id="editId">
       <div class="form-grid">
-        <div class="fg full"><label>Номер</label><input type="text" id="orderNumber" readonly></div>
+        <div class="fg full"><label>Номер заказа</label><input type="text" id="orderNumber" placeholder="Введите номер вручную, напр: К-125"></div>
         <div class="fg"><label>Дата приема</label><input type="date" id="orderDate" required></div>
         <div class="fg"><label>Дедлайн</label><input type="date" id="deadline"></div>
         <div class="fg full"><label>ТЗ / Описание</label><textarea id="reason" placeholder="Размеры, особенности..."></textarea></div>
@@ -223,26 +240,67 @@
         <div id="partsList"></div>
         <button type="button" class="btn btn-outline btn-sm" onclick="addRow()" style="width:100%;margin-top:6px">+ Вручную</button>
       </div>
+      
+      <!-- MINI CALCULATOR -->
+      <button type="button" class="calc-toggle" onclick="toggleCalc()">🔢 Калькулятор</button>
+      <div id="calcWrap" class="calc-wrap">
+        <div class="calc-display">
+          <div class="calc-expr" id="calcExpr"></div>
+          <div class="calc-res" id="calcRes">0</div>
+        </div>
+        <div class="calc-grid">
+          <button type="button" class="calc-btn clear" onclick="calcClear()">C</button>
+          <button type="button" class="calc-btn op" onclick="calcInput('back')">⌫</button>
+          <button type="button" class="calc-btn op" onclick="calcInput('(')">(</button>
+          <button type="button" class="calc-btn op" onclick="calcInput(')')">)</button>
+          
+          <button type="button" class="calc-btn" onclick="calcInput('7')">7</button>
+          <button type="button" class="calc-btn" onclick="calcInput('8')">8</button>
+          <button type="button" class="calc-btn" onclick="calcInput('9')">9</button>
+          <button type="button" class="calc-btn op" onclick="calcInput('/')">÷</button>
+          
+          <button type="button" class="calc-btn" onclick="calcInput('4')">4</button>
+          <button type="button" class="calc-btn" onclick="calcInput('5')">5</button>
+          <button type="button" class="calc-btn" onclick="calcInput('6')">6</button>
+          <button type="button" class="calc-btn op" onclick="calcInput('*')">×</button>
+          
+          <button type="button" class="calc-btn" onclick="calcInput('1')">1</button>
+          <button type="button" class="calc-btn" onclick="calcInput('2')">2</button>
+          <button type="button" class="calc-btn" onclick="calcInput('3')">3</button>
+          <button type="button" class="calc-btn op" onclick="calcInput('-')">−</button>
+          
+          <button type="button" class="calc-btn" onclick="calcInput('0')">0</button>
+          <button type="button" class="calc-btn" onclick="calcInput('.')">.</button>
+          <button type="button" class="calc-btn eq" onclick="calcEval()" style="grid-column:span 2">=</button>
+          
+          <button type="button" class="calc-btn" onclick="calcInput('+')" style="grid-column:span 2">+</button>
+          <button type="button" class="calc-btn op" onclick="calcInput('±')">±</button>
+        </div>
+        <div class="calc-insert">
+          <button type="button" onclick="calcInsert('orderNumber')">📋 В номер</button>
+          <button type="button" onclick="calcInsert('reason')">📝 В описание</button>
+        </div>
+      </div>
+      
       <div class="fg full" style="margin-top:8px"><label>Общий статус</label><select id="status"><option>Принят</option><option>В работе</option><option>Готово</option><option>Отгружен</option></select></div>
-      <div id="revertBox" class="hidden" style="background:#fef2f2;padding:8px;border-radius:6px;margin:8px 0;text-align:center;color:#991b1b;font-size:0.85rem">⚠️ Отгружен. Изменение закрыто. <button type="button" class="btn btn-danger btn-sm" onclick="revertOrder()" style="margin-left:6px">↩️ Вернуть</button></div>
+      <div id="revertBox" class="hidden" style="background:#fef2f2;padding:8px;border-radius:6px;margin:8px 0;text-align:center;color:#991b1b;font-size:0.85rem">⚠️ Отгружен. <button type="button" class="btn btn-danger btn-sm" onclick="revertOrder()" style="margin-left:6px">↩️ Вернуть</button></div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button type="button" class="btn btn-outline" onclick="closeModal()">Отмена</button><button type="submit" class="btn btn-primary">💾 Сохранить</button></div>
     </form>
   </div></div>
 
-  <!-- Parts Selector with MULTI-SELECT -->
+  <!-- Parts Selector -->
   <div id="partsModal" class="modal" onclick="if(event.target===this)closePartsSel()"><div class="modal-box">
     <div class="modal-header"><h2>Выбрать конструкции</h2><button class="close" onclick="closePartsSel()">&times;</button></div>
     <input type="text" id="partsSearch" placeholder="🔍 Поиск..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px" oninput="rendPartsSel()">
-    <!-- Selection Bar -->
     <div id="selBar" class="sel-bar hidden">
       <span class="sel-count">📦 Выбрано: <strong id="selCount">0</strong></span>
       <div class="sel-actions">
-        <button class="btn btn-sm" onclick="clearSelection()">✖ Сбросить</button>
+        <button class="btn btn-sm" onclick="clearSel()">✖ Сброс</button>
         <button class="btn btn-confirm btn-sm" onclick="addSelected()">✅ Добавить</button>
       </div>
     </div>
     <div id="partsListSel" style="max-height:350px;overflow-y:auto"></div>
-    <div id="partsEmptySel" class="empty">Нет доступных конструкций</div>
+    <div id="partsEmptySel" class="empty">Нет доступных</div>
   </div></div>
 
   <div id="detailModal" class="modal" onclick="if(event.target===this)closeDetail()"><div class="modal-box">
@@ -263,7 +321,7 @@
       <div style="font-size:0.7rem;color:var(--muted);margin-top:3px">Доступно: <strong id="tagsAvail">0</strong></div>
     </div>
     <div style="margin-bottom:12px"><strong style="font-size:0.8rem;color:var(--muted)">📦 Конструкции</strong><div id="dParts" style="margin-top:6px"></div></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="exportOrderAsJSON(curDetail)">📥 JSON</button><button class="btn btn-outline" onclick="editFromDetail()">✏️</button><button class="btn btn-primary" onclick="closeDetail()">Закрыть</button></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="exportJSON(curDetail)">📥 JSON</button><button class="btn btn-outline" onclick="editFromDetail()">✏️</button><button class="btn btn-primary" onclick="closeDetail()">Закрыть</button></div>
   </div></div>
 
   <div id="inventoryModal" class="modal" onclick="if(event.target===this)closeInvModal()"><div class="modal-box">
@@ -289,7 +347,7 @@
   <div id="shopModal" class="modal" onclick="if(event.target===this)closeShop()"><div class="modal-box" style="max-width:360px">
     <div class="modal-header"><h2>🛒 Магазин</h2><button class="close" onclick="closeShop()">&times;</button></div>
     <div style="background:var(--bg);padding:8px;border-radius:6px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><div><strong>🌙 Тёмная тема</strong><div style="font-size:0.75rem;color:var(--muted)">Переключатель</div></div><button class="btn btn-primary btn-sm" onclick="toggleTheme()">🔄</button></div>
-    <strong style="font-size:0.85rem">🏷️ Теги (<span id="shopTags">0</span> доступно)</strong>
+    <strong style="font-size:0.85rem">🏷️ Теги (<span id="shopTags">0</span>)</strong>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
       <button class="btn btn-outline btn-sm" onclick="buyTags(10,90)">10 шт. • 90🪙</button>
       <button class="btn btn-outline btn-sm" onclick="buyTags(30,250)">30 шт. • 250🪙</button>
@@ -314,7 +372,7 @@
 
   <script>
     const STAGES = ['Распил','ЧПУ','Фрезеровка','Шпонировка','Облицовка','Шлифовка','Сборка','Покраска','Упаковка','Отгрузка'];
-    const DB='prod_v82', SET='set_v82', INV='inv_v82';
+    const DB='prod_v83', SET='set_v83', INV='inv_v83';
     const SECRET='PROD2026';
     const LEVELS=[{l:1,n:'Новичок 🌱',t:0},{l:2,n:'Ученик 📖',t:60},{l:3,n:'Практик 🛠️',t:150},{l:4,n:'Мастер 🔧',t:300}];
     const COINS={CREATE:3,COMPLETE:10,ADD:1,SECRET:300,DAILY:1};
@@ -322,10 +380,14 @@
     let orders=JSON.parse(localStorage.getItem(DB)||'[]'), inv=JSON.parse(localStorage.getItem(INV)||'[]');
     let set=JSON.parse(localStorage.getItem(SET)||'{"name":"Менеджер","coins":0,"earned":0,"lvl":1,"theme":"light","tags":0}');
     let curDetail=null, curTab='orders', csvData=[];
-    let selectedParts = new Set(); // Для мульти-выбора
+    let selectedParts = new Set();
+    
+    // === Calculator State ===
+    let calcExpr = '';
+    let calcResult = '0';
+    let calcNeg = false;
     
     const $=id=>document.getElementById(id);
-    const ordNum=()=>'ORD-'+Date.now().toString(36).toUpperCase().slice(-4)+'-'+Math.random().toString(36).substr(2,3).toUpperCase();
     const date=d=>d?new Date(d).toLocaleDateString('ru-RU'):'—';
     
     // Theme & Coins
@@ -362,7 +424,7 @@
     
     // Order Modal
     const modal=$('modal'),form=$('orderForm');
-    function openModal(o=null){modal.classList.add('active');$('modalTitle').textContent=o?'Редактирование':'Новый заказ';$('editId').value=o?.id||'';$('orderNumber').value=o?.orderNumber||ordNum();$('orderDate').value=o?.date||new Date().toISOString().split('T')[0];$('deadline').value=o?.deadline||'';$('status').value=o?.status||'Принят';$('reason').value=o?.reason||'';$('vipCheck').checked=o?.vip||false;$('partsList').innerHTML='';if(o?.parts?.length)o.parts.forEach(p=>addRow(p));else addRow();calcTotals();$('status').disabled=o?.status==='Отгружен';$('revertBox').classList.toggle('hidden',o?.status!=='Отгружен');form.onsubmit=handleSub}
+    function openModal(o=null){modal.classList.add('active');$('modalTitle').textContent=o?'Редактирование':'Новый заказ';$('editId').value=o?.id||'';$('orderNumber').value=o?.orderNumber||'';$('orderDate').value=o?.date||new Date().toISOString().split('T')[0];$('deadline').value=o?.deadline||'';$('status').value=o?.status||'Принят';$('reason').value=o?.reason||'';$('vipCheck').checked=o?.vip||false;$('partsList').innerHTML='';if(o?.parts?.length)o.parts.forEach(p=>addRow(p));else addRow();calcTotals();$('status').disabled=o?.status==='Отгружен';$('revertBox').classList.toggle('hidden',o?.status!=='Отгружен');form.onsubmit=handleSub;calcExpr='';calcResult='0';updCalc();$('calcWrap').classList.remove('show')}
     function closeModal(){modal.classList.remove('active')}
     function addRow(d={}){const r=document.createElement('div');r.className='part-row';r.innerHTML=`<input type="text" placeholder="Название" value="${d.name||''}" class="p-name" required><select class="p-stage">${STAGES.map(s=>`<option value="${s}" ${d.stage===s?'selected':''}>${s}</option>`).join('')}</select><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove();calcTotals()">✕</button>`;$('partsList').appendChild(r);calcTotals()}
     function calcTotals(){const c=document.querySelectorAll('.p-name').length;$('sumTotal')?.remove();$('partsList').insertAdjacentHTML('afterend',`<div id="sumTotal" style="text-align:center;margin:6px 0;font-weight:600">Конструкций: ${c}</div>`)}
@@ -372,32 +434,47 @@
     function editOrder(id){const o=orders.find(x=>x.id===id);if(o)openModal(o)}
     function delOrder(id){if(!confirm('Удалить?'))return;orders=orders.filter(x=>x.id!==id);save();applyFilters();updateUI()}
     
-    // ===================== MULTI-SELECT PARTS SELECTOR =====================
+    // ===================== CALCULATOR =====================
+    function toggleCalc(){$('calcWrap').classList.toggle('show')}
+    function calcInput(v){
+      if(v==='back'){calcExpr=calcExpr.slice(0,-1);if(!calcExpr){calcResult='0';calcNeg=false;}}
+      else if(v==='±'){calcNeg=!calcNeg;}
+      else{calcExpr+=v;}
+      updCalc();
+    }
+    function calcClear(){calcExpr='';calcResult='0';calcNeg=false;updCalc();}
+    function updCalc(){
+      $('calcExpr').textContent=calcExpr.replace(/\*/g,'×').replace(/\//g,'÷').replace(/\-/g,'−');
+      $('calcRes').textContent=calcNeg?'−'+calcResult:calcResult;
+    }
+    function calcEval(){
+      if(!calcExpr){calcResult='0';calcNeg=false;updCalc();return;}
+      try{
+        const cleaned=calcExpr.replace(/[^0-9+\-*/().]/g,'');
+        const fn=new Function('return '+cleaned)();
+        if(typeof fn==='number'&&isFinite(fn)){calcResult=Math.round(fn*100)/100+'';}else{calcResult='Ошибка';}
+        calcExpr=calcResult;
+        calcNeg=false;
+      }catch(e){calcResult='Ошибка';}
+      updCalc();
+    }
+    function calcInsert(target){
+      const val=(calcNeg?'−':'')+calcResult;
+      const inp=$(target);
+      if(inp){inp.value=(inp.value?inp.value+' ':''+val);inp.focus();}
+      showCoin(0,`📋 ${val}`);
+    }
+    
+    // ===================== MULTI-SELECT =====================
     function openPartsSel(){$('partsModal').classList.add('active');selectedParts.clear();$('partsSearch').value='';updSelBar();rendPartsSel()}
     function closePartsSel(){$('partsModal').classList.remove('active');selectedParts.clear()}
-    
-    function rendPartsSel(){
-      const l=$('partsListSel'), em=$('partsEmptySel'), s=$('partsSearch').value.toLowerCase();
-      if(!l) return;
-      const f=inv.filter(i=>i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s)||(i.cat||'').toLowerCase().includes(s));
-      if(!f.length){l.innerHTML='';em.classList.remove('hidden');return;} em.classList.add('hidden');
-      l.innerHTML=f.map(it=>{
-        const av=it.stock-it.res, sb=av>0?`<span class="stock-badge stock-ok">✓ ${av}</span>`:`<span class="stock-badge stock-none">✗</span>`;
-        const checked=selectedParts.has(it.id)?'checked':'';
-        const selClass=selectedParts.has(it.id)?'sel':'';
-        return`<div class="inv-item ${selClass}" id="pi_${it.id}">
-          <div class="checkbox-wrap" onclick="event.stopPropagation()"><input type="checkbox" id="cb_${it.id}" ${checked} onchange="toggleSel('${it.id}',this.checked)"></div>
-          <div class="inv-info" onclick="toggleCb('${it.id}')"><div class="inv-name">${it.name} ${sb}</div><div class="inv-meta">${it.sku||'—'} • ${it.cat||'—'}</div></div>
-        </div>`;
-      }).join('');
-    }
-    function toggleCb(id){const cb=$('cb_'+id);if(cb){cb.checked=!cb.checked;toggleSel(id,cb.checked)}}
-    function toggleSel(id,checked){if(checked)selectedParts.add(id);else selectedParts.delete(id);updSelBar();const el=$('pi_'+id);if(el)el.classList.toggle('sel',checked)}
+    function rendPartsSel(){const l=$('partsListSel'),em=$('partsEmptySel'),s=$('partsSearch').value.toLowerCase();if(!l)return;const f=inv.filter(i=>i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s)||(i.cat||'').toLowerCase().includes(s));if(!f.length){l.innerHTML='';em.classList.remove('hidden');return;}em.classList.add('hidden')
+      l.innerHTML=f.map(it=>{const av=it.stock-it.res,sb=av>0?`<span class="stock-badge stock-ok">✓ ${av}</span>`:`<span class="stock-badge stock-none">✗</span>`;const ch=selectedParts.has(it.id)?'checked':'',sc=selectedParts.has(it.id)?'sel':'';return`<div class="inv-item ${sc}" id="pi_${it.id}"><div class="checkbox-wrap" onclick="event.stopPropagation()"><input type="checkbox" id="cb_${it.id}" ${ch} onchange="togSel('${it.id}',this.checked)"></div><div class="inv-info" onclick="togCb('${it.id}')"><div class="inv-name">${it.name} ${sb}</div><div class="inv-meta">${it.sku||'—'} • ${it.cat||'—'}</div></div></div>`}).join('')}
+    function togCb(id){const cb=$('cb_'+id);if(cb){cb.checked=!cb.checked;togSel(id,cb.checked)}}
+    function togSel(id,ch){if(ch)selectedParts.add(id);else selectedParts.delete(id);updSelBar();const el=$('pi_'+id);if(el)el.classList.toggle('sel',ch)}
     function updSelBar(){const bar=$('selBar'),cnt=$('selCount');if(bar){cnt.textContent=selectedParts.size;bar.classList.toggle('hidden',selectedParts.size===0)}}
-    function clearSelection(){selectedParts.clear();updSelBar();document.querySelectorAll('.inv-item.sel').forEach(el=>el.classList.remove('sel'));document.querySelectorAll('.inv-item input[type=checkbox]').forEach(cb=>cb.checked=false)}
-    function addSelected(){if(!selectedParts.size){alert('Выберите хотя бы одну конструкцию');return}
-      let added=0;selectedParts.forEach(id=>{const it=inv.find(x=>x.id===id);if(it){addRow({name:it.name,sku:it.sku,stage:'Распил'});added++}});
-      calcTotals();closePartsSel();showCoin(0,`📦 Добавлено: ${added} шт.`);selectedParts.clear()}
+    function clearSel(){selectedParts.clear();updSelBar();document.querySelectorAll('.inv-item.sel').forEach(el=>el.classList.remove('sel'));document.querySelectorAll('.inv-item input[type=checkbox]').forEach(cb=>cb.checked=false)}
+    function addSelected(){if(!selectedParts.size){alert('Выберите конструкции');return}let n=0;selectedParts.forEach(id=>{const it=inv.find(x=>x.id===id);if(it){addRow({name:it.name,sku:it.sku,stage:'Распил'});n++}});calcTotals();closePartsSel();showCoin(0,`📦 Добавлено: ${n}`)}
     
     // Inventory
     function rendInv(){const l=$('invList'),em=$('invEmpty'),s=$('invSearch')?.value.toLowerCase()||'';if(!l)return;const items=inv.filter(i=>!s||i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s));if(!items.length){em.classList.remove('hidden');l.innerHTML='';return}em.classList.add('hidden')
@@ -416,18 +493,18 @@
     // Settings/Export/CSV
     function openSet(){$('masterName').value=set.name;saveSet();$('settingsModal').classList.add('active')}function closeSet(){$('settingsModal').classList.remove('active')}
     function exportData(){const d={orders,inv,set,date:new Date().toISOString()};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)]));a.download=`prod_${new Date().toISOString().split('T')[0]}.json`;a.click()}
-    function importOrderFromJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const o=JSON.parse(e.target.result);if(!o.id||!o.date)throw new Error('Неверный формат');const idx=orders.findIndex(x=>x.id===o.id);if(idx>-1)orders[idx]={...orders[idx],...o,updatedAt:Date.now()};else{o.createdAt=o.createdAt||Date.now();orders.push(o)}save();applyFilters();updateUI();alert('✅ Импортировано')}catch(err){alert('❌ '+err.message)}};r.readAsText(f);inp.value=''}
-    function exportOrderAsJSON(oid){const o=orders.find(x=>x.id===oid);if(!o)return;const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`order_${o.orderNumber||oid.slice(-6)}.json`;a.click()}
+    function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const o=JSON.parse(e.target.result);if(!o.id||!o.date)throw new Error('Неверный формат');const idx=orders.findIndex(x=>x.id===o.id);if(idx>-1)orders[idx]={...orders[idx],...o,updatedAt:Date.now()};else{o.createdAt=o.createdAt||Date.now();orders.push(o)}save();applyFilters();updateUI();alert('✅ Импортировано')}catch(err){alert('❌ '+err.message)}};r.readAsText(f);inp.value=''}
+    function exportJSON(oid){const o=orders.find(x=>x.id===oid);if(!o)return;const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`order_${o.orderNumber||oid.slice(-6)}.json`;a.click()}
     function openShop(){$('shopModal').classList.add('active');upShopTags()}function closeShop(){$('shopModal').classList.remove('active')}
     
     // CSV
     function openCsvImport(){csvData=[];$('csvStep1').classList.remove('hidden');$('csvStep2').classList.add('hidden');$('csvFile').value='';$('csvModal').classList.add('active')}function closeCsv(){$('csvModal').classList.remove('active')}
     function handleCsv(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{csvData=parseCsv(e.target.result);if(!csvData.length){alert('❌ Пусто');return}$('csvStep1').classList.add('hidden');$('csvStep2').classList.remove('hidden');$('csvPrev').innerHTML=csvData.slice(0,5).map(i=>`<div style="padding:4px 0;border-bottom:1px solid var(--border)"><strong>${i.name}</strong><br><small>${i.sku||'—'} • ${i.cat||'—'} • ${i.stock} шт.</small></div>`).join('')}catch(err){alert('❌ '+err.message)}};r.readAsText(f,'UTF-8')}
-    function parseCsv(t){const dl=t.split('\n')[0].includes(';')?';':',';return t.split('\n').slice(1).filter(l=>l.trim()).map(l=>{const v=[],cur='',q=false;let c='';for(let i=0;i<l.length;i++){const ch=l[i];if(ch==='"')q=!q;else if(ch===dl&&!q){v.push(c.trim());c=''}else c+=ch}v.push(c.trim());return v[0]?{name:v[0],sku:v[1],cat:v[2],stock:parseInt(v[3])||0,res:parseInt(v[4])||0,description:v[5]}:null}).filter(Boolean)}
+    function parseCsv(t){const dl=t.split('\n')[0].includes(';')?';':',';return t.split('\n').slice(1).filter(l=>l.trim()).map(l=>{const v=[],c='',q=false;let cur='';for(let i=0;i<l.length;i++){const ch=l[i];if(ch==='"')q=!q;else if(ch===dl&&!q){v.push(cur.trim());cur=''}else cur+=ch}v.push(cur.trim());return v[0]?{name:v[0],sku:v[1],cat:v[2],stock:parseInt(v[3])||0,res:parseInt(v[4])||0}:null}).filter(Boolean)}
     function confirmCsv(){if(!csvData.length)return;let a=0,u=0;csvData.forEach(n=>{const i=inv.findIndex(x=>x.sku&&x.sku===n.sku||x.name===n.name);if(i>-1){inv[i]={...inv[i],...n};u++}else{n.id=Date.now().toString(36)+Math.random().toString(36).substr(2,6);inv.push(n);a++}});localStorage.setItem(INV,JSON.stringify(inv));closeCsv();rendInv();alert(`✅ Добавлено: ${a}, Обновлено: ${u}`)}
     
     // Init
-    window.onload=()=>{const fs=$('filterStatus');STAGES.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fs.appendChild(o)});if(set.theme==='dark')document.documentElement.setAttribute('data-theme','dark');$('masterName').value=set.name;updateUI();renderTable();rendInv();const lk='prod_land_v82',ov=$('landing');if(localStorage.getItem(lk)!=='true'&&ov)$('startBtn')?.addEventListener('click',e=>{e.preventDefault();ov.style.display='none';localStorage.setItem(lk,'true')});else if(ov)ov.style.display='none'}
+    window.onload=()=>{const fs=$('filterStatus');STAGES.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fs.appendChild(o)});if(set.theme==='dark')document.documentElement.setAttribute('data-theme','dark');$('masterName').value=set.name;updateUI();renderTable();rendInv();const lk='prod_land_v83',ov=$('landing');if(localStorage.getItem(lk)!=='true'&&ov)$('startBtn')?.addEventListener('click',e=>{e.preventDefault();ov.style.display='none';localStorage.setItem(lk,'true')});else if(ov)ov.style.display='none'}
   </script>
 </body>
 </html>
