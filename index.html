@@ -19,7 +19,6 @@
     body { background:var(--bg); color:var(--text); font-family:var(--font); line-height:1.4; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
     .container { max-width:100%; padding:8px; }
     
-    /* Header */
     header { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 8px; border-bottom:1px solid var(--border); background:var(--card); position:sticky; top:0; z-index:50; }
     .brand { display:flex; align-items:center; gap:10px; min-width:0; }
     .brand-logo { width:34px; height:34px; flex-shrink:0; }
@@ -29,7 +28,6 @@
     .badge { font-size:0.6rem; background:#e0f2fe; color:#0369a1; padding:2px 5px; border-radius:8px; }
     .header-actions { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
     
-    /* Buttons */
     .btn { padding:8px 10px; border:none; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:4px; min-height:36px; min-width:36px; justify-content:center; transition:transform 0.1s; }
     .btn:active { transform:scale(0.96); }
     .btn-primary { background:var(--primary); color:#fff; }
@@ -39,12 +37,10 @@
     .btn-sm { padding:6px 8px; font-size:0.8rem; min-height:32px; }
     .btn-icon { padding:8px; width:36px; height:36px; }
     
-    /* Tabs */
     .nav-tabs { display:flex; gap:2px; padding:8px 8px 0; background:var(--card); border-bottom:1px solid var(--border); }
     .nav-tab { flex:1; padding:10px; background:none; border:none; border-bottom:2px solid transparent; font-weight:600; color:var(--muted); font-size:0.85rem; }
     .nav-tab.active { color:var(--primary); border-bottom-color:var(--primary); }
     
-    /* Stats */
     .dashboard { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:10px 8px; }
     .stat-card { background:var(--card); padding:10px 6px; border-radius:8px; text-align:center; border-left:3px solid var(--primary); }
     .stat-card.profit { border-left-color:var(--success); }
@@ -52,12 +48,10 @@
     .stat-card h3 { font-size:0.6rem; color:var(--muted); text-transform:uppercase; margin-bottom:2px; }
     .stat-card .val { font-size:1rem; font-weight:700; }
     
-    /* Controls */
     .controls { background:var(--card); padding:8px; margin:8px; border-radius:8px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
     .ctrl label { font-size:0.65rem; color:var(--muted); display:block; margin-bottom:3px; }
     .ctrl input, .ctrl select { width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; background:var(--bg); }
     
-    /* Table */
     .table-wrap { background:var(--card); margin:8px; border-radius:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
     table { width:100%; border-collapse:collapse; min-width:360px; }
     th, td { padding:8px 6px; text-align:left; border-bottom:1px solid var(--border); font-size:0.85rem; vertical-align:middle; }
@@ -66,11 +60,9 @@
     .order-row:hover { background:rgba(37,99,235,0.04); }
     .order-row:active { background:rgba(37,99,235,0.1); }
     
-    /* Quick Status */
     .quick-status { width:100%; max-width:110px; padding:6px 8px; border:1px solid var(--border); border-radius:6px; font-size:0.75rem; background:var(--bg); font-weight:500; }
     .quick-status:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 2px rgba(37,99,235,0.15); }
     
-    /* Tags & Progress */
     .row-tags { display:flex; flex-wrap:wrap; gap:3px; margin-top:4px; }
     .row-tag { font-size:0.6rem; padding:1px 5px; border-radius:4px; color:#fff; font-weight:600; white-space:nowrap; }
     .tag-срочно { background:#ef4444; } .tag-не-срочно { background:#6b7280; }
@@ -82,25 +74,35 @@
     .progress-fill { height:100%; background:linear-gradient(90deg,var(--primary),var(--success)); transition:width 0.2s; }
     .progress-label { font-size:0.65rem; color:var(--muted); }
     
-    /* Badges & VIP */
     .vip-badge { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; padding:1px 4px; border-radius:3px; font-size:0.6rem; font-weight:700; margin-left:3px; vertical-align:middle; }
     tr.vip-row { background:#fffbeb !important; }
     [data-theme="dark"] tr.vip-row { background:#451a03 !important; }
     
-    /* Actions */
     .actions { display:flex; gap:4px; white-space:nowrap; }
     .action-btn { width:28px; height:28px; border-radius:6px; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.85rem; }
     .action-btn:active { background:var(--primary); color:#fff; border-color:var(--primary); }
     
-    /* Inventory List */
-    .inv-item { display:flex; gap:8px; padding:10px; border-bottom:1px solid var(--border); align-items:center; }
+    .inv-item { display:flex; gap:8px; padding:10px; border-bottom:1px solid var(--border); align-items:center; cursor:pointer; transition:background 0.15s; }
+    .inv-item:active { background:rgba(37,99,235,0.06); }
+    .inv-item.sel { background:rgba(37,99,235,0.08); border-left:3px solid var(--primary); }
     .inv-info { flex:1; min-width:0; }
     .inv-name { font-weight:600; font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .inv-meta { font-size:0.7rem; color:var(--muted); }
     .stock-badge { padding:2px 6px; border-radius:4px; font-size:0.7rem; font-weight:600; white-space:nowrap; }
     .stock-ok { background:#dcfce7; color:#166534; } .stock-low { background:#fef3c7; color:#92400e; } .stock-none { background:#fee2e2; color:#991b1b; }
     
-    /* Modals */
+    /* Checkbox styling */
+    .checkbox-wrap { display:flex; align-items:center; padding-right:8px; }
+    .checkbox-wrap input[type="checkbox"] { width:18px; height:18px; margin:0; cursor:pointer; accent-color:var(--primary); flex-shrink:0; }
+    
+    /* Multi-select bar */
+    .sel-bar { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; border-radius:8px; margin-bottom:10px; box-shadow:0 2px 8px rgba(37,99,235,0.2); }
+    .sel-bar .sel-count { font-weight:700; font-size:0.95rem; }
+    .sel-bar .sel-actions { display:flex; gap:8px; }
+    .sel-bar .btn { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:#fff; }
+    .sel-bar .btn:active { background:rgba(255,255,255,0.3); }
+    .sel-bar .btn-confirm { background:#10b981; border-color:#10b981; font-weight:700; }
+    
     .modal { position:fixed; inset:0; background:rgba(15,23,42,0.5); display:none; justify-content:center; align-items:flex-end; z-index:100; padding:0; }
     .modal.active { display:flex; }
     @media(min-width:640px) { .modal { align-items:center; padding:16px; } }
@@ -110,7 +112,6 @@
     .modal-header h2 { font-size:1rem; font-weight:700; }
     .close { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--muted); padding:4px; }
     
-    /* Forms */
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .fg { display:flex; flex-direction:column; }
     .fg.full { grid-column:1/-1; }
@@ -118,12 +119,10 @@
     .fg input, .fg select, .fg textarea { padding:9px 10px; border:1px solid var(--border); border-radius:7px; font-size:0.9rem; background:var(--bg); }
     .fg textarea { resize:vertical; min-height:50px; }
     
-    /* Parts */
     .parts-sec { background:var(--bg); padding:10px; border-radius:8px; margin:10px 0; }
     .part-row { display:grid; grid-template-columns:1fr 1fr 36px; gap:6px; margin-bottom:6px; align-items:end; }
     .part-row input, .part-row select { padding:7px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; background:#fff; }
     
-    /* Detail */
     .detail-header { background:var(--bg); padding:10px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
     .detail-row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed var(--border); font-size:0.9rem; }
     .detail-part { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
@@ -131,9 +130,9 @@
     .tag-item { display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:600; color:#fff; }
     .tag-item button { background:none; border:none; color:inherit; padding:0; margin-left:2px; cursor:pointer; font-size:0.8rem; }
     
-    /* Coin Popup & Landing */
     .coin-popup { position:fixed; top:20%; left:50%; transform:translateX(-50%) translateY(10px); background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#fff; padding:8px 16px; border-radius:10px; font-weight:700; font-size:0.9rem; box-shadow:0 6px 16px rgba(245,158,11,0.3); opacity:0; pointer-events:none; z-index:999; transition:all 0.25s; }
     .coin-popup.show { opacity:1; transform:translateX(-50%) translateY(-20px); }
+    
     .landing { position:fixed; inset:0; background:linear-gradient(135deg,#0f172a,#1e293b); display:flex; justify-content:center; align-items:center; padding:20px; z-index:200; text-align:center; }
     .landing-box { background:var(--card); border-radius:16px; padding:20px; max-width:380px; width:100%; }
     .landing h1 { font-size:1.4rem; margin-bottom:4px; }
@@ -144,7 +143,6 @@
     .hidden { display:none !important; }
     .empty { text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
     
-    /* Mobile tweaks */
     @media(max-width:420px) {
       .form-grid { grid-template-columns:1fr; }
       .controls { grid-template-columns:1fr; }
@@ -164,14 +162,14 @@
         <svg class="brand-logo" viewBox="0 0 44 44" fill="none"><defs><linearGradient id="g" x1="0" y1="0" x2="44" y2="44"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs><rect width="44" height="44" rx="12" fill="url(#g)"/><path d="M8 32V20L16 24V16L24 20V12L32 16V32H8Z" stroke="#fff" stroke-width="2.2"/><path d="M12 32V28H20V32M24 32V24H32V32" stroke="#fff" stroke-width="2.2"/><circle cx="22" cy="34" r="3" fill="#97CF26"/></svg>
         <div class="brand-text">
           <div class="brand-title">ПРОИЗВОДСТВО</div>
-          <div class="brand-sub">Lite • <span class="badge">v8.1</span></div>
+          <div class="brand-sub">Lite • <span class="badge">v8.2</span></div>
         </div>
       </div>
       <div class="header-actions">
         <div style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;padding:4px 8px;border-radius:12px;font-size:0.75rem;font-weight:700">🪙 <span id="coinDisplay">0</span></div>
         <button class="btn btn-outline btn-sm" onclick="openShop()">🛒</button>
         <button class="btn btn-primary btn-sm" onclick="openModal()">+ Заказ</button>
-        <button class="btn btn-outline btn-icon" onclick="openSettings()">⚙️</button>
+        <button class="btn btn-outline btn-icon" onclick="openSet()">⚙️</button>
         <button class="btn btn-outline btn-icon" onclick="exportData()">📥</button>
       </div>
     </header>
@@ -200,10 +198,10 @@
     <div id="inventorySection" class="hidden">
       <div style="display:flex;justify-content:space-between;align-items:center;padding:8px">
         <div><strong>📦 Склад</strong><div style="font-size:0.75rem;color:var(--muted)">Конструкции</div></div>
-        <div style="display:flex;gap:6px"><button class="btn btn-success btn-sm" onclick="openCsvImport()">📊 CSV</button><button class="btn btn-primary btn-sm" onclick="openInventoryModal()">+ Добавить</button></div>
+        <div style="display:flex;gap:6px"><button class="btn btn-success btn-sm" onclick="openCsvImport()">📊 CSV</button><button class="btn btn-primary btn-sm" onclick="openInvModal()">+ Добавить</button></div>
       </div>
       <div class="controls">
-        <div class="ctrl" style="grid-column:1/-1"><label>Поиск</label><input type="text" id="invSearch" placeholder="Название, артикул..." oninput="renderInventory()"></div>
+        <div class="ctrl" style="grid-column:1/-1"><label>Поиск</label><input type="text" id="invSearch" placeholder="Название, артикул..." oninput="rendInv()"></div>
       </div>
       <div class="table-wrap"><div id="invList"></div><div id="invEmpty" class="empty hidden">Пусто</div></div>
     </div>
@@ -221,14 +219,30 @@
         <div class="fg full"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="vipCheck" style="width:18px;height:18px"> <span>⭐ Срочный</span></label></div>
       </div>
       <div class="parts-sec">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong>📦 Конструкции</strong><button type="button" class="btn btn-outline btn-sm" onclick="openPartsSelector()">+ Со склада</button></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong>📦 Конструкции</strong><button type="button" class="btn btn-primary btn-sm" onclick="openPartsSel()">+ Выбрать со склада</button></div>
         <div id="partsList"></div>
-        <button type="button" class="btn btn-outline btn-sm" onclick="addPartRow()" style="width:100%;margin-top:6px">+ Вручную</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="addRow()" style="width:100%;margin-top:6px">+ Вручную</button>
       </div>
       <div class="fg full" style="margin-top:8px"><label>Общий статус</label><select id="status"><option>Принят</option><option>В работе</option><option>Готово</option><option>Отгружен</option></select></div>
       <div id="revertBox" class="hidden" style="background:#fef2f2;padding:8px;border-radius:6px;margin:8px 0;text-align:center;color:#991b1b;font-size:0.85rem">⚠️ Отгружен. Изменение закрыто. <button type="button" class="btn btn-danger btn-sm" onclick="revertOrder()" style="margin-left:6px">↩️ Вернуть</button></div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button type="button" class="btn btn-outline" onclick="closeModal()">Отмена</button><button type="submit" class="btn btn-primary">💾 Сохранить</button></div>
     </form>
+  </div></div>
+
+  <!-- Parts Selector with MULTI-SELECT -->
+  <div id="partsModal" class="modal" onclick="if(event.target===this)closePartsSel()"><div class="modal-box">
+    <div class="modal-header"><h2>Выбрать конструкции</h2><button class="close" onclick="closePartsSel()">&times;</button></div>
+    <input type="text" id="partsSearch" placeholder="🔍 Поиск..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px" oninput="rendPartsSel()">
+    <!-- Selection Bar -->
+    <div id="selBar" class="sel-bar hidden">
+      <span class="sel-count">📦 Выбрано: <strong id="selCount">0</strong></span>
+      <div class="sel-actions">
+        <button class="btn btn-sm" onclick="clearSelection()">✖ Сбросить</button>
+        <button class="btn btn-confirm btn-sm" onclick="addSelected()">✅ Добавить</button>
+      </div>
+    </div>
+    <div id="partsListSel" style="max-height:350px;overflow-y:auto"></div>
+    <div id="partsEmptySel" class="empty">Нет доступных конструкций</div>
   </div></div>
 
   <div id="detailModal" class="modal" onclick="if(event.target===this)closeDetail()"><div class="modal-box">
@@ -266,16 +280,10 @@
     </form>
   </div></div>
 
-  <div id="partsModal" class="modal" onclick="if(event.target===this)closePartsSel()"><div class="modal-box">
-    <div class="modal-header"><h2>Выбрать со склада</h2><button class="close" onclick="closePartsSel()">&times;</button></div>
-    <input type="text" id="partsSearch" placeholder="🔍 Поиск..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px" oninput="renderPartsSel()">
-    <div id="partsListSel" style="max-height:300px;overflow-y:auto"></div>
-  </div></div>
-
   <div id="settingsModal" class="modal" onclick="if(event.target===this)closeSet()"><div class="modal-box" style="max-width:360px">
     <div class="modal-header"><h2>⚙️ Профиль</h2><button class="close" onclick="closeSet()">&times;</button></div>
     <div class="fg"><label>Имя</label><input type="text" id="masterName" placeholder="Иванов И.И."></div>
-    <button class="btn btn-primary" style="width:100%;margin-top:12px" onclick="saveSettings()">💾 Сохранить</button>
+    <button class="btn btn-primary" style="width:100%;margin-top:12px" onclick="saveSet()">💾 Сохранить</button>
   </div></div>
 
   <div id="shopModal" class="modal" onclick="if(event.target===this)closeShop()"><div class="modal-box" style="max-width:360px">
@@ -306,7 +314,7 @@
 
   <script>
     const STAGES = ['Распил','ЧПУ','Фрезеровка','Шпонировка','Облицовка','Шлифовка','Сборка','Покраска','Упаковка','Отгрузка'];
-    const DB='prod_v81', SET='set_v81', INV='inv_v81';
+    const DB='prod_v82', SET='set_v82', INV='inv_v82';
     const SECRET='PROD2026';
     const LEVELS=[{l:1,n:'Новичок 🌱',t:0},{l:2,n:'Ученик 📖',t:60},{l:3,n:'Практик 🛠️',t:150},{l:4,n:'Мастер 🔧',t:300}];
     const COINS={CREATE:3,COMPLETE:10,ADD:1,SECRET:300,DAILY:1};
@@ -314,11 +322,11 @@
     let orders=JSON.parse(localStorage.getItem(DB)||'[]'), inv=JSON.parse(localStorage.getItem(INV)||'[]');
     let set=JSON.parse(localStorage.getItem(SET)||'{"name":"Менеджер","coins":0,"earned":0,"lvl":1,"theme":"light","tags":0}');
     let curDetail=null, curTab='orders', csvData=[];
+    let selectedParts = new Set(); // Для мульти-выбора
     
     const $=id=>document.getElementById(id);
-    const fmt=n=>new Intl.NumberFormat('ru-RU').format(n||0);
-    const date=d=>d?new Date(d).toLocaleDateString('ru-RU'):'—';
     const ordNum=()=>'ORD-'+Date.now().toString(36).toUpperCase().slice(-4)+'-'+Math.random().toString(36).substr(2,3).toUpperCase();
+    const date=d=>d?new Date(d).toLocaleDateString('ru-RU'):'—';
     
     // Theme & Coins
     function toggleTheme(){set.theme=set.theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',set.theme==='dark'?'dark':'');saveSet();showCoin(0,`🎨 ${set.theme==='dark'?'Тёмная':'Светлая'}`)}
@@ -330,7 +338,7 @@
     // Tags
     function buyTags(c,p){if(set.coins<p){alert('❌ Мало коинов');return}if(!confirm(`Купить ${c} тегов за ${p}🪙?`))return;set.coins-=p;set.tags=(set.tags||0)+c;saveSet();upShopTags();showCoin(0,`✅ Куплено ${c}`)}
     function upShopTags(){if($('shopTags'))$('shopTags').textContent=set.tags||0;if($('tagsAvail'))$('tagsAvail').textContent=set.tags||0}
-    function addTag(){const t=$('tagSelect').value;if(!t)return;if((set.tags||0)<=0){alert('❌ Нет тегов! Купите в 🛒');openShop();return}const o=orders.find(x=>x.id===curDetail);if(!o||!o.tags)o.tags=[];if(o.tags.includes(t)){alert('Уже есть');return}o.tags.push(t);set.tags--;save();saveSet();rendTags(o);upShopTags();$('tagSelect').value=''}
+    function addTag(){const t=$('tagSelect').value;if(!t)return;if((set.tags||0)<=0){alert('❌ Нет тегов!');openShop();return}const o=orders.find(x=>x.id===curDetail);if(!o||!o.tags)o.tags=[];if(o.tags.includes(t)){alert('Уже есть');return}o.tags.push(t);set.tags--;save();saveSet();rendTags(o);upShopTags();$('tagSelect').value=''}
     function remTag(t){const o=orders.find(x=>x.id===curDetail);if(!o||!o.tags)return;o.tags=o.tags.filter(x=>x!==t);save();rendTags(o)}
     function rendTags(o){const c=$('dTags'),a=$('tagsAvail');if(!c)return;if(a)a.textContent=set.tags||0;if(!o.tags?.length){c.innerHTML='<span style="color:var(--muted);font-size:0.85rem">Нет тегов</span>';return}c.innerHTML=o.tags.map(t=>`<span class="tag-item tag-${t}">${getTName(t)} <button onclick="remTag('${t}')">×</button></span>`).join('')}
     function getTName(t){const n={'срочно':'Срочно','не-срочно':'Не срочно','авито':'Авито','проверенный-клиент':'Проверенный','аванс':'Аванс','ждем-материалы':'Ждем материалы','готово':'Готово'};return n[t]||t}
@@ -357,18 +365,39 @@
     function openModal(o=null){modal.classList.add('active');$('modalTitle').textContent=o?'Редактирование':'Новый заказ';$('editId').value=o?.id||'';$('orderNumber').value=o?.orderNumber||ordNum();$('orderDate').value=o?.date||new Date().toISOString().split('T')[0];$('deadline').value=o?.deadline||'';$('status').value=o?.status||'Принят';$('reason').value=o?.reason||'';$('vipCheck').checked=o?.vip||false;$('partsList').innerHTML='';if(o?.parts?.length)o.parts.forEach(p=>addRow(p));else addRow();calcTotals();$('status').disabled=o?.status==='Отгружен';$('revertBox').classList.toggle('hidden',o?.status!=='Отгружен');form.onsubmit=handleSub}
     function closeModal(){modal.classList.remove('active')}
     function addRow(d={}){const r=document.createElement('div');r.className='part-row';r.innerHTML=`<input type="text" placeholder="Название" value="${d.name||''}" class="p-name" required><select class="p-stage">${STAGES.map(s=>`<option value="${s}" ${d.stage===s?'selected':''}>${s}</option>`).join('')}</select><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove();calcTotals()">✕</button>`;$('partsList').appendChild(r);calcTotals()}
-    function calcTotals(){$('sumTotal')?.remove();const c=document.querySelectorAll('.p-name').length;$('partsList').insertAdjacentHTML('afterend',`<div id="sumTotal" style="text-align:center;margin:6px 0;font-weight:600">Конструкций: ${c}</div>`)}
+    function calcTotals(){const c=document.querySelectorAll('.p-name').length;$('sumTotal')?.remove();$('partsList').insertAdjacentHTML('afterend',`<div id="sumTotal" style="text-align:center;margin:6px 0;font-weight:600">Конструкций: ${c}</div>`)}
     function handleSub(e){e.preventDefault();if(!$('orderDate').value){alert('❌ Укажите дату');return}const id=$('editId').value||Date.now().toString(36)+Math.random().toString(36).substr(2,5),isEdit=!!$('editId').value,pts=Array.from(document.querySelectorAll('.part-row')).map(r=>({name:r.querySelector('.p-name').value.trim(),stage:r.querySelector('.p-stage').value})).filter(p=>p.name);const ord={id,orderNumber:$('orderNumber').value,orderDate:$('orderDate').value,deadline:$('deadline').value,status:$('status').value,reason:$('reason').value,parts:pts,createdAt:orders.find(o=>o.id===id)?.createdAt||Date.now(),vip:$('vipCheck').checked,tags:orders.find(o=>o.id===id)?.tags||[]};const idx=orders.findIndex(o=>o.id===id);if(idx>-1)orders[idx]=ord;else orders.push(ord);save();if(!isEdit)addCoins(COINS.CREATE,'📋 Новый');closeModal();applyFilters();updateUI()}
     function revertOrder(){const id=$('editId').value;if(!id||!confirm('Вернуть?'))return;const o=orders.find(x=>x.id===id);if(o){o.status='Готово';save();closeModal();applyFilters();updateUI()}}
     function save(){localStorage.setItem(DB,JSON.stringify(orders))}
     function editOrder(id){const o=orders.find(x=>x.id===id);if(o)openModal(o)}
     function delOrder(id){if(!confirm('Удалить?'))return;orders=orders.filter(x=>x.id!==id);save();applyFilters();updateUI()}
     
-    // Parts Selector
-    function openPartsSel(){$('partsModal').classList.add('active');$('partsSearch').value='';rendPartsSel()}
-    function closePartsSel(){$('partsModal').classList.remove('active')}
-    function rendPartsSel(){const l=$('partsListSel'),s=$('partsSearch').value.toLowerCase(),f=inv.filter(i=>i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s));l.innerHTML=f.length?f.map(it=>{const av=it.stock-it.res;return`<div class="inv-item" onclick="selPart('${it.id}')"><div class="inv-info"><div class="inv-name">${it.name}</div><div class="inv-meta">${it.sku||'—'} • ${it.cat||'—'} ${av>0?'<span class="stock-badge stock-ok">✓ '+av+'</span>':'<span class="stock-badge stock-none">✗</span>'}</div></div></div>`}).join(''):'<div class="empty">Не найдено</div>'}
-    function selPart(id){const it=inv.find(x=>x.id===id);if(!it)return;addRow({name:it.name,sku:it.sku,stage:'Распил'});closePartsSel();calcTotals()}
+    // ===================== MULTI-SELECT PARTS SELECTOR =====================
+    function openPartsSel(){$('partsModal').classList.add('active');selectedParts.clear();$('partsSearch').value='';updSelBar();rendPartsSel()}
+    function closePartsSel(){$('partsModal').classList.remove('active');selectedParts.clear()}
+    
+    function rendPartsSel(){
+      const l=$('partsListSel'), em=$('partsEmptySel'), s=$('partsSearch').value.toLowerCase();
+      if(!l) return;
+      const f=inv.filter(i=>i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s)||(i.cat||'').toLowerCase().includes(s));
+      if(!f.length){l.innerHTML='';em.classList.remove('hidden');return;} em.classList.add('hidden');
+      l.innerHTML=f.map(it=>{
+        const av=it.stock-it.res, sb=av>0?`<span class="stock-badge stock-ok">✓ ${av}</span>`:`<span class="stock-badge stock-none">✗</span>`;
+        const checked=selectedParts.has(it.id)?'checked':'';
+        const selClass=selectedParts.has(it.id)?'sel':'';
+        return`<div class="inv-item ${selClass}" id="pi_${it.id}">
+          <div class="checkbox-wrap" onclick="event.stopPropagation()"><input type="checkbox" id="cb_${it.id}" ${checked} onchange="toggleSel('${it.id}',this.checked)"></div>
+          <div class="inv-info" onclick="toggleCb('${it.id}')"><div class="inv-name">${it.name} ${sb}</div><div class="inv-meta">${it.sku||'—'} • ${it.cat||'—'}</div></div>
+        </div>`;
+      }).join('');
+    }
+    function toggleCb(id){const cb=$('cb_'+id);if(cb){cb.checked=!cb.checked;toggleSel(id,cb.checked)}}
+    function toggleSel(id,checked){if(checked)selectedParts.add(id);else selectedParts.delete(id);updSelBar();const el=$('pi_'+id);if(el)el.classList.toggle('sel',checked)}
+    function updSelBar(){const bar=$('selBar'),cnt=$('selCount');if(bar){cnt.textContent=selectedParts.size;bar.classList.toggle('hidden',selectedParts.size===0)}}
+    function clearSelection(){selectedParts.clear();updSelBar();document.querySelectorAll('.inv-item.sel').forEach(el=>el.classList.remove('sel'));document.querySelectorAll('.inv-item input[type=checkbox]').forEach(cb=>cb.checked=false)}
+    function addSelected(){if(!selectedParts.size){alert('Выберите хотя бы одну конструкцию');return}
+      let added=0;selectedParts.forEach(id=>{const it=inv.find(x=>x.id===id);if(it){addRow({name:it.name,sku:it.sku,stage:'Распил'});added++}});
+      calcTotals();closePartsSel();showCoin(0,`📦 Добавлено: ${added} шт.`);selectedParts.clear()}
     
     // Inventory
     function rendInv(){const l=$('invList'),em=$('invEmpty'),s=$('invSearch')?.value.toLowerCase()||'';if(!l)return;const items=inv.filter(i=>!s||i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s));if(!items.length){em.classList.remove('hidden');l.innerHTML='';return}em.classList.add('hidden')
@@ -398,7 +427,7 @@
     function confirmCsv(){if(!csvData.length)return;let a=0,u=0;csvData.forEach(n=>{const i=inv.findIndex(x=>x.sku&&x.sku===n.sku||x.name===n.name);if(i>-1){inv[i]={...inv[i],...n};u++}else{n.id=Date.now().toString(36)+Math.random().toString(36).substr(2,6);inv.push(n);a++}});localStorage.setItem(INV,JSON.stringify(inv));closeCsv();rendInv();alert(`✅ Добавлено: ${a}, Обновлено: ${u}`)}
     
     // Init
-    window.onload=()=>{const fs=$('filterStatus');STAGES.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fs.appendChild(o)});if(set.theme==='dark')document.documentElement.setAttribute('data-theme','dark');$('masterName').value=set.name;updateUI();renderTable();rendInv();const lk='prod_land_v81',ov=$('landing');if(localStorage.getItem(lk)!=='true'&&ov)$('startBtn')?.addEventListener('click',e=>{e.preventDefault();ov.style.display='none';localStorage.setItem(lk,'true')});else if(ov)ov.style.display='none'}
+    window.onload=()=>{const fs=$('filterStatus');STAGES.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fs.appendChild(o)});if(set.theme==='dark')document.documentElement.setAttribute('data-theme','dark');$('masterName').value=set.name;updateUI();renderTable();rendInv();const lk='prod_land_v82',ov=$('landing');if(localStorage.getItem(lk)!=='true'&&ov)$('startBtn')?.addEventListener('click',e=>{e.preventDefault();ov.style.display='none';localStorage.setItem(lk,'true')});else if(ov)ov.style.display='none'}
   </script>
 </body>
 </html>
