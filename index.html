@@ -41,7 +41,6 @@
     .nav-tab { flex:1; padding:10px; background:none; border:none; border-bottom:2px solid transparent; font-weight:600; color:var(--muted); font-size:0.85rem; }
     .nav-tab.active { color:var(--primary); border-bottom-color:var(--primary); }
     
-    /* Collapsible Stats */
     .stats-toggle { background:var(--card); padding:10px 14px; margin:8px; border-radius:8px; border:1px solid var(--border); cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; user-select:none; }
     .stats-toggle:active { background:var(--bg); }
     .stats-panel { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:0 8px 8px; transition:all 0.2s ease; overflow:hidden; }
@@ -99,7 +98,6 @@
     .sel-bar .btn { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:#fff; }
     .sel-bar .btn-confirm { background:#10b981; border-color:#10b981; font-weight:700; }
     
-    /* Calculator */
     .calc-toggle { width:100%; padding:8px; background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#fff; border:none; border-radius:8px; font-weight:700; font-size:0.85rem; margin:10px 0 0; cursor:pointer; }
     .calc-toggle:active { opacity:0.85; }
     .calc-wrap { display:none; background:var(--bg); padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid var(--border); }
@@ -118,7 +116,6 @@
     .calc-insert button { flex:1; padding:6px; border:1px solid var(--border); border-radius:6px; background:var(--card); font-size:0.75rem; cursor:pointer; font-weight:600; color:var(--muted); }
     .calc-insert button:active { background:var(--primary); color:#fff; border-color:var(--primary); }
     
-    /* Other */
     .modal { position:fixed; inset:0; background:rgba(15,23,42,0.5); display:none; justify-content:center; align-items:flex-end; z-index:100; padding:0; }
     .modal.active { display:flex; }
     @media(min-width:640px) { .modal { align-items:center; padding:16px; } }
@@ -179,7 +176,7 @@
         <svg class="brand-logo" viewBox="0 0 44 44" fill="none"><defs><linearGradient id="g" x1="0" y1="0" x2="44" y2="44"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs><rect width="44" height="44" rx="12" fill="url(#g)"/><path d="M8 32V20L16 24V16L24 20V12L32 16V32H8Z" stroke="#fff" stroke-width="2.2"/><path d="M12 32V28H20V32M24 32V24H32V32" stroke="#fff" stroke-width="2.2"/><circle cx="22" cy="34" r="3" fill="#97CF26"/></svg>
         <div class="brand-text">
           <div class="brand-title">ПРОИЗВОДСТВО</div>
-          <div class="brand-sub">Lite • <span class="badge">v8.4</span></div>
+          <div class="brand-sub">Lite • <span class="badge">v8.5</span></div>
         </div>
       </div>
       <div class="header-actions">
@@ -197,17 +194,12 @@
     </div>
 
     <div id="ordersSection">
-      <!-- Collapsible Stats -->
-      <div class="stats-toggle" onclick="toggleStats()">
-        <span>📊 Статистика</span>
-        <span id="statsArrow">▼</span>
-      </div>
+      <div class="stats-toggle" onclick="toggleStats()"><span>📊 Статистика</span><span id="statsArrow">▼</span></div>
       <div id="statsPanel" class="stats-panel hide">
         <div class="stat-card profit"><h3>✅ Отгружено</h3><div class="val" id="statReady">0</div></div>
         <div class="stat-card warning"><h3>⏳ В работе</h3><div class="val" id="statActive">0</div></div>
         <div class="stat-card"><h3>📊 Всего</h3><div class="val" id="statCount">0</div></div>
       </div>
-      
       <div class="controls">
         <div class="ctrl"><label>Поиск</label><input type="text" id="search" placeholder="№ или конструкция" oninput="applyFilters()"></div>
         <div class="ctrl"><label>Фильтр</label><select id="filterStatus" onchange="applyFilters()"><option value="">Все</option></select></div>
@@ -246,27 +238,19 @@
         <div id="partsList"></div>
         <button type="button" class="btn btn-outline btn-sm" onclick="addRow()" style="width:100%;margin-top:6px">+ Вручную</button>
       </div>
-      
       <button type="button" class="calc-toggle" onclick="toggleCalc()">🔢 Калькулятор</button>
       <div id="calcWrap" class="calc-wrap">
         <div class="calc-display"><div class="calc-expr" id="calcExpr"></div><div class="calc-res" id="calcRes">0</div></div>
         <div class="calc-grid">
-          <button type="button" class="calc-btn clear" onclick="calcClear()">C</button>
-          <button type="button" class="calc-btn op" onclick="calcInput('back')">⌫</button>
-          <button type="button" class="calc-btn op" onclick="calcInput('(')">(</button>
-          <button type="button" class="calc-btn op" onclick="calcInput(')')">)</button>
+          <button type="button" class="calc-btn clear" onclick="calcClear()">C</button><button type="button" class="calc-btn op" onclick="calcInput('back')">⌫</button><button type="button" class="calc-btn op" onclick="calcInput('(')">(</button><button type="button" class="calc-btn op" onclick="calcInput(')')">)</button>
           <button type="button" class="calc-btn" onclick="calcInput('7')">7</button><button type="button" class="calc-btn" onclick="calcInput('8')">8</button><button type="button" class="calc-btn" onclick="calcInput('9')">9</button><button type="button" class="calc-btn op" onclick="calcInput('/')">÷</button>
           <button type="button" class="calc-btn" onclick="calcInput('4')">4</button><button type="button" class="calc-btn" onclick="calcInput('5')">5</button><button type="button" class="calc-btn" onclick="calcInput('6')">6</button><button type="button" class="calc-btn op" onclick="calcInput('*')">×</button>
           <button type="button" class="calc-btn" onclick="calcInput('1')">1</button><button type="button" class="calc-btn" onclick="calcInput('2')">2</button><button type="button" class="calc-btn" onclick="calcInput('3')">3</button><button type="button" class="calc-btn op" onclick="calcInput('-')">−</button>
           <button type="button" class="calc-btn" onclick="calcInput('0')">0</button><button type="button" class="calc-btn" onclick="calcInput('.')">.</button><button type="button" class="calc-btn eq" onclick="calcEval()" style="grid-column:span 2">=</button>
           <button type="button" class="calc-btn" onclick="calcInput('+')" style="grid-column:span 2">+</button><button type="button" class="calc-btn op" onclick="calcInput('±')">±</button>
         </div>
-        <div class="calc-insert">
-          <button type="button" onclick="calcInsert('orderNumber')">📋 В номер</button>
-          <button type="button" onclick="calcInsert('reason')">📝 В описание</button>
-        </div>
+        <div class="calc-insert"><button type="button" onclick="calcInsert('orderNumber')">📋 В номер</button><button type="button" onclick="calcInsert('reason')">📝 В описание</button></div>
       </div>
-      
       <div class="fg full" style="margin-top:8px"><label>Общий статус</label><select id="status"><option>Принят</option><option>В работе</option><option>Готово</option><option>Отгружен</option></select></div>
       <div id="revertBox" class="hidden" style="background:#fef2f2;padding:8px;border-radius:6px;margin:8px 0;text-align:center;color:#991b1b;font-size:0.85rem">⚠️ Отгружен. <button type="button" class="btn btn-danger btn-sm" onclick="revertOrder()" style="margin-left:6px">↩️ Вернуть</button></div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button type="button" class="btn btn-outline" onclick="closeModal()">Отмена</button><button type="submit" class="btn btn-primary">💾 Сохранить</button></div>
@@ -282,6 +266,7 @@
     <div id="partsEmptySel" class="empty">Нет доступных</div>
   </div></div>
 
+  <!-- Detail Modal -->
   <div id="detailModal" class="modal" onclick="if(event.target===this)closeDetail()"><div class="modal-box">
     <div class="modal-header"><h2 id="detailTitle">Заказ #...</h2><button class="close" onclick="closeDetail()">&times;</button></div>
     <div class="detail-header">
@@ -308,6 +293,7 @@
     </div>
   </div></div>
 
+  <!-- Inventory Modal -->
   <div id="inventoryModal" class="modal" onclick="if(event.target===this)closeInvModal()"><div class="modal-box">
     <div class="modal-header"><h2 id="invTitle">Добавить</h2><button class="close" onclick="closeInvModal()">&times;</button></div>
     <form id="invForm"><input type="hidden" id="invEdit">
@@ -356,7 +342,7 @@
 
   <script>
     const STAGES = ['Распил','ЧПУ','Фрезеровка','Шпонировка','Облицовка','Шлифовка','Сборка','Покраска','Упаковка','Отгрузка'];
-    const DB='prod_v84', SET='set_v84', INV='inv_v84';
+    const DB='prod_v85', SET='set_v85', INV='inv_v85';
     const LEVELS=[{l:1,n:'Новичок 🌱',t:0},{l:2,n:'Ученик 📖',t:60},{l:3,n:'Практик 🛠️',t:150},{l:4,n:'Мастер 🔧',t:300}];
     const COINS={CREATE:3,COMPLETE:10,ADD:1,SECRET:300,DAILY:1};
     
@@ -368,7 +354,8 @@
     
     const $=id=>document.getElementById(id);
     const date=d=>d?new Date(d).toLocaleDateString('ru-RU'):'—';
-    const today=()=>new Date().toISOString().split('T')[0];
+    const today=()=>{ const n=new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0'); };
+    const safeDate=o=>o.orderDate||o.date||'';
     
     // Theme & Coins
     function toggleTheme(){set.theme=set.theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',set.theme==='dark'?'dark':'');saveSet();showCoin(0,`🎨 ${set.theme==='dark'?'Тёмная':'Светлая'}`)}
@@ -392,22 +379,28 @@
     
     function progress(o){if(!o.parts?.length)return{p:0,l:'Нет'};const idx=STAGES.reduce((acc,s,i)=>{acc[s]=i;return acc},{});let s=0;o.parts.forEach(p=>s+=Math.min(100,(idx[p.stage]!==undefined?idx[p.stage]+1:0)*10));const pc=Math.round(s/o.parts.length);return{p:pc,l:pc===100?'✅ Готово':`🔄 ${pc}%`}}
     
+    // === FIX: используем safeDate() вместо o.date ===
     function renderTable(data=orders){const tb=$('tbody'),em=$('emptyState');tb.innerHTML='';if(!data.length){em.classList.remove('hidden');return}em.classList.add('hidden')
       data.sort((a,b)=>(a.vip&&!b.vip)?-1:(!a.vip&&b.vip)?1:b.createdAt-a.createdAt).forEach(o=>{const pr=progress(o),vb=o.vip?'<span class="vip-badge">VIP</span>':'';const thtml=(o.tags||[]).map(t=>`<span class="row-tag tag-${t}">${getTName(t)}</span>`).join('');
         tb.innerHTML+=`<tr class="order-row ${o.vip?'vip-row':''}" onclick="openDetail('${o.id}')">
-          <td><strong>${o.orderNumber||o.id.slice(-6)}</strong>${vb}<br><small style="color:var(--muted)">${date(o.date)}</small></td>
+          <td><strong>${o.orderNumber||o.id.slice(-6)}</strong>${vb}<br><small style="color:var(--muted)">${date(safeDate(o))}</small></td>
           <td><div class="progress-bar"><div class="progress-fill" style="width:${pr.p}%"></div></div><div class="progress-label">${pr.l}</div><div class="row-tags">${thtml}</div></td>
           <td onclick="event.stopPropagation()"><select class="quick-status" onchange="qStatus('${o.id}',this.value)">${['Принят','В работе','Готово','Отгружен'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}</select></td></tr>`})}
     
     function qStatus(id,ns){const o=orders.find(x=>x.id===id);if(!o)return;o.status=ns;if(ns==='Отгружен')addCoins(COINS.COMPLETE,'✅ Отгружен');save();updateUI();applyFilters();showCoin(0,`📊 ${ns}`)}
-    function applyFilters(){const q=$('search').value.toLowerCase(),s=$('filterStatus').value;renderTable(orders.filter(o=>(!q||o.orderNumber?.toLowerCase().includes(q)||o.parts?.some(p=>p.name.toLowerCase().includes(q)))&&(!s||o.status===s||o.parts?.some(p=>p.stage===s))))}
+    
+    // === FIX: фильтруем по orderDate ===
+    function applyFilters(){const q=$('search').value.toLowerCase(),s=$('filterStatus').value;renderTable(orders.filter(o=>{const mQ=!q||o.orderNumber?.toLowerCase().includes(q)||o.parts?.some(p=>p.name.toLowerCase().includes(q));const mS=!s||o.status===s||o.parts?.some(p=>p.stage===s);return mQ&&mS;}))}
     
     // Order Modal
     const modal=$('modal'),form=$('orderForm');
-    function openModal(o=null){modal.classList.add('active');$('modalTitle').textContent=o?'Редактирование':'Новый заказ';$('editId').value=o?.id||'';$('orderNumber').value=o?.orderNumber||'';$('orderDate').value=o?.date||today();$('deadline').value=o?.deadline||'';$('status').value=o?.status||'Принят';$('reason').value=o?.reason||'';$('vipCheck').checked=o?.vip||false;$('partsList').innerHTML='';if(o?.parts?.length)o.parts.forEach(p=>addRow(p));else addRow();calcTotals();$('status').disabled=o?.status==='Отгружен';$('revertBox').classList.toggle('hidden',o?.status!=='Отгружен');form.onsubmit=handleSub;calcExpr='';calcResult='0';calcNeg=false;updCalc();$('calcWrap').classList.remove('show')}
+    
+    // === FIX: читаем orderDate, а не date ===
+    function openModal(o=null){modal.classList.add('active');$('modalTitle').textContent=o?'Редактирование':'Новый заказ';$('editId').value=o?.id||'';$('orderNumber').value=o?.orderNumber||'';$('orderDate').value=o?.orderDate||today();$('deadline').value=o?.deadline||'';$('status').value=o?.status||'Принят';$('reason').value=o?.reason||'';$('vipCheck').checked=o?.vip||false;$('partsList').innerHTML='';if(o?.parts?.length)o.parts.forEach(p=>addRow(p));else addRow();calcTotals();$('status').disabled=o?.status==='Отгружен';$('revertBox').classList.toggle('hidden',o?.status!=='Отгружен');form.onsubmit=handleSub;calcExpr='';calcResult='0';calcNeg=false;updCalc();$('calcWrap').classList.remove('show')}
     function closeModal(){modal.classList.remove('active')}
     function addRow(d={}){const r=document.createElement('div');r.className='part-row';r.innerHTML=`<input type="text" placeholder="Название" value="${d.name||''}" class="p-name" required><select class="p-stage">${STAGES.map(s=>`<option value="${s}" ${d.stage===s?'selected':''}>${s}</option>`).join('')}</select><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove();calcTotals()">✕</button>`;$('partsList').appendChild(r);calcTotals()}
     function calcTotals(){const c=document.querySelectorAll('.p-name').length;$('sumTotal')?.remove();$('partsList').insertAdjacentHTML('afterend',`<div id="sumTotal" style="text-align:center;margin:6px 0;font-weight:600">Конструкций: ${c}</div>`)}
+    
     function handleSub(e){e.preventDefault();const id=$('editId').value||Date.now().toString(36)+Math.random().toString(36).substr(2,5),isEdit=!!$('editId').value,pts=Array.from(document.querySelectorAll('.part-row')).map(r=>({name:r.querySelector('.p-name').value.trim(),stage:r.querySelector('.p-stage').value})).filter(p=>p.name);const ord={id,orderNumber:$('orderNumber').value.trim()||('ЗАК-'+Date.now().toString().slice(-6)),orderDate:$('orderDate').value,deadline:$('deadline').value,status:$('status').value,reason:$('reason').value,parts:pts,createdAt:orders.find(o=>o.id===id)?.createdAt||Date.now(),vip:$('vipCheck').checked,tags:orders.find(o=>o.id===id)?.tags||[]};const idx=orders.findIndex(o=>o.id===id);if(idx>-1)orders[idx]=ord;else orders.push(ord);save();if(!isEdit)addCoins(COINS.CREATE,'📋 Новый');closeModal();applyFilters();updateUI()}
     function revertOrder(){const id=$('editId').value;if(!id||!confirm('Вернуть?'))return;const o=orders.find(x=>x.id===id);if(o){o.status='Готово';save();closeModal();applyFilters();updateUI()}}
     function save(){localStorage.setItem(DB,JSON.stringify(orders))}
@@ -442,15 +435,18 @@
     function delInv(id){if(confirm('Удалить?')){inv=inv.filter(x=>x.id!==id);localStorage.setItem(INV,JSON.stringify(inv));rendInv()}}
     
     // Detail
-    function openDetail(id){curDetail=id;const o=orders.find(x=>x.id===id);if(!o)return;$('detailTitle').textContent=`Заказ #${o.orderNumber||o.id.slice(-6)}`;$('dDate').textContent=date(o.date);$('dDeadline').textContent=o.deadline?date(o.deadline):'—';$('dStatus').textContent=o.status;$('dReason').textContent=o.reason||'Не указано';const dp=$('dParts');dp.innerHTML='';if(o.parts?.length){o.parts.forEach((p,i)=>{dp.innerHTML+=`<div class="detail-part"><div><strong>${p.name}</strong><br><small style="color:var(--muted)">${p.sku||''}</small></div><select style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem" onchange="hStage('${o.id}',${i},this.value)">${STAGES.map(s=>`<option value="${s}" ${p.stage===s?'selected':''}>${s}</option>`).join('')}</select></div>`})}else{dp.innerHTML='<div style="color:var(--muted);padding:10px">Нет конструкций</div>'}rendTags(o);$('detailModal').classList.add('active')}
+    // === FIX: используем safeDate() ===
+    function openDetail(id){curDetail=id;const o=orders.find(x=>x.id===id);if(!o)return;$('detailTitle').textContent=`Заказ #${o.orderNumber||o.id.slice(-6)}`;$('dDate').textContent=date(safeDate(o));$('dDeadline').textContent=o.deadline?date(o.deadline):'—';$('dStatus').textContent=o.status;$('dReason').textContent=o.reason||'Не указано';const dp=$('dParts');dp.innerHTML='';if(o.parts?.length){o.parts.forEach((p,i)=>{dp.innerHTML+=`<div class="detail-part"><div><strong>${p.name}</strong><br><small style="color:var(--muted)">${p.sku||''}</small></div><select style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem" onchange="hStage('${o.id}',${i},this.value)">${STAGES.map(s=>`<option value="${s}" ${p.stage===s?'selected':''}>${s}</option>`).join('')}</select></div>`})}else{dp.innerHTML='<div style="color:var(--muted);padding:10px">Нет конструкций</div>'}rendTags(o);$('detailModal').classList.add('active')}
     function closeDetail(){$('detailModal').classList.remove('active');curDetail=null}
-    function editFromDetail(){if(curDetail){closeDetail();setTimeout(()=>editOrder(curDetail),100)}}
+    function editFromDetail(){if(curDetail){closeDetail();setTimeout(()=>editOrder(curDetail),150)}}
     function hStage(oid,pi,ns){const o=orders.find(x=>x.id===oid);if(!o||!o.parts[pi])return;o.parts[pi].stage=ns;if(o.parts.every(p=>p.stage==='Отгрузка')){o.status='Отгружен';addCoins(COINS.COMPLETE,'✅ Завершён')}save();updateUI();applyFilters()}
     
     // Settings/Export/CSV
     function openSet(){$('masterName').value=set.name;saveSet();$('settingsModal').classList.add('active')}function closeSet(){$('settingsModal').classList.remove('active')}
     function exportAllData(){const d={orders,inv,set,date:new Date().toISOString()};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)]));a.download=`prod_${today()}.json`;a.click()}
-    function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const o=JSON.parse(e.target.result);if(!o.id||!o.date)throw new Error('Неверный формат');const idx=orders.findIndex(x=>x.id===o.id);if(idx>-1)orders[idx]={...orders[idx],...o,updatedAt:Date.now()};else{o.createdAt=o.createdAt||Date.now();orders.push(o)}save();applyFilters();updateUI();alert('✅ Импортировано')}catch(err){alert('❌ '+err.message)}};r.readAsText(f);inp.value=''}
+    
+    // === FIX: импорт с fallback на orderDate ===
+    function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const o=JSON.parse(e.target.result);if(!o.id)throw new Error('Неверный формат');const oDate=o.orderDate||o.date||today();o.orderDate=oDate;if(!orders.find(x=>x.id===o.id)){o.createdAt=o.createdAt||Date.now();orders.push(o);}else{const idx=orders.findIndex(x=>x.id===o.id);orders[idx]={...orders[idx],...o,orderDate:oDate,updatedAt:Date.now()};}save();applyFilters();updateUI();alert('✅ Импортировано')}catch(err){alert('❌ '+err.message)}};r.readAsText(f);inp.value=''}
     function exportJSON(oid){const o=orders.find(x=>x.id===oid);if(!o)return;const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`order_${o.orderNumber||oid.slice(-6)}.json`;a.click()}
     function openShop(){$('shopModal').classList.add('active');upShopTags()}function closeShop(){$('shopModal').classList.remove('active')}
     
@@ -461,7 +457,7 @@
     function confirmCsv(){if(!csvData.length)return;let a=0,u=0;csvData.forEach(n=>{const i=inv.findIndex(x=>x.sku&&x.sku===n.sku||x.name===n.name);if(i>-1){inv[i]={...inv[i],...n};u++}else{n.id=Date.now().toString(36)+Math.random().toString(36).substr(2,6);inv.push(n);a++}});localStorage.setItem(INV,JSON.stringify(inv));closeCsv();rendInv();alert(`✅ Добавлено: ${a}, Обновлено: ${u}`)}
     
     // Init
-    window.onload=()=>{const fs=$('filterStatus');STAGES.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fs.appendChild(o)});if(set.theme==='dark')document.documentElement.setAttribute('data-theme','dark');$('masterName').value=set.name;updateUI();renderTable();rendInv();const lk='prod_land_v84',ov=$('landing');if(localStorage.getItem(lk)!=='true'&&ov)$('startBtn')?.addEventListener('click',e=>{e.preventDefault();ov.style.display='none';localStorage.setItem(lk,'true')});else if(ov)ov.style.display='none'}
+    window.onload=()=>{const fs=$('filterStatus');STAGES.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fs.appendChild(o)});if(set.theme==='dark')document.documentElement.setAttribute('data-theme','dark');$('masterName').value=set.name;updateUI();renderTable();rendInv();const lk='prod_land_v85',ov=$('landing');if(localStorage.getItem(lk)!=='true'&&ov)$('startBtn')?.addEventListener('click',e=>{e.preventDefault();ov.style.display='none';localStorage.setItem(lk,'true')});else if(ov)ov.style.display='none'}
   </script>
 </body>
 </html>
