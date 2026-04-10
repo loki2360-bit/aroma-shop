@@ -2,714 +2,403 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>ПРОИЗВОДСТВО | Lite</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #64748b;
-      --primary: #2563eb; --primary-hover: #1d4ed8; --danger: #ef4444;
-      --success: #10b981; --warning: #f59e0b; --border: #e2e8f0;
-      --radius: 12px; --shadow: 0 2px 8px rgba(0,0,0,0.08);
-      --font: system-ui, -apple-system, sans-serif;
-      /* Stage colors */
-      --s1:#3b82f6; --s2:#8b5cf6; --s3:#10b981; --s4:#f59e0b;
-      --s5:#ec4899; --s6:#6366f1; --s7:#ef4444; --s8:#14b8a6;
+      --primary: #2563eb; --danger: #ef4444; --success: #10b981; --warning: #f59e0b;
+      --border: #e2e8f0; --radius: 10px; --shadow: 0 2px 8px rgba(0,0,0,0.06);
+      --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     }
     [data-theme="dark"] {
-      --bg:#0b1120; --card:#1e293b; --text:#f1f5f9; --muted:#94a3b8;
-      --border:#334155; --shadow:0 2px 8px rgba(0,0,0,0.4);
+      --bg: #0b1120; --card: #1e293b; --text: #f1f5f9; --muted: #94a3b8;
+      --border: #334155; --shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
-    * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+    * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
     body { background:var(--bg); color:var(--text); font-family:var(--font); line-height:1.4; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
     .container { max-width:100%; padding:8px; }
     
     /* Header */
-    header { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:12px 8px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--card); z-index:50; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 8px; border-bottom:1px solid var(--border); background:var(--card); position:sticky; top:0; z-index:50; }
     .brand { display:flex; align-items:center; gap:10px; min-width:0; }
-    .brand-logo { width:36px; height:36px; flex-shrink:0; }
+    .brand-logo { width:34px; height:34px; flex-shrink:0; }
     .brand-text { min-width:0; }
-    .brand-title { font-size:1rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .brand-sub { font-size:0.7rem; color:var(--muted); }
-    .brand-badge { font-size:0.6rem; background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:10px; }
+    .brand-title { font-size:0.95rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .brand-sub { font-size:0.65rem; color:var(--muted); }
+    .badge { font-size:0.6rem; background:#e0f2fe; color:#0369a1; padding:2px 5px; border-radius:8px; }
     .header-actions { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
     
     /* Buttons */
-    .btn { padding:8px 12px; border:none; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:4px; min-height:36px; min-width:36px; justify-content:center; transition:transform 0.1s; }
-    .btn:active { transform:scale(0.98); }
+    .btn { padding:8px 10px; border:none; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:4px; min-height:36px; min-width:36px; justify-content:center; transition:transform 0.1s; }
+    .btn:active { transform:scale(0.96); }
     .btn-primary { background:var(--primary); color:#fff; }
     .btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
     .btn-success { background:var(--success); color:#fff; }
     .btn-danger { background:var(--danger); color:#fff; }
-    .btn-sm { padding:6px 10px; font-size:0.8rem; min-height:32px; }
+    .btn-sm { padding:6px 8px; font-size:0.8rem; min-height:32px; }
     .btn-icon { padding:8px; width:36px; height:36px; }
     
     /* Tabs */
-    .nav-tabs { display:flex; gap:4px; padding:8px; background:var(--card); border-bottom:1px solid var(--border); position:sticky; top:56px; z-index:40; }
+    .nav-tabs { display:flex; gap:2px; padding:8px 8px 0; background:var(--card); border-bottom:1px solid var(--border); }
     .nav-tab { flex:1; padding:10px; background:none; border:none; border-bottom:2px solid transparent; font-weight:600; color:var(--muted); font-size:0.85rem; }
     .nav-tab.active { color:var(--primary); border-bottom-color:var(--primary); }
     
     /* Stats */
-    .dashboard { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:8px; }
-    .stat-card { background:var(--card); padding:12px 10px; border-radius:10px; text-align:center; border-left:3px solid var(--primary); }
+    .dashboard { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:10px 8px; }
+    .stat-card { background:var(--card); padding:10px 6px; border-radius:8px; text-align:center; border-left:3px solid var(--primary); }
     .stat-card.profit { border-left-color:var(--success); }
     .stat-card.warning { border-left-color:var(--warning); }
-    .stat-card h3 { font-size:0.65rem; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
-    .stat-card .val { font-size:1.1rem; font-weight:700; }
+    .stat-card h3 { font-size:0.6rem; color:var(--muted); text-transform:uppercase; margin-bottom:2px; }
+    .stat-card .val { font-size:1rem; font-weight:700; }
     
     /* Controls */
-    .controls { background:var(--card); padding:10px 8px; margin:8px; border-radius:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .control-group label { font-size:0.7rem; color:var(--muted); display:block; margin-bottom:4px; }
-    .control-group input, .control-group select { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:0.9rem; background:var(--bg); }
+    .controls { background:var(--card); padding:8px; margin:8px; border-radius:8px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .ctrl label { font-size:0.65rem; color:var(--muted); display:block; margin-bottom:3px; }
+    .ctrl input, .ctrl select { width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; background:var(--bg); }
     
     /* Table */
-    .table-wrap { background:var(--card); margin:8px; border-radius:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
-    table { width:100%; border-collapse:collapse; min-width:500px; }
-    th, td { padding:10px 8px; text-align:left; border-bottom:1px solid var(--border); font-size:0.85rem; }
-    th { background:var(--bg); font-weight:600; color:var(--muted); font-size:0.7rem; text-transform:uppercase; position:sticky; top:0; }
-    tr:active { background:rgba(37,99,235,0.05); }
+    .table-wrap { background:var(--card); margin:8px; border-radius:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    table { width:100%; border-collapse:collapse; min-width:360px; }
+    th, td { padding:8px 6px; text-align:left; border-bottom:1px solid var(--border); font-size:0.85rem; vertical-align:middle; }
+    th { background:var(--bg); font-weight:600; color:var(--muted); font-size:0.65rem; text-transform:uppercase; position:sticky; top:0; }
+    .order-row { cursor:pointer; transition:background 0.15s; }
+    .order-row:hover { background:rgba(37,99,235,0.04); }
+    .order-row:active { background:rgba(37,99,235,0.1); }
     
-    /* Badges */
-    .status-badge, .stage-badge, .order-tag { display:inline-block; padding:3px 8px; border-radius:6px; font-size:0.7rem; font-weight:600; white-space:nowrap; }
-    .stage-Распил { background:rgba(59,130,246,0.15); color:#1d4ed8; border:1px solid var(--s1); }
-    .stage-ЧПУ { background:rgba(139,92,246,0.15); color:#6d28d9; border:1px solid var(--s2); }
-    .stage-Сборка { background:rgba(16,185,129,0.15); color:#047857; border:1px solid var(--s3); }
-    .stage-Упаковка { background:rgba(245,158,11,0.15); color:#b45309; border:1px solid var(--s4); }
-    .stage-Фанеровка { background:rgba(236,72,153,0.15); color:#9d174d; border:1px solid var(--s5); }
-    .stage-Шлифовка { background:rgba(99,102,241,0.15); color:#3730a3; border:1px solid var(--s6); }
-    .stage-Покраска { background:rgba(239,68,68,0.15); color:#991b1b; border:1px solid var(--s7); }
-    .stage-Склад { background:rgba(20,184,166,0.15); color:#0f766e; border:1px solid var(--s8); }
-    .tag-срочно { background:#ef4444; color:#fff; }
-    .tag-не-срочно { background:#6b7280; color:#fff; }
-    .tag-авито { background:#00aaff; color:#fff; }
-    .tag-проверенный-клиент { background:#10b981; color:#fff; }
-    .tag-аванс { background:#f59e0b; color:#fff; }
-    .tag-ждем-материалы { background:#f97316; color:#fff; }
-    .tag-готово { background:#8b5cf6; color:#fff; }
+    /* Quick Status */
+    .quick-status { width:100%; max-width:110px; padding:6px 8px; border:1px solid var(--border); border-radius:6px; font-size:0.75rem; background:var(--bg); font-weight:500; }
+    .quick-status:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 2px rgba(37,99,235,0.15); }
     
-    /* Progress */
-    .progress-bar { height:4px; background:var(--border); border-radius:2px; overflow:hidden; margin:4px 0; }
+    /* Tags & Progress */
+    .row-tags { display:flex; flex-wrap:wrap; gap:3px; margin-top:4px; }
+    .row-tag { font-size:0.6rem; padding:1px 5px; border-radius:4px; color:#fff; font-weight:600; white-space:nowrap; }
+    .tag-срочно { background:#ef4444; } .tag-не-срочно { background:#6b7280; }
+    .tag-авито { background:#00aaff; } .tag-проверенный-клиент { background:#10b981; }
+    .tag-аванс { background:#f59e0b; } .tag-ждем-материалы { background:#f97316; }
+    .tag-готово { background:#8b5cf6; }
+    
+    .progress-bar { height:4px; background:var(--border); border-radius:2px; overflow:hidden; margin:3px 0; }
     .progress-fill { height:100%; background:linear-gradient(90deg,var(--primary),var(--success)); transition:width 0.2s; }
     .progress-label { font-size:0.65rem; color:var(--muted); }
     
-    /* Actions */
-    .actions { display:flex; gap:4px; }
-    .action-btn { width:28px; height:28px; border-radius:6px; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.9rem; }
+    /* Badges & VIP */
+    .vip-badge { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; padding:1px 4px; border-radius:3px; font-size:0.6rem; font-weight:700; margin-left:3px; vertical-align:middle; }
+    tr.vip-row { background:#fffbeb !important; }
+    [data-theme="dark"] tr.vip-row { background:#451a03 !important; }
     
-    /* Modal */
+    /* Actions */
+    .actions { display:flex; gap:4px; white-space:nowrap; }
+    .action-btn { width:28px; height:28px; border-radius:6px; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.85rem; }
+    .action-btn:active { background:var(--primary); color:#fff; border-color:var(--primary); }
+    
+    /* Inventory List */
+    .inv-item { display:flex; gap:8px; padding:10px; border-bottom:1px solid var(--border); align-items:center; }
+    .inv-info { flex:1; min-width:0; }
+    .inv-name { font-weight:600; font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .inv-meta { font-size:0.7rem; color:var(--muted); }
+    .stock-badge { padding:2px 6px; border-radius:4px; font-size:0.7rem; font-weight:600; white-space:nowrap; }
+    .stock-ok { background:#dcfce7; color:#166534; } .stock-low { background:#fef3c7; color:#92400e; } .stock-none { background:#fee2e2; color:#991b1b; }
+    
+    /* Modals */
     .modal { position:fixed; inset:0; background:rgba(15,23,42,0.5); display:none; justify-content:center; align-items:flex-end; z-index:100; padding:0; }
     .modal.active { display:flex; }
     @media(min-width:640px) { .modal { align-items:center; padding:16px; } }
-    .modal-box { background:var(--card); width:100%; max-width:600px; max-height:90vh; border-radius:16px 16px 0 0; overflow-y:auto; padding:16px; }
-    @media(min-width:640px) { .modal-box { border-radius:16px; } }
-    .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border); }
-    .modal-header h2 { font-size:1.1rem; font-weight:700; }
+    .modal-box { background:var(--card); width:100%; max-width:560px; max-height:88vh; border-radius:16px 16px 0 0; overflow-y:auto; padding:14px; }
+    @media(min-width:640px) { .modal-box { border-radius:14px; } }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+    .modal-header h2 { font-size:1rem; font-weight:700; }
     .close { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--muted); padding:4px; }
     
-    /* Form */
+    /* Forms */
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .form-group { display:flex; flex-direction:column; }
-    .form-group.full { grid-column:1/-1; }
-    .form-group label { font-size:0.75rem; color:var(--muted); margin-bottom:4px; }
-    .form-group input, .form-group select, .form-group textarea { padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:0.95rem; background:var(--bg); }
-    .form-group textarea { resize:vertical; min-height:60px; }
+    .fg { display:flex; flex-direction:column; }
+    .fg.full { grid-column:1/-1; }
+    .fg label { font-size:0.7rem; color:var(--muted); margin-bottom:4px; }
+    .fg input, .fg select, .fg textarea { padding:9px 10px; border:1px solid var(--border); border-radius:7px; font-size:0.9rem; background:var(--bg); }
+    .fg textarea { resize:vertical; min-height:50px; }
     
-    /* Parts section */
-    .parts-section { background:var(--bg); padding:12px; border-radius:10px; margin:12px 0; }
-    .part-row { display:grid; grid-template-columns:1fr 1fr 40px; gap:8px; margin-bottom:8px; align-items:end; }
-    .part-row input, .part-row select { padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:0.9rem; }
+    /* Parts */
+    .parts-sec { background:var(--bg); padding:10px; border-radius:8px; margin:10px 0; }
+    .part-row { display:grid; grid-template-columns:1fr 1fr 36px; gap:6px; margin-bottom:6px; align-items:end; }
+    .part-row input, .part-row select { padding:7px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; background:#fff; }
     
-    /* Totals */
-    .totals { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0; padding:12px; background:var(--bg); border-radius:10px; }
-    .total-box { text-align:center; }
-    .total-box .label { font-size:0.7rem; color:var(--muted); }
-    .total-box .val { font-size:1rem; font-weight:700; }
+    /* Detail */
+    .detail-header { background:var(--bg); padding:10px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+    .detail-row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed var(--border); font-size:0.9rem; }
+    .detail-part { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
+    .tags-wrap { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
+    .tag-item { display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:600; color:#fff; }
+    .tag-item button { background:none; border:none; color:inherit; padding:0; margin-left:2px; cursor:pointer; font-size:0.8rem; }
     
-    /* Inventory */
-    .inv-item { display:flex; gap:10px; padding:10px; border-bottom:1px solid var(--border); align-items:center; }
-    .inv-thumb { width:40px; height:40px; background:var(--bg); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
-    .inv-info { flex:1; min-width:0; }
-    .inv-name { font-weight:600; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .inv-meta { font-size:0.75rem; color:var(--muted); }
-    .stock-badge { padding:2px 6px; border-radius:4px; font-size:0.7rem; font-weight:600; }
-    .stock-ok { background:#dcfce7; color:#166534; }
-    .stock-low { background:#fef3c7; color:#92400e; }
-    .stock-none { background:#fee2e2; color:#991b1b; }
-    
-    /* Tags in detail */
-    .tags-wrap { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
-    .tag-item { display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:600; }
-    .tag-item button { background:none; border:none; color:inherit; padding:0; margin-left:4px; cursor:pointer; font-size:0.8rem; }
-    
-    /* Coin badge */
-    .coin-badge { display:inline-flex; align-items:center; gap:4px; background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#fff; padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:700; }
-    
-    /* Empty state */
-    .empty { text-align:center; padding:24px; color:var(--muted); font-size:0.9rem; }
-    .hidden { display:none !important; }
-    
-    /* Landing */
-    .landing-overlay { position:fixed; inset:0; background:linear-gradient(135deg,#0f172a,#1e293b); display:flex; justify-content:center; align-items:center; padding:20px; z-index:200; }
-    .landing-content { background:var(--card); border-radius:20px; padding:24px; max-width:400px; width:100%; text-align:center; }
-    .landing-logo { width:60px; height:60px; margin:0 auto 16px; }
-    .landing-title { font-size:1.5rem; font-weight:800; margin-bottom:4px; }
-    .landing-subtitle { color:var(--muted); font-size:0.9rem; margin-bottom:20px; }
-    .landing-features { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; text-align:left; }
-    .feature { background:var(--bg); padding:10px; border-radius:10px; font-size:0.8rem; }
-    .feature-icon { font-size:1.2rem; margin-bottom:4px; }
-    .btn-start { width:100%; padding:14px; background:var(--primary); color:#fff; border:none; border-radius:12px; font-size:1rem; font-weight:700; margin-bottom:12px; }
-    
-    /* Coin popup */
-    .coin-popup { position:fixed; top:20%; left:50%; transform:translateX(-50%) translateY(10px); background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#fff; padding:10px 18px; border-radius:12px; font-weight:700; font-size:0.9rem; box-shadow:0 8px 20px rgba(245,158,11,0.4); opacity:0; pointer-events:none; z-index:999; transition:all 0.3s; }
+    /* Coin Popup & Landing */
+    .coin-popup { position:fixed; top:20%; left:50%; transform:translateX(-50%) translateY(10px); background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#fff; padding:8px 16px; border-radius:10px; font-weight:700; font-size:0.9rem; box-shadow:0 6px 16px rgba(245,158,11,0.3); opacity:0; pointer-events:none; z-index:999; transition:all 0.25s; }
     .coin-popup.show { opacity:1; transform:translateX(-50%) translateY(-20px); }
+    .landing { position:fixed; inset:0; background:linear-gradient(135deg,#0f172a,#1e293b); display:flex; justify-content:center; align-items:center; padding:20px; z-index:200; text-align:center; }
+    .landing-box { background:var(--card); border-radius:16px; padding:20px; max-width:380px; width:100%; }
+    .landing h1 { font-size:1.4rem; margin-bottom:4px; }
+    .landing p { color:var(--muted); font-size:0.9rem; margin-bottom:16px; }
+    .features { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px; text-align:left; }
+    .feat { background:var(--bg); padding:8px; border-radius:8px; font-size:0.8rem; }
+    .btn-start { width:100%; padding:12px; background:var(--primary); color:#fff; border:none; border-radius:10px; font-size:1rem; font-weight:700; margin-bottom:8px; }
+    .hidden { display:none !important; }
+    .empty { text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
     
-    /* Scanner */
-    #reader { width:100%; border-radius:8px; overflow:hidden; }
-    .scan-result { margin-top:12px; padding:12px; background:#f0fdf4; border:1px solid #86efac; border-radius:8px; display:none; font-size:0.85rem; }
-    .scan-result.show { display:block; }
-    .scan-result.not-found { background:#fef2f2; border-color:#fca5a5; }
-    
-    /* Utility */
-    .money { font-weight:600; }
-    .vip-badge { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; padding:2px 6px; border-radius:4px; font-size:0.65rem; font-weight:700; margin-left:4px; }
-    tr.vip-row { background:#fffbeb !important; border-left:3px solid #f59e0b; }
-    [data-theme="dark"] tr.vip-row { background:#451a03 !important; }
-    
-    /* Mobile optimizations */
-    @media(max-width:480px) {
+    /* Mobile tweaks */
+    @media(max-width:420px) {
       .form-grid { grid-template-columns:1fr; }
       .controls { grid-template-columns:1fr; }
       .dashboard { grid-template-columns:1fr; }
-      .totals { grid-template-columns:1fr; }
-      .part-row { grid-template-columns:1fr 40px; }
-      .part-row .p-name { grid-column:1/-1; }
-      th, td { padding:8px 6px; font-size:0.8rem; }
-      .btn { padding:10px 14px; font-size:0.9rem; min-height:44px; }
-      .btn-icon { width:44px; height:44px; }
-      .modal-box { padding:12px; border-radius:16px 16px 0 0; }
-      .landing-features { grid-template-columns:1fr; }
+      .part-row { grid-template-columns:1fr 36px; }
+      .quick-status { max-width:100px; }
     }
-    
-    /* Dark mode adjustments */
-    [data-theme="dark"] .stat-card, [data-theme="dark"] .controls, [data-theme="dark"] .table-wrap,
-    [data-theme="dark"] .modal-box, [data-theme="dark"] .parts-section, [data-theme="dark"] .totals { background:var(--card); }
-    [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { background:#0f172a; color:#f1f5f9; border-color:#475569; }
+    [data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea { background:#0f172a; color:#f1f5f9; border-color:#475569; }
     [data-theme="dark"] th { background:#1e293b; }
+    [data-theme="dark"] .stat-card,[data-theme="dark"] .controls,[data-theme="dark"] .table-wrap,[data-theme="dark"] .modal-box,[data-theme="dark"] .parts-sec { background:var(--card); }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
     <header>
       <div class="brand">
-        <svg class="brand-logo" viewBox="0 0 44 44" fill="none">
-          <defs><linearGradient id="g" x1="0" y1="0" x2="44" y2="44"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs>
-          <rect width="44" height="44" rx="12" fill="url(#g)"/>
-          <path d="M8 32V20L16 24V16L24 20V12L32 16V32H8Z" stroke="#fff" stroke-width="2.2"/>
-          <path d="M12 32V28H20V32M24 32V24H32V32" stroke="#fff" stroke-width="2.2"/>
-          <circle cx="22" cy="34" r="3" fill="#97CF26"/>
-        </svg>
+        <svg class="brand-logo" viewBox="0 0 44 44" fill="none"><defs><linearGradient id="g" x1="0" y1="0" x2="44" y2="44"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs><rect width="44" height="44" rx="12" fill="url(#g)"/><path d="M8 32V20L16 24V16L24 20V12L32 16V32H8Z" stroke="#fff" stroke-width="2.2"/><path d="M12 32V28H20V32M24 32V24H32V32" stroke="#fff" stroke-width="2.2"/><circle cx="22" cy="34" r="3" fill="#97CF26"/></svg>
         <div class="brand-text">
           <div class="brand-title">ПРОИЗВОДСТВО</div>
-          <div class="brand-sub">Lite • <span class="brand-badge">v8.0</span></div>
+          <div class="brand-sub">Lite • <span class="badge">v8.1</span></div>
         </div>
       </div>
       <div class="header-actions">
-        <div class="coin-badge">🪙 <span id="coinDisplay">0</span></div>
+        <div style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;padding:4px 8px;border-radius:12px;font-size:0.75rem;font-weight:700">🪙 <span id="coinDisplay">0</span></div>
         <button class="btn btn-outline btn-sm" onclick="openShop()">🛒</button>
         <button class="btn btn-primary btn-sm" onclick="openModal()">+ Заказ</button>
         <button class="btn btn-outline btn-icon" onclick="openSettings()">⚙️</button>
         <button class="btn btn-outline btn-icon" onclick="exportData()">📥</button>
-        <label class="btn btn-outline btn-icon" title="Импорт">📤<input type="file" accept=".json" style="display:none" onchange="importOrderFromJSON(this)"></label>
       </div>
     </header>
 
-    <!-- Tabs -->
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="switchTab('orders')">📋 Заказы</button>
       <button class="nav-tab" onclick="switchTab('inventory')">📦 Конструкции</button>
     </div>
 
-    <!-- Orders Section -->
     <div id="ordersSection">
       <div class="dashboard">
-        <div class="stat-card profit"><h3>✅ Готово</h3><div class="val" id="statReady">0</div></div>
+        <div class="stat-card profit"><h3>✅ Отгружено</h3><div class="val" id="statReady">0</div></div>
         <div class="stat-card warning"><h3>⏳ В работе</h3><div class="val" id="statActive">0</div></div>
         <div class="stat-card"><h3>📊 Всего</h3><div class="val" id="statCount">0</div></div>
       </div>
-      
       <div class="controls">
-        <div class="control-group"><label>Поиск</label><input type="text" id="search" placeholder="№ или конструкция" oninput="applyFilters()"></div>
-        <div class="control-group"><label>Этап</label><select id="filterStatus" onchange="applyFilters()"><option value="">Все</option></select></div>
-        <div class="control-group"><label>С</label><input type="date" id="dateFrom" onchange="applyFilters()"></div>
-        <div class="control-group"><label>По</label><input type="date" id="dateTo" onchange="applyFilters()"></div>
+        <div class="ctrl"><label>Поиск</label><input type="text" id="search" placeholder="№ или конструкция" oninput="applyFilters()"></div>
+        <div class="ctrl"><label>Фильтр</label><select id="filterStatus" onchange="applyFilters()"><option value="">Все</option></select></div>
       </div>
-      
       <div class="table-wrap">
-        <table>
-          <thead><tr><th>№</th><th>Дата</th><th>Прогресс</th><th>Конструкции</th><th>Действия</th></tr></thead>
-          <tbody id="tbody"></tbody>
-        </table>
+        <table><thead><tr><th>Заказ</th><th>Прогресс / Теги</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="tbody"></tbody></table>
         <div id="emptyState" class="empty hidden">Нет заказов. Нажмите «+ Заказ»</div>
       </div>
     </div>
 
-    <!-- Inventory Section -->
     <div id="inventorySection" class="hidden">
       <div style="display:flex;justify-content:space-between;align-items:center;padding:8px">
-        <div><strong>📦 Конструкции</strong><div style="font-size:0.8rem;color:var(--muted)">Склад материалов</div></div>
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-success btn-sm" onclick="openCsvImport()">📊 CSV</button>
-          <button class="btn btn-primary btn-sm" onclick="openInventoryModal()">+ Добавить</button>
-        </div>
+        <div><strong>📦 Склад</strong><div style="font-size:0.75rem;color:var(--muted)">Конструкции</div></div>
+        <div style="display:flex;gap:6px"><button class="btn btn-success btn-sm" onclick="openCsvImport()">📊 CSV</button><button class="btn btn-primary btn-sm" onclick="openInventoryModal()">+ Добавить</button></div>
       </div>
       <div class="controls">
-        <div class="control-group" style="grid-column:1/-1"><label>Поиск</label><input type="text" id="invSearch" placeholder="Название, артикул..." oninput="renderInventory()"></div>
-        <div class="control-group"><label>Категория</label><select id="invCategory" onchange="renderInventory()"><option value="">Все</option><option>ЛДСП</option><option>Массив</option><option>МДФ</option><option>Фурнитура</option><option>Кромка</option></select></div>
-        <div class="control-group"><label>Статус</label><select id="invFilter" onchange="renderInventory()"><option value="">Все</option><option value="in">В наличии</option><option value="low">Мало</option><option value="out">Нет</option></select></div>
+        <div class="ctrl" style="grid-column:1/-1"><label>Поиск</label><input type="text" id="invSearch" placeholder="Название, артикул..." oninput="renderInventory()"></div>
       </div>
-      <div class="table-wrap">
-        <div id="invList"></div>
-        <div id="invEmpty" class="empty hidden">Нет записей. Нажмите «+ Добавить»</div>
-      </div>
+      <div class="table-wrap"><div id="invList"></div><div id="invEmpty" class="empty hidden">Пусто</div></div>
     </div>
   </div>
 
-  <!-- Order Modal -->
-  <div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2 id="modalTitle">Новый заказ</h2>
-        <button class="close" onclick="closeModal()">&times;</button>
+  <!-- Modals -->
+  <div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="modal-box">
+    <div class="modal-header"><h2 id="modalTitle">Новый заказ</h2><button class="close" onclick="closeModal()">&times;</button></div>
+    <form id="orderForm"><input type="hidden" id="editId">
+      <div class="form-grid">
+        <div class="fg full"><label>Номер</label><input type="text" id="orderNumber" readonly></div>
+        <div class="fg"><label>Дата приема</label><input type="date" id="orderDate" required></div>
+        <div class="fg"><label>Дедлайн</label><input type="date" id="deadline"></div>
+        <div class="fg full"><label>ТЗ / Описание</label><textarea id="reason" placeholder="Размеры, особенности..."></textarea></div>
+        <div class="fg full"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="vipCheck" style="width:18px;height:18px"> <span>⭐ Срочный</span></label></div>
       </div>
-      <form id="orderForm">
-        <input type="hidden" id="editId">
-        <div class="form-grid">
-          <div class="form-group full"><label>Номер заказа</label><input type="text" id="orderNumber" readonly></div>
-          <div class="form-group"><label>Дата приема</label><input type="date" id="orderDate" required></div>
-          <div class="form-group"><label>Дедлайн</label><input type="date" id="deadline"></div>
-          <div class="form-group"><label>Статус</label><select id="status"><option>Принят</option><option>В работе</option><option>Готово</option><option>Отгружен</option></select></div>
-          <div class="form-group full"><label>Описание / ТЗ</label><textarea id="reason" placeholder="Размеры, особенности..."></textarea></div>
-          <div class="form-group full">
-            <label style="display:flex;align-items:center;gap:8px">
-              <input type="checkbox" id="vipCheck" style="width:18px;height:18px"> <span>⭐ Срочный</span>
-            </label>
-          </div>
-        </div>
-        
-        <div class="parts-section">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <strong>📦 Конструкции</strong>
-            <button type="button" class="btn btn-outline btn-sm" onclick="openPartsSelector()">+ Со склада</button>
-          </div>
-          <div id="partsList"></div>
-          <button type="button" class="btn btn-outline btn-sm" onclick="addPartRow()" style="width:100%">+ Вручную</button>
-        </div>
-        
-        <div class="totals">
-          <div class="total-box"><div class="label">Всего</div><div class="val" id="sumTotal">0</div></div>
-          <div class="total-box"><div class="label">Конструкций</div><div class="val" id="sumCount">0</div></div>
-        </div>
-        
-        <div id="revertSection" class="hidden" style="background:#fef2f2;padding:10px;border-radius:8px;margin:10px 0;text-align:center">
-          <div style="color:#991b1b;font-size:0.85rem;margin-bottom:8px">⚠️ Статус «Отгружен». Изменение запрещено.</div>
-          <button type="button" class="btn btn-danger btn-sm" onclick="revertOrder()">↩️ Вернуть</button>
-        </div>
-        
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
-          <button type="button" class="btn btn-outline" onclick="closeModal()">Отмена</button>
-          <button type="submit" class="btn btn-primary">💾 Сохранить</button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="parts-sec">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong>📦 Конструкции</strong><button type="button" class="btn btn-outline btn-sm" onclick="openPartsSelector()">+ Со склада</button></div>
+        <div id="partsList"></div>
+        <button type="button" class="btn btn-outline btn-sm" onclick="addPartRow()" style="width:100%;margin-top:6px">+ Вручную</button>
+      </div>
+      <div class="fg full" style="margin-top:8px"><label>Общий статус</label><select id="status"><option>Принят</option><option>В работе</option><option>Готово</option><option>Отгружен</option></select></div>
+      <div id="revertBox" class="hidden" style="background:#fef2f2;padding:8px;border-radius:6px;margin:8px 0;text-align:center;color:#991b1b;font-size:0.85rem">⚠️ Отгружен. Изменение закрыто. <button type="button" class="btn btn-danger btn-sm" onclick="revertOrder()" style="margin-left:6px">↩️ Вернуть</button></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button type="button" class="btn btn-outline" onclick="closeModal()">Отмена</button><button type="submit" class="btn btn-primary">💾 Сохранить</button></div>
+    </form>
+  </div></div>
 
-  <!-- Inventory Modal -->
-  <div id="inventoryModal" class="modal" onclick="if(event.target===this)closeInventoryModal()">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2 id="invModalTitle">Добавить конструкцию</h2>
-        <button class="close" onclick="closeInventoryModal()">&times;</button>
-      </div>
-      <form id="inventoryForm">
-        <input type="hidden" id="invEditId">
-        <div class="form-grid">
-          <div class="form-group full"><label>Название *</label><input type="text" id="invName" required placeholder="Например: Дверца 600×400"></div>
-          <div class="form-group"><label>Артикул</label><input type="text" id="invSku" placeholder="ART-001"></div>
-          <div class="form-group"><label>Категория</label><select id="invCategorySel"><option>ЛДСП</option><option>Массив</option><option>МДФ</option><option>Фурнитура</option><option>Кромка</option><option>Другое</option></select></div>
-          <div class="form-group"><label>В наличии</label><input type="number" id="invInStock" min="0" value="0"></div>
-          <div class="form-group"><label>В резерве</label><input type="number" id="invReserved" min="0" value="0"></div>
-          <div class="form-group full"><label>Описание</label><textarea id="invDesc" placeholder="Размеры, особенности..."></textarea></div>
-        </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
-          <button type="button" class="btn btn-outline" onclick="closeInventoryModal()">Отмена</button>
-          <button type="submit" class="btn btn-primary">💾 Сохранить</button>
-        </div>
-      </form>
+  <div id="detailModal" class="modal" onclick="if(event.target===this)closeDetail()"><div class="modal-box">
+    <div class="modal-header"><h2 id="detailTitle">Заказ #...</h2><button class="close" onclick="closeDetail()">&times;</button></div>
+    <div class="detail-header">
+      <div><div style="font-size:0.8rem;color:var(--muted)">Прием</div><strong id="dDate"></strong></div>
+      <div><div style="font-size:0.8rem;color:var(--muted)">Дедлайн</div><strong id="dDeadline"></strong></div>
+      <div><div style="font-size:0.8rem;color:var(--muted)">Статус</div><span id="dStatus" class="badge" style="background:var(--primary);color:#fff"></span></div>
     </div>
-  </div>
-
-  <!-- Parts Selector Modal -->
-  <div id="partsModal" class="modal" onclick="if(event.target===this)closePartsSelector()">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2>Выбрать конструкцию</h2>
-        <button class="close" onclick="closePartsSelector()">&times;</button>
+    <div style="margin-bottom:12px"><strong style="font-size:0.8rem;color:var(--muted)">Описание</strong><p id="dReason" style="margin-top:4px;font-size:0.9rem"></p></div>
+    <div style="margin-bottom:12px">
+      <strong style="font-size:0.8rem;color:var(--muted)">🏷️ Теги</strong>
+      <div id="dTags" class="tags-wrap" style="margin-top:6px"></div>
+      <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+        <select id="tagSelect" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem"><option value="">Добавить...</option><option value="срочно">🔴 Срочно</option><option value="не-срочно">⚪ Не срочно</option><option value="авито">🔵 Авито</option><option value="проверенный-клиент">🟢 Проверенный</option><option value="аванс">🟡 Аванс</option><option value="ждем-материалы">🟠 Ждем материалы</option><option value="готово">🟣 Готово</option></select>
+        <button class="btn btn-primary btn-sm" onclick="addTag()">➕</button>
       </div>
-      <input type="text" id="partsSearch" placeholder="🔍 Поиск..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px" oninput="renderPartsSelector()">
-      <div id="partsListSel" style="max-height:400px;overflow-y:auto"></div>
-      <div style="text-align:center;padding:12px;color:var(--muted)" id="partsEmpty">Не найдено</div>
+      <div style="font-size:0.7rem;color:var(--muted);margin-top:3px">Доступно: <strong id="tagsAvail">0</strong></div>
     </div>
-  </div>
+    <div style="margin-bottom:12px"><strong style="font-size:0.8rem;color:var(--muted)">📦 Конструкции</strong><div id="dParts" style="margin-top:6px"></div></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="exportOrderAsJSON(curDetail)">📥 JSON</button><button class="btn btn-outline" onclick="editFromDetail()">✏️</button><button class="btn btn-primary" onclick="closeDetail()">Закрыть</button></div>
+  </div></div>
 
-  <!-- Detail Modal -->
-  <div id="detailModal" class="modal" onclick="if(event.target===this)closeDetailModal()">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2 id="detailTitle">Заказ #...</h2>
-        <button class="close" onclick="closeDetailModal()">&times;</button>
+  <div id="inventoryModal" class="modal" onclick="if(event.target===this)closeInvModal()"><div class="modal-box">
+    <div class="modal-header"><h2 id="invTitle">Добавить</h2><button class="close" onclick="closeInvModal()">&times;</button></div>
+    <form id="invForm"><input type="hidden" id="invEdit">
+      <div class="form-grid">
+        <div class="fg full"><label>Название *</label><input type="text" id="invName" required></div>
+        <div class="fg"><label>Артикул</label><input type="text" id="invSku"></div>
+        <div class="fg"><label>Категория</label><select id="invCat"><option>ЛДСП</option><option>Массив</option><option>МДФ</option><option>Фурнитура</option><option>Кромка</option><option>Другое</option></select></div>
+        <div class="fg"><label>В наличии</label><input type="number" id="invStock" min="0" value="0"></div>
+        <div class="fg"><label>В резерве</label><input type="number" id="invRes" min="0" value="0"></div>
       </div>
-      <div style="background:var(--bg);padding:12px;border-radius:10px;margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <span style="color:var(--muted);font-size:0.85rem">Прием:</span>
-          <strong id="dDate"></strong>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <span style="color:var(--muted);font-size:0.85rem">Дедлайн:</span>
-          <strong id="dDeadline"></strong>
-        </div>
-        <div style="display:flex;justify-content:space-between">
-          <span style="color:var(--muted);font-size:0.85rem">Статус:</span>
-          <span id="dStatus" class="status-badge"></span>
-        </div>
-      </div>
-      <div style="margin-bottom:12px">
-        <strong style="font-size:0.85rem;color:var(--muted)">Описание</strong>
-        <p id="dReason" style="margin-top:4px;font-size:0.95rem"></p>
-      </div>
-      <div style="margin-bottom:12px">
-        <strong style="font-size:0.85rem;color:var(--muted)">🏷️ Теги</strong>
-        <div id="dTags" class="tags-wrap" style="margin-top:6px"></div>
-        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-          <select id="tagSelect" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem">
-            <option value="">Добавить тег...</option>
-            <option value="срочно">🔴 Срочно</option>
-            <option value="не-срочно">⚪ Не срочно</option>
-            <option value="авито">🔵 Авито</option>
-            <option value="проверенный-клиент">🟢 Проверенный</option>
-            <option value="аванс">🟡 Аванс</option>
-            <option value="ждем-материалы">🟠 Ждем материалы</option>
-            <option value="готово">🟣 Готово</option>
-          </select>
-          <button class="btn btn-primary btn-sm" onclick="addTag()">➕</button>
-        </div>
-        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px">Доступно: <strong id="tagsAvailable">0</strong></div>
-      </div>
-      <div style="margin-bottom:12px">
-        <strong style="font-size:0.85rem;color:var(--muted)">📦 Конструкции</strong>
-        <div id="dParts" style="margin-top:8px"></div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
-        <button class="btn btn-outline" onclick="exportOrderAsJSON(currentDetailId)">📥 JSON</button>
-        <button class="btn btn-outline" onclick="editFromDetail()">✏️</button>
-        <button class="btn btn-primary" onclick="closeDetailModal()">Закрыть</button>
-      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button type="button" class="btn btn-outline" onclick="closeInvModal()">Отмена</button><button type="submit" class="btn btn-primary">💾 Сохранить</button></div>
+    </form>
+  </div></div>
+
+  <div id="partsModal" class="modal" onclick="if(event.target===this)closePartsSel()"><div class="modal-box">
+    <div class="modal-header"><h2>Выбрать со склада</h2><button class="close" onclick="closePartsSel()">&times;</button></div>
+    <input type="text" id="partsSearch" placeholder="🔍 Поиск..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px" oninput="renderPartsSel()">
+    <div id="partsListSel" style="max-height:300px;overflow-y:auto"></div>
+  </div></div>
+
+  <div id="settingsModal" class="modal" onclick="if(event.target===this)closeSet()"><div class="modal-box" style="max-width:360px">
+    <div class="modal-header"><h2>⚙️ Профиль</h2><button class="close" onclick="closeSet()">&times;</button></div>
+    <div class="fg"><label>Имя</label><input type="text" id="masterName" placeholder="Иванов И.И."></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:12px" onclick="saveSettings()">💾 Сохранить</button>
+  </div></div>
+
+  <div id="shopModal" class="modal" onclick="if(event.target===this)closeShop()"><div class="modal-box" style="max-width:360px">
+    <div class="modal-header"><h2>🛒 Магазин</h2><button class="close" onclick="closeShop()">&times;</button></div>
+    <div style="background:var(--bg);padding:8px;border-radius:6px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><div><strong>🌙 Тёмная тема</strong><div style="font-size:0.75rem;color:var(--muted)">Переключатель</div></div><button class="btn btn-primary btn-sm" onclick="toggleTheme()">🔄</button></div>
+    <strong style="font-size:0.85rem">🏷️ Теги (<span id="shopTags">0</span> доступно)</strong>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+      <button class="btn btn-outline btn-sm" onclick="buyTags(10,90)">10 шт. • 90🪙</button>
+      <button class="btn btn-outline btn-sm" onclick="buyTags(30,250)">30 шт. • 250🪙</button>
     </div>
-  </div>
+  </div></div>
 
-  <!-- Settings Modal -->
-  <div id="settingsModal" class="modal" onclick="if(event.target===this)closeSettings()">
-    <div class="modal-box" style="max-width:400px">
-      <div class="modal-header">
-        <h2>⚙️ Профиль</h2>
-        <button class="close" onclick="closeSettings()">&times;</button>
-      </div>
-      <div style="background:var(--bg);padding:12px;border-radius:10px;margin-bottom:16px">
-        <div style="font-weight:700;margin-bottom:4px" id="profileName">Менеджер</div>
-        <div style="font-size:0.85rem;color:var(--muted)">🏆 <span id="profileLevel">Новичок</span></div>
-      </div>
-      <div class="form-group"><label>Имя</label><input type="text" id="masterName" placeholder="Иванов И.И."></div>
-      <div style="display:flex;gap:8px;justify-content:center;margin-top:16px">
-        <button class="btn btn-primary" onclick="persistSettings()">💾 Сохранить</button>
-      </div>
-    </div>
-  </div>
+  <div id="csvModal" class="modal" onclick="if(event.target===this)closeCsv()"><div class="modal-box">
+    <div class="modal-header"><h2>📊 Импорт CSV</h2><button class="close" onclick="closeCsv()">&times;</button></div>
+    <div id="csvStep1" style="border:2px dashed var(--border);border-radius:8px;padding:16px;text-align:center;cursor:pointer" onclick="$('csvFile').click()"><div style="font-size:1.5rem">📁</div><div style="font-size:0.85rem;margin-top:4px">Выберите файл</div><input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCsv(this)"></div>
+    <div id="csvStep2" class="hidden"><div id="csvPrev" style="max-height:180px;overflow-y:auto;margin-bottom:10px;font-size:0.8rem"></div><div style="display:flex;gap:6px"><button class="btn btn-outline" style="flex:1" onclick="closeCsv()">Отмена</button><button class="btn btn-success" style="flex:1" onclick="confirmCsv()">✅ Импорт</button></div></div>
+  </div></div>
 
-  <!-- Shop Modal -->
-  <div id="shopModal" class="modal" onclick="if(event.target===this)closeShop()">
-    <div class="modal-box" style="max-width:400px">
-      <div class="modal-header">
-        <h2>🛒 Магазин</h2>
-        <button class="close" onclick="closeShop()">&times;</button>
-      </div>
-      <div style="margin-bottom:16px">
-        <h3 style="font-size:0.95rem;margin-bottom:8px">🎨 Оформление</h3>
-        <div style="background:var(--bg);padding:12px;border-radius:10px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-weight:600">🌙 Тёмная тема</div>
-              <div style="font-size:0.8rem;color:var(--muted)">Переключатель темы</div>
-            </div>
-            <button class="btn btn-primary btn-sm" onclick="toggleTheme()">🔄</button>
-          </div>
-        </div>
-      </div>
-      <div>
-        <h3 style="font-size:0.95rem;margin-bottom:8px">🏷️ Теги</h3>
-        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:10px">Доступно: <strong id="shopTags">0</strong></p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <button class="btn btn-outline" onclick="buyTags(10,90)">10 шт. • 90🪙</button>
-          <button class="btn btn-outline" onclick="buyTags(20,160)">20 шт. • 160🪙</button>
-          <button class="btn btn-outline" onclick="buyTags(50,300)">50 шт. • 300🪙</button>
-          <button class="btn btn-outline" onclick="buyTags(100,500)">100 шт. • 500🪙</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scanner Modal -->
-  <div id="scannerModal" class="modal" onclick="if(event.target===this)closeScanner()">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2>📷 Сканирование</h2>
-        <button class="close" onclick="closeScanner()">&times;</button>
-      </div>
-      <div id="reader"></div>
-      <div id="scanResult" class="scan-result"></div>
-    </div>
-  </div>
-
-  <!-- CSV Import Modal -->
-  <div id="csvModal" class="modal" onclick="if(event.target===this)closeCsvImport()">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2>📊 Импорт CSV</h2>
-        <button class="close" onclick="closeCsvImport()">&times;</button>
-      </div>
-      <div id="csvStep1">
-        <div style="border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;cursor:pointer" onclick="$('csvFile').click()">
-          <div style="font-size:2rem;margin-bottom:8px">📁</div>
-          <div>Нажмите для выбора файла</div>
-          <div style="font-size:0.8rem;color:var(--muted);margin-top:8px">Формат: Название;Артикул;Категория;В наличии;В резерве;Описание</div>
-        </div>
-        <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCsv(this)">
-        <button class="btn btn-outline" style="width:100%;margin-top:12px" onclick="downloadTemplate()">📄 Скачать шаблон</button>
-      </div>
-      <div id="csvStep2" class="hidden">
-        <div id="csvPreview" style="max-height:200px;overflow-y:auto;margin-bottom:12px;font-size:0.8rem"></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-outline" style="flex:1" onclick="cancelCsv()">Отмена</button>
-          <button class="btn btn-success" style="flex:1" onclick="confirmCsv()">✅ Импортировать</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Landing -->
-  <div id="landing" class="landing-overlay">
-    <div class="landing-content">
-      <svg class="landing-logo" viewBox="0 0 44 44" fill="none">
-        <defs><linearGradient id="gL" x1="0" y1="0" x2="44" y2="44"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs>
-        <rect width="44" height="44" rx="12" fill="url(#gL)"/>
-        <path d="M8 32V20L16 24V16L24 20V12L32 16V32H8Z" stroke="#fff" stroke-width="2.2"/>
-        <path d="M12 32V28H20V32M24 32V24H32V32" stroke="#fff" stroke-width="2.2"/>
-        <circle cx="22" cy="34" r="3" fill="#97CF26"/>
-      </svg>
-      <h1 class="landing-title">ПРОИЗВОДСТВО</h1>
-      <p class="landing-subtitle">Учёт заказов • Мобильная версия</p>
-      <div class="landing-features">
-        <div class="feature"><div class="feature-icon">📋</div>Заказы по этапам</div>
-        <div class="feature"><div class="feature-icon">📦</div>Склад конструкций</div>
-        <div class="feature"><div class="feature-icon">🏷️</div>Теги и фильтры</div>
-        <div class="feature"><div class="feature-icon">☁️</div>Бэкап данных</div>
-      </div>
+  <div id="landing" class="landing">
+    <div class="landing-box">
+      <h1 style="font-size:1.6rem;font-weight:800;margin-bottom:4px">ПРОИЗВОДСТВО</h1>
+      <p>Учёт заказов • Мобильная версия</p>
+      <div class="features"><div class="feat">📋 Заказы по этапам</div><div class="feat">📦 Склад конструкций</div><div class="feat">🏷️ Теги и фильтры</div><div class="feat">☁️ Бэкап данных</div></div>
       <button class="btn-start" id="startBtn">Начать бесплатно →</button>
-      <p style="font-size:0.75rem;color:var(--muted)">Данные хранятся в браузере • Без регистрации</p>
+      <p style="font-size:0.7rem;color:var(--muted)">Данные в браузере • Без регистрации</p>
     </div>
   </div>
 
   <script>
-    // === CONFIG ===
-    const STAGES = ['Распил','ЧПУ','Сборка','Упаковка','Фанеровка','Шлифовка','Покраска','Склад'];
-    const DB = 'prod_lite_v8', SET = 'prod_set_v8', INV = 'prod_inv_v8';
-    const SECRET = 'PROD2026';
-    const LEVELS = [{l:1,n:'Новичок 🌱',t:0},{l:2,n:'Ученик 📖',t:60},{l:3,n:'Практик 🛠️',t:150},{l:4,n:'Мастер 🔧',t:300},{l:5,n:'Эксперт 🎓',t:500}];
-    const COINS = {CREATE:3,COMPLETE:12,ADD:2,SECRET:500,DAILY:1,EXPORT:1,IMPORT:2};
+    const STAGES = ['Распил','ЧПУ','Фрезеровка','Шпонировка','Облицовка','Шлифовка','Сборка','Покраска','Упаковка','Отгрузка'];
+    const DB='prod_v81', SET='set_v81', INV='inv_v81';
+    const SECRET='PROD2026';
+    const LEVELS=[{l:1,n:'Новичок 🌱',t:0},{l:2,n:'Ученик 📖',t:60},{l:3,n:'Практик 🛠️',t:150},{l:4,n:'Мастер 🔧',t:300}];
+    const COINS={CREATE:3,COMPLETE:10,ADD:1,SECRET:300,DAILY:1};
     
-    let orders = JSON.parse(localStorage.getItem(DB)||'[]');
-    let inventory = JSON.parse(localStorage.getItem(INV)||'[]');
-    let settings = JSON.parse(localStorage.getItem(SET)||'{"name":"Менеджер","coins":0,"earned":0,"lvl":1,"lvlName":"Новичок 🌱","theme":"light","tags":0}');
-    let currentDetail = null, currentTab = 'orders', photo64 = null, csvData = [];
+    let orders=JSON.parse(localStorage.getItem(DB)||'[]'), inv=JSON.parse(localStorage.getItem(INV)||'[]');
+    let set=JSON.parse(localStorage.getItem(SET)||'{"name":"Менеджер","coins":0,"earned":0,"lvl":1,"theme":"light","tags":0}');
+    let curDetail=null, curTab='orders', csvData=[];
     
-    const $ = id => document.getElementById(id);
-    const fmt = n => new Intl.NumberFormat('ru-RU').format(n||0);
-    const date = d => d ? new Date(d).toLocaleDateString('ru-RU') : '—';
-    const orderNum = () => 'ORD-'+Date.now().toString(36).toUpperCase().slice(-4)+'-'+Math.random().toString(36).substr(2,3).toUpperCase();
+    const $=id=>document.getElementById(id);
+    const fmt=n=>new Intl.NumberFormat('ru-RU').format(n||0);
+    const date=d=>d?new Date(d).toLocaleDateString('ru-RU'):'—';
+    const ordNum=()=>'ORD-'+Date.now().toString(36).toUpperCase().slice(-4)+'-'+Math.random().toString(36).substr(2,3).toUpperCase();
     
-    // === THEME ===
-    function toggleTheme() {
-      settings.theme = settings.theme === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', settings.theme === 'dark' ? 'dark' : '');
-      persistSettings(); showCoin(0, `🎨 ${settings.theme==='dark'?'Тёмная':'Светлая'}`);
-    }
+    // Theme & Coins
+    function toggleTheme(){set.theme=set.theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',set.theme==='dark'?'dark':'');saveSet();showCoin(0,`🎨 ${set.theme==='dark'?'Тёмная':'Светлая'}`)}
+    function addCoins(a,r){set.coins+=a;set.earned+=a;checkLvl();saveSet();showCoin(a,r)}
+    function checkLvl(){let l=LEVELS[0];for(let x of LEVELS)if(set.earned>=x.t)l=x;if(l.l>set.lvl){set.lvl=l.l;set.lvlName=l.n;showCoin(0,`🎉 ${l.n}`);}else set.lvlName=l.n}
+    function saveSet(){set.name=$('masterName')?.value||set.name;localStorage.setItem(SET,JSON.stringify(set));if($('coinDisplay'))$('coinDisplay').textContent=set.coins;if($('masterName'))$('masterName').value=set.name}
+    function showCoin(a,r){const e=document.createElement('div');e.className='coin-popup';e.innerHTML=a>0?`+${a} 🪙<br><small>${r}</small>`:`🎉 ${r}`;document.body.appendChild(e);setTimeout(()=>e.classList.add('show'),10);setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.remove(),300);},1800)}
     
-    // === COINS ===
-    function addCoins(a, r) { settings.coins+=a; settings.earned+=a; checkLevel(); persistSettings(); showCoin(a,r); }
-    function checkLevel() { let l=LEVELS[0]; for(let x of LEVELS) if(settings.earned>=x.t)l=x; if(l.l>settings.lvl){settings.lvl=l.l;settings.lvlName=l.n;showCoin(0,`🎉 ${l.n}!`);} else settings.lvlName=l.n; }
-    function persistSettings() { settings.name = $('masterName')?.value || settings.name; localStorage.setItem(SET, JSON.stringify(settings)); if($('coinDisplay')) $('coinDisplay').textContent = settings.coins; if($('profileName')) $('profileName').textContent = settings.name; if($('profileLevel')) $('profileLevel').textContent = settings.lvlName; }
-    function showCoin(a, r) { const e = document.createElement('div'); e.className='coin-popup'; e.innerHTML = a>0?`+${a} 🪙<br><small>${r}</small>`:`🎉 ${r}`; document.body.appendChild(e); setTimeout(()=>e.classList.add('show'),10); setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.remove(),300);},2000); }
+    // Tags
+    function buyTags(c,p){if(set.coins<p){alert('❌ Мало коинов');return}if(!confirm(`Купить ${c} тегов за ${p}🪙?`))return;set.coins-=p;set.tags=(set.tags||0)+c;saveSet();upShopTags();showCoin(0,`✅ Куплено ${c}`)}
+    function upShopTags(){if($('shopTags'))$('shopTags').textContent=set.tags||0;if($('tagsAvail'))$('tagsAvail').textContent=set.tags||0}
+    function addTag(){const t=$('tagSelect').value;if(!t)return;if((set.tags||0)<=0){alert('❌ Нет тегов! Купите в 🛒');openShop();return}const o=orders.find(x=>x.id===curDetail);if(!o||!o.tags)o.tags=[];if(o.tags.includes(t)){alert('Уже есть');return}o.tags.push(t);set.tags--;save();saveSet();rendTags(o);upShopTags();$('tagSelect').value=''}
+    function remTag(t){const o=orders.find(x=>x.id===curDetail);if(!o||!o.tags)return;o.tags=o.tags.filter(x=>x!==t);save();rendTags(o)}
+    function rendTags(o){const c=$('dTags'),a=$('tagsAvail');if(!c)return;if(a)a.textContent=set.tags||0;if(!o.tags?.length){c.innerHTML='<span style="color:var(--muted);font-size:0.85rem">Нет тегов</span>';return}c.innerHTML=o.tags.map(t=>`<span class="tag-item tag-${t}">${getTName(t)} <button onclick="remTag('${t}')">×</button></span>`).join('')}
+    function getTName(t){const n={'срочно':'Срочно','не-срочно':'Не срочно','авито':'Авито','проверенный-клиент':'Проверенный','аванс':'Аванс','ждем-материалы':'Ждем материалы','готово':'Готово'};return n[t]||t}
     
-    // === TAGS ===
-    function buyTags(c, p) { if(settings.coins < p) { alert('❌ Недостаточно коинов'); return; } if(!confirm(`Купить ${c} тегов за ${p} 🪙?`)) return; settings.coins -= p; settings.tags = (settings.tags||0) + c; persistSettings(); updateShopTags(); showCoin(0, `✅ Куплено ${c} тегов`); }
-    function updateShopTags() { if($('shopTags')) $('shopTags').textContent = settings.tags||0; if($('tagsAvailable')) $('tagsAvailable').textContent = settings.tags||0; }
-    function addTag() { const t = $('tagSelect').value; if(!t) return; if((settings.tags||0) <= 0) { alert('❌ Нет тегов! Купите в 🛒'); openShop(); return; } const o = orders.find(x=>x.id===currentDetail); if(!o||!o.tags) o.tags=[]; if(o.tags.includes(t)) { alert('Уже добавлен'); return; } o.tags.push(t); settings.tags--; save(); persistSettings(); renderTags(o); updateShopTags(); $('tagSelect').value=''; showCoin(0, `🏷️ Добавлен`); }
-    function removeTag(t) { const o = orders.find(x=>x.id===currentDetail); if(!o||!o.tags) return; o.tags = o.tags.filter(x=>x!==t); save(); renderTags(o); }
-    function renderTags(o) { const c = $('dTags'), a = $('tagsAvailable'); if(!c) return; if(a) a.textContent = settings.tags||0; if(!o.tags?.length) { c.innerHTML = '<span style="color:var(--muted);font-size:0.85rem">Нет тегов</span>'; return; } c.innerHTML = o.tags.map(t => `<span class="tag-item tag-${t}">${getTagName(t)} <button onclick="removeTag('${t}')">×</button></span>`).join(''); }
-    function getTagName(t) { const n = {'срочно':'Срочно','не-срочно':'Не срочно','авито':'Авито','проверенный-клиент':'Проверенный','аванс':'Аванс','ждем-материалы':'Ждем материалы','готово':'Готово'}; return n[t]||t; }
+    // Nav & UI
+    function switchTab(t){curTab=t;document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');$('ordersSection').classList.toggle('hidden',t!=='orders');$('inventorySection').classList.toggle('hidden',t!=='inventory');if(t==='inventory')rendInv()}
+    function updateUI(){if($('coinDisplay'))$('coinDisplay').textContent=set.coins;let r=0,a=0;orders.forEach(o=>o.status==='Отгружен'?r++:a++);$('statReady').textContent=r;$('statActive').textContent=a;$('statCount').textContent=orders.length}
     
-    // === NAV ===
-    function switchTab(t) { currentTab=t; document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); $('ordersSection').classList.toggle('hidden',t!=='orders'); $('inventorySection').classList.toggle('hidden',t!=='inventory'); if(t==='inventory') renderInventory(); }
+    function progress(o){if(!o.parts?.length)return{p:0,l:'Нет'};const idx=STAGES.reduce((acc,s,i)=>{acc[s]=i;return acc},{});let s=0;o.parts.forEach(p=>s+=Math.min(100,(idx[p.stage]!==undefined?idx[p.stage]+1:0)*10));const pc=Math.round(s/o.parts.length);return{p:pc,l:pc===100?'✅ Готово':`🔄 ${pc}%`}}
     
-    // === UI ===
-    function updateUI() { if($('coinDisplay')) $('coinDisplay').textContent = settings.coins; let r=0,a=0; orders.forEach(o=>{const c=o.parts.length;if(o.status==='Отгружен')r+=c;else a+=c;}); $('statReady').textContent=r; $('statActive').textContent=a; $('statCount').textContent=orders.length; }
+    function renderTable(data=orders){const tb=$('tbody'),em=$('emptyState');tb.innerHTML='';if(!data.length){em.classList.remove('hidden');return}em.classList.add('hidden')
+      data.sort((a,b)=>(a.vip&&!b.vip)?-1:(!a.vip&&b.vip)?1:b.createdAt-a.createdAt).forEach(o=>{const pr=progress(o),vb=o.vip?'<span class="vip-badge">VIP</span>':'';const thtml=(o.tags||[]).map(t=>`<span class="row-tag tag-${t}">${getTName(t)}</span>`).join('');
+        tb.innerHTML+=`<tr class="order-row ${o.vip?'vip-row':''}" onclick="openDetail('${o.id}')">
+          <td><strong>${o.orderNumber||o.id.slice(-6)}</strong>${vb}<br><small style="color:var(--muted)">${date(o.date)}</small></td>
+          <td><div class="progress-bar"><div class="progress-fill" style="width:${pr.p}%"></div></div><div class="progress-label">${pr.l}</div><div class="row-tags">${thtml}</div></td>
+          <td onclick="event.stopPropagation()"><select class="quick-status" onchange="qStatus('${o.id}',this.value)">${['Принят','В работе','Готово','Отгружен'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}</select></td>
+          <td class="actions" onclick="event.stopPropagation()"><button class="action-btn" onclick="editOrder('${o.id}')">✏️</button><button class="action-btn" onclick="delOrder('${o.id}')">🗑️</button></td></tr>`})}
     
-    function progress(o) { if(!o.parts?.length) return {p:0,l:'Нет'}; const idx = {'Распил':0,'ЧПУ':1,'Сборка':2,'Упаковка':3,'Фанеровка':4,'Шлифовка':5,'Покраска':6,'Склад':7}; let s=0; o.parts.forEach(p=>s+=Math.min(100,(idx[p.stage]||0)+1)*12.5); const pc=Math.round(s/o.parts.length); return {p:pc,l:pc===100?'✅ Готово':`🔄 ${pc}%`}; }
+    function qStatus(id,ns){const o=orders.find(x=>x.id===id);if(!o)return;o.status=ns;if(ns==='Отгружен')addCoins(COINS.COMPLETE,'✅ Отгружен');save();updateUI();applyFilters();showCoin(0,`📊 ${ns}`)}
+    function applyFilters(){const q=$('search').value.toLowerCase(),s=$('filterStatus').value;renderTable(orders.filter(o=>(!q||o.orderNumber?.toLowerCase().includes(q)||o.parts?.some(p=>p.name.toLowerCase().includes(q)))&&(!s||o.status===s||o.parts?.some(p=>p.stage===s))))}
     
-    function renderTable(data=orders) {
-      const tb=$('tbody'), em=$('emptyState'); tb.innerHTML='';
-      if(!data.length){em.classList.remove('hidden');return;} em.classList.add('hidden');
-      data.sort((a,b)=>(a.vip&&!b.vip)?-1:(!a.vip&&b.vip)?1:b.createdAt-a.createdAt).forEach(o=>{
-        const pr=progress(o), vb=o.vip?'<span class="vip-badge">VIP</span>':'';
-        tb.innerHTML+=`<tr class="${o.vip?'vip-row':''}">
-          <td><strong>${o.orderNumber||o.id.slice(-6).toUpperCase()}</strong>${vb}</td>
-          <td>${date(o.date)}</td>
-          <td><div class="progress-bar"><div class="progress-fill" style="width:${pr.p}%"></div></div><div class="progress-label">${pr.l}</div></td>
-          <td>${o.parts.length}</td>
-          <td class="actions">
-            <button class="action-btn" onclick="exportOrderAsJSON('${o.id}')" title="JSON">📥</button>
-            <button class="action-btn" onclick="openDetail('${o.id}')" title="Просмотр">👁️</button>
-            <button class="action-btn" onclick="editOrder('${o.id}')" title="Редактировать">✏️</button>
-            <button class="action-btn" onclick="delOrder('${o.id}')" title="Удалить">🗑️</button>
-          </td>
-        </tr>`;
-      });
-    }
+    // Order Modal
+    const modal=$('modal'),form=$('orderForm');
+    function openModal(o=null){modal.classList.add('active');$('modalTitle').textContent=o?'Редактирование':'Новый заказ';$('editId').value=o?.id||'';$('orderNumber').value=o?.orderNumber||ordNum();$('orderDate').value=o?.date||new Date().toISOString().split('T')[0];$('deadline').value=o?.deadline||'';$('status').value=o?.status||'Принят';$('reason').value=o?.reason||'';$('vipCheck').checked=o?.vip||false;$('partsList').innerHTML='';if(o?.parts?.length)o.parts.forEach(p=>addRow(p));else addRow();calcTotals();$('status').disabled=o?.status==='Отгружен';$('revertBox').classList.toggle('hidden',o?.status!=='Отгружен');form.onsubmit=handleSub}
+    function closeModal(){modal.classList.remove('active')}
+    function addRow(d={}){const r=document.createElement('div');r.className='part-row';r.innerHTML=`<input type="text" placeholder="Название" value="${d.name||''}" class="p-name" required><select class="p-stage">${STAGES.map(s=>`<option value="${s}" ${d.stage===s?'selected':''}>${s}</option>`).join('')}</select><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove();calcTotals()">✕</button>`;$('partsList').appendChild(r);calcTotals()}
+    function calcTotals(){$('sumTotal')?.remove();const c=document.querySelectorAll('.p-name').length;$('partsList').insertAdjacentHTML('afterend',`<div id="sumTotal" style="text-align:center;margin:6px 0;font-weight:600">Конструкций: ${c}</div>`)}
+    function handleSub(e){e.preventDefault();if(!$('orderDate').value){alert('❌ Укажите дату');return}const id=$('editId').value||Date.now().toString(36)+Math.random().toString(36).substr(2,5),isEdit=!!$('editId').value,pts=Array.from(document.querySelectorAll('.part-row')).map(r=>({name:r.querySelector('.p-name').value.trim(),stage:r.querySelector('.p-stage').value})).filter(p=>p.name);const ord={id,orderNumber:$('orderNumber').value,orderDate:$('orderDate').value,deadline:$('deadline').value,status:$('status').value,reason:$('reason').value,parts:pts,createdAt:orders.find(o=>o.id===id)?.createdAt||Date.now(),vip:$('vipCheck').checked,tags:orders.find(o=>o.id===id)?.tags||[]};const idx=orders.findIndex(o=>o.id===id);if(idx>-1)orders[idx]=ord;else orders.push(ord);save();if(!isEdit)addCoins(COINS.CREATE,'📋 Новый');closeModal();applyFilters();updateUI()}
+    function revertOrder(){const id=$('editId').value;if(!id||!confirm('Вернуть?'))return;const o=orders.find(x=>x.id===id);if(o){o.status='Готово';save();closeModal();applyFilters();updateUI()}}
+    function save(){localStorage.setItem(DB,JSON.stringify(orders))}
+    function editOrder(id){const o=orders.find(x=>x.id===id);if(o)openModal(o)}
+    function delOrder(id){if(!confirm('Удалить?'))return;orders=orders.filter(x=>x.id!==id);save();applyFilters();updateUI()}
     
-    function applyFilters() {
-      const q=$('search').value.toLowerCase(), s=$('filterStatus').value, d1=$('dateFrom').value, d2=$('dateTo').value;
-      renderTable(orders.filter(o=>(!q||o.orderNumber?.toLowerCase().includes(q)||o.parts?.some(p=>p.name.toLowerCase().includes(q)))&&(!s||o.status===s||o.parts?.some(p=>p.stage===s))&&(!d1||o.date>=d1)&&(!d2||o.date<=d2)));
-    }
-    function resetFilters() { $('search').value='';$('filterStatus').value='';$('dateFrom').value='';$('dateTo').value=''; renderTable(); }
+    // Parts Selector
+    function openPartsSel(){$('partsModal').classList.add('active');$('partsSearch').value='';rendPartsSel()}
+    function closePartsSel(){$('partsModal').classList.remove('active')}
+    function rendPartsSel(){const l=$('partsListSel'),s=$('partsSearch').value.toLowerCase(),f=inv.filter(i=>i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s));l.innerHTML=f.length?f.map(it=>{const av=it.stock-it.res;return`<div class="inv-item" onclick="selPart('${it.id}')"><div class="inv-info"><div class="inv-name">${it.name}</div><div class="inv-meta">${it.sku||'—'} • ${it.cat||'—'} ${av>0?'<span class="stock-badge stock-ok">✓ '+av+'</span>':'<span class="stock-badge stock-none">✗</span>'}</div></div></div>`}).join(''):'<div class="empty">Не найдено</div>'}
+    function selPart(id){const it=inv.find(x=>x.id===id);if(!it)return;addRow({name:it.name,sku:it.sku,stage:'Распил'});closePartsSel();calcTotals()}
     
-    // === ORDER MODAL ===
-    const modal=$('modal'), form=$('orderForm');
-    function openModal(o=null) {
-      modal.classList.add('active'); $('modalTitle').textContent=o?'Редактирование':'Новый заказ';
-      $('editId').value=o?.id||''; $('orderNumber').value=o?.orderNumber||orderNum(); $('orderDate').value=o?.date||new Date().toISOString().split('T')[0];
-      $('deadline').value=o?.deadline||''; $('status').value=o?.status||'Принят'; $('reason').value=o?.reason||''; $('vipCheck').checked=o?.vip||false;
-      $('partsList').innerHTML=''; if(o?.parts?.length) o.parts.forEach(p=>addPartRow(p)); else addPartRow();
-      calcTotals(); $('status').disabled=o?.status==='Отгружен'; $('revertSection').classList.toggle('hidden',o?.status!=='Отгружен'); form.onsubmit=handleSubmit;
-    }
-    function closeModal() { modal.classList.remove('active'); }
+    // Inventory
+    function rendInv(){const l=$('invList'),em=$('invEmpty'),s=$('invSearch')?.value.toLowerCase()||'';if(!l)return;const items=inv.filter(i=>!s||i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s));if(!items.length){em.classList.remove('hidden');l.innerHTML='';return}em.classList.add('hidden')
+      l.innerHTML=items.map(i=>{const av=i.stock-i.res,sc=av>5?'ok':av>0?'low':'none',st=av>0?av+' шт.':'Нет';return`<div class="inv-item"><div class="inv-info"><div class="inv-name">${i.name}</div><div class="inv-meta">${i.sku||'—'} • ${i.cat||'—'}</div></div><span class="stock-badge stock-${sc}">${st}</span><button class="btn btn-outline btn-sm" onclick="openInvModal(inv.find(x=>x.id==='${i.id}'))">✏️</button><button class="btn btn-danger btn-sm" onclick="delInv('${i.id}')">🗑️</button></div>`}).join('')}
+    function openInvModal(i=null){$('inventoryModal').classList.add('active');$('invTitle').textContent=i?'Редактировать':'Добавить';$('invEdit').value=i?.id||'';$('invName').value=i?.name||'';$('invSku').value=i?.sku||'';$('invCat').value=i?.cat||'ЛДСП';$('invStock').value=i?.stock||0;$('invRes').value=i?.res||0;$('invForm').onsubmit=hInvSub}
+    function closeInvModal(){$('inventoryModal').classList.remove('active')}
+    function hInvSub(e){e.preventDefault();const id=$('invEdit').value||Date.now().toString(36)+Math.random().toString(36).substr(2,6),isNew=!$('invEdit').value;const it={id,name:$('invName').value,sku:$('invSku').value,cat:$('invCat').value,stock:parseInt($('invStock').value)||0,res:parseInt($('invRes').value)||0};const idx=inv.findIndex(x=>x.id===id);if(idx>-1)inv[idx]=it;else{inv.push(it);if(isNew)addCoins(COINS.ADD,'📦 Новая')}localStorage.setItem(INV,JSON.stringify(inv));closeInvModal();rendInv()}
+    function delInv(id){if(confirm('Удалить?')){inv=inv.filter(x=>x.id!==id);localStorage.setItem(INV,JSON.stringify(inv));rendInv()}}
     
-    function addPartRow(d={}) {
-      const r=document.createElement('div'); r.className='part-row';
-      r.innerHTML=`<input type="text" placeholder="Название" value="${d.name||''}" class="p-name" required><select class="p-stage">${STAGES.map(s=>`<option value="${s}" ${d.stage===s?'selected':''}>${s}</option>`).join('')}</select><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove();calcTotals()">✕</button>`;
-      $('partsList').appendChild(r);
-      const ss=r.querySelector('.p-stage'), sb=document.createElement('span'); sb.className=`stage-badge stage-${d.stage||'Распил'}`; sb.textContent=d.stage||'Распил'; r.appendChild(sb);
-      ss.addEventListener('change',e=>{sb.textContent=e.target.value;sb.className=`stage-badge stage-${e.target.value}`;});
-      if(d.stage){ss.value=d.stage;sb.textContent=d.stage;sb.className=`stage-badge stage-${d.stage}`;}
-    }
-    function calcTotals() { const c=document.querySelectorAll('.p-name').length; $('sumTotal').textContent=c; $('sumCount').textContent=c; }
+    // Detail
+    function openDetail(id){curDetail=id;const o=orders.find(x=>x.id===id);if(!o)return;$('detailTitle').textContent=`Заказ #${o.orderNumber||o.id.slice(-6)}`;$('dDate').textContent=date(o.date);$('dDeadline').textContent=o.deadline?date(o.deadline):'—';$('dStatus').textContent=o.status;$('dReason').textContent=o.reason||'Не указано';const dp=$('dParts');dp.innerHTML='';if(o.parts?.length){o.parts.forEach((p,i)=>{dp.innerHTML+=`<div class="detail-part"><div><strong>${p.name}</strong><br><small style="color:var(--muted)">${p.sku||''}</small></div><select style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem" onchange="hStage('${o.id}',${i},this.value)">${STAGES.map(s=>`<option value="${s}" ${p.stage===s?'selected':''}>${s}</option>`).join('')}</select></div>`})}else{dp.innerHTML='<div style="color:var(--muted);padding:10px">Нет</div>'}rendTags(o);$('detailModal').classList.add('active')}
+    function closeDetail(){$('detailModal').classList.remove('active');curDetail=null}
+    function editFromDetail(){if(curDetail){closeDetail();setTimeout(()=>editOrder(curDetail),100)}}
+    function hStage(oid,pi,ns){const o=orders.find(x=>x.id===oid);if(!o||!o.parts[pi])return;o.parts[pi].stage=ns;if(o.parts.every(p=>p.stage==='Отгрузка')){o.status='Отгружен';addCoins(COINS.COMPLETE,'✅ Завершён')}save();updateUI();applyFilters()}
     
-    function handleSubmit(e) {
-      e.preventDefault(); const isEdit=!!$('editId').value, ns=$('status').value;
-      const pts=Array.from(document.querySelectorAll('.part-row')).map(r=>({name:r.querySelector('.p-name').value.trim(),stage:r.querySelector('.p-stage').value})).filter(p=>p.name);
-      if(!$('orderDate').value){alert('❌ Укажите дату');return;}
-      const id=$('editId').value||Date.now().toString(36)+Math.random().toString(36).substr(2,5);
-      const ord={id,orderNumber:$('orderNumber').value||orderNum(),date:$('orderDate').value,deadline:$('deadline').value,status:ns,reason:$('reason').value,parts:pts,createdAt:orders.find(o=>o.id===id)?.createdAt||Date.now(),vip:$('vipCheck').checked,tags:orders.find(o=>o.id===id)?.tags||[]};
-      const idx=orders.findIndex(o=>o.id===id); if(idx>-1) orders[idx]=ord; else orders.push(ord);
-      save(); if(!isEdit) addCoins(COINS.CREATE,'📋 Новый');
-      closeModal(); applyFilters(); updateUI();
-    }
-    function revertOrder() { const id=$('editId').value; if(!id||!confirm('Вернуть из «Отгружен»?')) return; const o=orders.find(x=>x.id===id); if(o){o.status='Готово';save();closeModal();applyFilters();updateUI();alert('✅ Статус изменён');} }
-    function save() { localStorage.setItem(DB,JSON.stringify(orders)); }
-    function editOrder(id) { const o=orders.find(x=>x.id===id); if(o) openModal(o); }
-    function delOrder(id) { if(!confirm('Удалить заказ?')) return; orders=orders.filter(x=>x.id!==id); save(); applyFilters(); updateUI(); }
+    // Settings/Export/CSV
+    function openSet(){$('masterName').value=set.name;saveSet();$('settingsModal').classList.add('active')}function closeSet(){$('settingsModal').classList.remove('active')}
+    function exportData(){const d={orders,inv,set,date:new Date().toISOString()};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)]));a.download=`prod_${new Date().toISOString().split('T')[0]}.json`;a.click()}
+    function importOrderFromJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const o=JSON.parse(e.target.result);if(!o.id||!o.date)throw new Error('Неверный формат');const idx=orders.findIndex(x=>x.id===o.id);if(idx>-1)orders[idx]={...orders[idx],...o,updatedAt:Date.now()};else{o.createdAt=o.createdAt||Date.now();orders.push(o)}save();applyFilters();updateUI();alert('✅ Импортировано')}catch(err){alert('❌ '+err.message)}};r.readAsText(f);inp.value=''}
+    function exportOrderAsJSON(oid){const o=orders.find(x=>x.id===oid);if(!o)return;const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`order_${o.orderNumber||oid.slice(-6)}.json`;a.click()}
+    function openShop(){$('shopModal').classList.add('active');upShopTags()}function closeShop(){$('shopModal').classList.remove('active')}
     
-    // === PARTS SELECTOR ===
-    function openPartsSelector() { $('partsModal').classList.add('active'); $('partsSearch').value=''; renderPartsSelector(); }
-    function closePartsSelector() { $('partsModal').classList.remove('active'); }
-    function renderPartsSelector() {
-      const l=$('partsListSel'), s=$('partsSearch').value.toLowerCase(), e=$('partsEmpty'); if(!l) return;
-      const f=inventory.filter(i=>i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s)||(i.category||'').toLowerCase().includes(s));
-      if(!f.length){l.innerHTML='';e.style.display='block';return;} e.style.display='none';
-      l.innerHTML=f.map(it=>{const av=it.inStock-it.reserved, sb=av>0?`<span class="stock-badge stock-ok">✓ ${av}</span>`:`<span class="stock-badge stock-none">✗</span>`;return`<div class="inv-item" onclick="selectPart('${it.id}')"><div class="inv-thumb">📦</div><div class="inv-info"><div class="inv-name">${it.name} ${sb}</div><div class="inv-meta">${it.category||'—'} ${it.sku?'• '+it.sku:''}</div></div></div>`;}).join('');
-    }
-    function selectPart(id) { const it=inventory.find(x=>x.id===id); if(!it) return; addPartRow({name:it.name,sku:it.sku,stage:'Распил'}); closePartsSelector(); calcTotals(); }
+    // CSV
+    function openCsvImport(){csvData=[];$('csvStep1').classList.remove('hidden');$('csvStep2').classList.add('hidden');$('csvFile').value='';$('csvModal').classList.add('active')}function closeCsv(){$('csvModal').classList.remove('active')}
+    function handleCsv(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{csvData=parseCsv(e.target.result);if(!csvData.length){alert('❌ Пусто');return}$('csvStep1').classList.add('hidden');$('csvStep2').classList.remove('hidden');$('csvPrev').innerHTML=csvData.slice(0,5).map(i=>`<div style="padding:4px 0;border-bottom:1px solid var(--border)"><strong>${i.name}</strong><br><small>${i.sku||'—'} • ${i.cat||'—'} • ${i.stock} шт.</small></div>`).join('')}catch(err){alert('❌ '+err.message)}};r.readAsText(f,'UTF-8')}
+    function parseCsv(t){const dl=t.split('\n')[0].includes(';')?';':',';return t.split('\n').slice(1).filter(l=>l.trim()).map(l=>{const v=[],cur='',q=false;let c='';for(let i=0;i<l.length;i++){const ch=l[i];if(ch==='"')q=!q;else if(ch===dl&&!q){v.push(c.trim());c=''}else c+=ch}v.push(c.trim());return v[0]?{name:v[0],sku:v[1],cat:v[2],stock:parseInt(v[3])||0,res:parseInt(v[4])||0,description:v[5]}:null}).filter(Boolean)}
+    function confirmCsv(){if(!csvData.length)return;let a=0,u=0;csvData.forEach(n=>{const i=inv.findIndex(x=>x.sku&&x.sku===n.sku||x.name===n.name);if(i>-1){inv[i]={...inv[i],...n};u++}else{n.id=Date.now().toString(36)+Math.random().toString(36).substr(2,6);inv.push(n);a++}});localStorage.setItem(INV,JSON.stringify(inv));closeCsv();rendInv();alert(`✅ Добавлено: ${a}, Обновлено: ${u}`)}
     
-    // === INVENTORY ===
-    function renderInventory() {
-      const l=$('invList'), em=$('invEmpty'), s=$('invSearch')?.value.toLowerCase()||'', c=$('invCategory')?.value||'', f=$('invFilter')?.value||'';
-      if(!l||!em) return;
-      let items=inventory.filter(i=>{const ms=!s||i.name.toLowerCase().includes(s)||(i.sku||'').toLowerCase().includes(s)||(i.category||'').toLowerCase().includes(s),mc=!c||i.category===c,av=i.inStock-i.reserved;let mf=true;if(f==='in')mf=av>5;else if(f==='low')mf=av>0&&av<=5;else if(f==='out')mf=av<=0;return ms&&mc&&mf;});
-      if(!items.length){em.classList.remove('hidden');l.innerHTML='';return;} em.classList.add('hidden');
-      l.innerHTML=items.map(i=>{const av=i.inStock-i.reserved,sc=av>5?'ok':av>0?'low':'none',st=av>0?`${av} шт.`:'Нет';return`<div class="inv-item"><div class="inv-thumb">📦</div><div class="inv-info"><div class="inv-name">${i.name}</div><div class="inv-meta">${i.sku||'—'} • ${i.category||'—'}</div></div><span class="stock-badge stock-${sc}">${st}</span><button class="btn btn-outline btn-sm" onclick="editInventory('${i.id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delInventory('${i.id}')">🗑️</button></div>`;}).join('');
-    }
-    function openInventoryModal(i=null) { $('inventoryModal').classList.add('active'); $('invModalTitle').textContent=i?'Редактировать':'Добавить'; $('invEditId').value=i?.id||''; $('invName').value=i?.name||''; $('invSku').value=i?.sku||''; $('invCategorySel').value=i?.category||'ЛДСП'; $('invInStock').value=i?.inStock||0; $('invReserved').value=i?.reserved||0; $('invDesc').value=i?.description||''; $('inventoryForm').onsubmit=handleInvSubmit; }
-    function closeInventoryModal() { $('inventoryModal').classList.remove('active'); }
-    function handleInvSubmit(e) { e.preventDefault(); const id=$('invEditId').value||Date.now().toString(36)+Math.random().toString(36).substr(2,6), isNew=!$('invEditId').value; const it={id,name:$('invName').value,sku:$('invSku').value,category:$('invCategorySel').value,inStock:parseInt($('invInStock').value)||0,reserved:parseInt($('invReserved').value)||0,description:$('invDesc').value,updatedAt:Date.now()}; const idx=inventory.findIndex(x=>x.id===id); if(idx>-1) inventory[idx]=it; else{inventory.push(it);if(isNew)addCoins(COINS.ADD,'📦 Новая');} localStorage.setItem(INV,JSON.stringify(inventory)); closeInventoryModal(); renderInventory(); }
-    function editInventory(id) { const i=inventory.find(x=>x.id===id); if(i) openInventoryModal(i); }
-    function delInventory(id) { if(confirm('Удалить?')){inventory=inventory.filter(x=>x.id!==id);localStorage.setItem(INV,JSON.stringify(inventory));renderInventory();} }
-    
-    // === DETAIL ===
-    function openDetail(id) { currentDetail=id; const o=orders.find(x=>x.id===id); if(!o) return;
-      $('detailTitle').textContent=`Заказ #${o.orderNumber||o.id.slice(-6).toUpperCase()}`; $('dDate').textContent=date(o.date); $('dDeadline').textContent=o.deadline?date(o.deadline):'—';
-      $('dStatus').textContent=o.status; $('dReason').textContent=o.reason||'Не указано';
-      const dp=$('dParts'); dp.innerHTML=''; if(o.parts?.length){o.parts.forEach((p,i)=>{dp.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><div><strong>${p.name}</strong><br><small style="color:var(--muted)">${p.sku||''}</small></div><select class="inline-stage" onchange="handleStage('${o.id}',${i},this.value)" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem">${STAGES.map(s=>`<option value="${s}" ${p.stage===s?'selected':''}>${s}</option>`).join('')}</select></div>`;});}else{dp.innerHTML='<div style="color:var(--muted);padding:12px">Нет конструкций</div>';}
-      renderTags(o); $('detailModal').classList.add('active');
-    }
-    function closeDetailModal() { $('detailModal').classList.remove('active'); currentDetail=null; }
-    function editFromDetail() { if(currentDetail){closeDetailModal();setTimeout(()=>editOrder(currentDetail),100);} }
-    function handleStage(oid,pi,ns) { const o=orders.find(x=>x.id===oid); if(!o||!o.parts[pi]) return; o.parts[pi].stage=ns; if(o.parts.every(p=>p.stage==='Склад')){o.status='Отгружен';addCoins(COINS.COMPLETE,'✅ Завершён');} save(); updateUI(); applyFilters(); }
-    
-    // === SETTINGS / EXPORT ===
-    function openSettings() { $('masterName').value=settings.name; persistSettings(); $('settingsModal').classList.add('active'); }
-    function closeSettings() { $('settingsModal').classList.remove('active'); }
-    function exportData() { const d={orders,inventory,settings,date:new Date().toISOString()}; const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)])); a.download=`prod_${new Date().toISOString().split('T')[0]}.json`; a.click(); }
-    function importOrderFromJSON(inp) { const f=inp.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>{try{const o=JSON.parse(e.target.result);if(!o.id||!o.date)throw new Error('Неверный формат');const idx=orders.findIndex(x=>x.id===o.id);if(idx>-1)orders[idx]={...orders[idx],...o,updatedAt:Date.now()};else{o.createdAt=o.createdAt||Date.now();orders.push(o);}save();applyFilters();updateUI();alert('✅ Импортировано');addCoins(COINS.IMPORT,'📤 Импорт');}catch(err){alert('❌ '+err.message);}};r.readAsText(f);inp.value='';}
-    function exportOrderAsJSON(oid) { const o=orders.find(x=>x.id===oid); if(!o) return; const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`order_${o.orderNumber||oid.slice(-6)}.json`;a.click();URL.revokeObjectURL(u);addCoins(COINS.EXPORT,'📥 Экспорт');}
-    
-    // === CSV ===
-    function openCsvImport() { csvData=[]; $('csvStep1').classList.remove('hidden'); $('csvStep2').classList.add('hidden'); $('csvFile').value=''; $('csvModal').classList.add('active'); }
-    function closeCsvImport() { $('csvModal').classList.remove('active'); csvData=[]; }
-    function cancelCsv() { closeCsvImport(); }
-    function handleCsv(inp) { const f=inp.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>{try{csvData=parseCsv(e.target.result);if(!csvData.length){alert('❌ Пусто');return;}showCsvPreview();}catch(err){alert('❌ '+err.message);}};r.readAsText(f,'UTF-8');}
-    function parseCsv(t) { const dl=t.split('\n')[0].includes(';')?';':','; return t.split('\n').slice(1).filter(l=>l.trim()).map(l=>{const v=[],c='',q=false;let cur='';for(let i=0;i<l.length;i++){const ch=l[i];if(ch==='"')q=!q;else if(ch===dl&&!q){v.push(cur.trim());cur=''}else cur+=ch;}v.push(cur.trim());return v[0]?{name:v[0]||'',sku:v[1]||'',category:v[2]||'Другое',inStock:parseInt(v[3])||0,reserved:parseInt(v[4])||0,description:v[5]||'',updatedAt:Date.now()}:null;}).filter(Boolean);}
-    function showCsvPreview() { $('csvStep1').classList.add('hidden'); $('csvStep2').classList.remove('hidden'); $('csvPreview').innerHTML=csvData.slice(0,5).map(i=>`<div style="padding:6px 0;border-bottom:1px solid var(--border)"><strong>${i.name}</strong><br><small>${i.sku||'—'} • ${i.category} • ${i.inStock} шт.</small></div>`).join('')+`<div style="padding:8px;color:var(--muted)">+ ещё ${Math.max(0,csvData.length-5)}</div>`; }
-    function confirmCsv() { if(!csvData.length) return; let a=0,u=0; csvData.forEach(n=>{const i=inventory.findIndex(x=>x.sku&&x.sku===n.sku||x.name===n.name);if(i>-1){inventory[i]={...inventory[i],...n};u++;}else{n.id=Date.now().toString(36)+Math.random().toString(36).substr(2,6);inventory.push(n);a++;}});localStorage.setItem(INV,JSON.stringify(inventory));closeCsvImport();renderInventory();alert(`✅ Добавлено: ${a}, Обновлено: ${u}`);}
-    function downloadTemplate() { const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeffНазвание;Артикул;Категория;В наличии;В резерве;Описание\nДверца;DOOR-01;ЛДСП;5;0;600×400×16мм'],{type:'text/csv'}));a.download='template.csv';a.click();}
-    
-    // === SCANNER ===
-    let qr=null; function openScanner() { const m=$('scannerModal'); if(!m) return; m.classList.add('active'); if(window.Html5Qrcode) { qr=new Html5Qrcode('reader'); qr.start({facingMode:'environment'},{fps:10,qrbox:{width:250,height:250}},onScan,()=>{}).catch(()=>{alert('❌ Камера');closeScanner();});} else { alert('📦 Установите библиотеку'); closeScanner(); } }
-    function closeScanner() { const m=$('scannerModal'); if(m) m.classList.remove('active'); if(qr) { qr.stop().then(()=>{qr.clear();qr=null;}).catch(()=>{}); } $('scanResult').classList.remove('show'); }
-    function onScan(txt) { qr?.stop(); const f=inventory.find(i=>(i.sku&&i.sku.toLowerCase()===txt.toLowerCase())||i.name.toLowerCase().includes(txt.toLowerCase())); const r=$('scanResult'); if(f) { r.className='scan-result show'; r.innerHTML=`<strong style="color:var(--success)">✅ ${f.name}</strong><br>${f.sku||'—'} • ${f.category}`; } else { r.className='scan-result show not-found'; r.innerHTML=`<strong style="color:var(--danger)">❌ Не найдено</strong><br><code>${txt}</code>`; } }
-    
-    // === SHOP ===
-    function openShop() { $('shopModal').classList.add('active'); updateShopTags(); }
-    function closeShop() { $('shopModal').classList.remove('active'); }
-    
-    // === INIT ===
-    window.onload = () => {
-      const fs=$('filterStatus'); STAGES.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fs.appendChild(o);});
-      if($('masterName')) $('masterName').value=settings.name;
-      if(settings.theme==='dark') document.documentElement.setAttribute('data-theme','dark');
-      updateUI(); renderTable(); renderInventory();
-      $('secretInput')?.addEventListener('keyup',e=>{if(e.key==='Enter'&&e.target.value.trim()===SECRET){addCoins(COINS.SECRET,'🤫 Секрет');e.target.value='';}});
-      const last=localStorage.getItem('last_login'), today=new Date().toISOString().split('T')[0]; if(last!==today){addCoins(COINS.DAILY,'👋 Вход');localStorage.setItem('last_login',today);}
-      // Landing
-      const LK='prod_land_v8', ov=$('landing'), btn=$('startBtn'); if(localStorage.getItem(LK)!=='true'&&ov){btn?.addEventListener('click',e=>{e.preventDefault();ov.style.display='none';localStorage.setItem(LK,'true');});} else if(ov) ov.style.display='none';
-    };
+    // Init
+    window.onload=()=>{const fs=$('filterStatus');STAGES.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fs.appendChild(o)});if(set.theme==='dark')document.documentElement.setAttribute('data-theme','dark');$('masterName').value=set.name;updateUI();renderTable();rendInv();const lk='prod_land_v81',ov=$('landing');if(localStorage.getItem(lk)!=='true'&&ov)$('startBtn')?.addEventListener('click',e=>{e.preventDefault();ov.style.display='none';localStorage.setItem(lk,'true')});else if(ov)ov.style.display='none'}
   </script>
 </body>
 </html>
