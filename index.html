@@ -43,7 +43,6 @@
     
     .task-list { list-style: none; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
     
-    /* Компактная карточка без свайпов */
     .task-card { 
       background: var(--card); 
       padding: 12px 14px; 
@@ -96,7 +95,6 @@
     .indicator.today { background: #dcfce7; color: #166534; }
     .indicator.file { background: #e0f2fe; color: #075985; }
     
-    /* Детали задачи */
     #detailView { display: none; padding: 16px; animation: fadeIn 0.2s; }
     #detailView.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -185,7 +183,6 @@
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     #toast.error { background: var(--danger); }
     
-    /* Modal */
     .modal { position: fixed; inset: 0; background: rgba(15,23,42,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 100; }
     .modal.active { display: flex; }
     @media(min-width: 640px) { .modal { align-items: center; } }
@@ -266,7 +263,7 @@
       </div>
     </div>
     
-    <div id="loadingState" class="loading">⏳ Загрузка данных...</div>
+    <div id="loadingState" class="loading">⏳ Загрузка...</div>
     <ul id="taskList" class="task-list hidden"></ul>
     <div id="emptyState" class="empty hidden">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
@@ -324,22 +321,81 @@
   <div id="toast"></div>
 
   <script>
-    // === IndexedDB Engine ===
+    // === IndexedDB с таймаутом ===
     const DB_NAME = 'TaskManager_v4', DB_VER = 1;
     let idb;
+    
+    function openDBWithTimeout() {
+      return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('IndexedDB timeout'));
+        }, 5000);
+        
+        const req = indexedDB.open(DB_NAME, DB_VER);
+        req.onupgradeneeded = e => { 
+          const db = e.target.result; 
+          if(!db.objectStoreNames.contains('tasks')) {
+            db.createObjectStore('tasks', {keyPath:'id'}); 
+          }
+        };
+        req.onsuccess = e => { 
+          clearTimeout(timeout);
+          idb = e.target.result; 
+          resolve(); 
+        };
+        req.onerror = e => { 
+          clearTimeout(timeout);
+          reject(e.target.error);
+        };
+      });
+    }
+    
     const IDB = {
       async init() {
-        return new Promise((res, rej) => {
-          const req = indexedDB.open(DB_NAME, DB_VER);
-          req.onupgradeneeded = e => { const db = e.target.result; if(!db.objectStoreNames.contains('tasks')) db.createObjectStore('tasks', {keyPath:'id'}); };
-          req.onsuccess = e => { idb = e.target.result; res(); };
-          req.onerror = e => rej(e.target.error);
-        });
+        if (!('indexedDB' in window)) {
+          throw new Error('IndexedDB not supported');
+        }
+        await openDBWithTimeout();
       },
-      async getAll() { return new Promise((res,rej)=>{const tx=idb.transaction('tasks','readonly'); tx.objectStore('tasks').getAll().onsuccess=e=>res(e.target.result); tx.onerror=e=>rej(e.target.error);}); },
-      async put(task) { return new Promise((res,rej)=>{const tx=idb.transaction('tasks','readwrite'); tx.objectStore('tasks').put(task); tx.oncomplete=()=>res(); tx.onerror=e=>rej(e.target.error);}); },
-      async delete(id) { return new Promise((res,rej)=>{const tx=idb.transaction('tasks','readwrite'); tx.objectStore('tasks').delete(id); tx.oncomplete=()=>res(); tx.onerror=e=>rej(e.target.error);}); },
-      async clear() { return new Promise((res,rej)=>{const tx=idb.transaction('tasks','readwrite'); tx.objectStore('tasks').clear(); tx.oncomplete=()=>res(); tx.onerror=e=>rej(e.target.error);}); }
+      async getAll() { 
+        return new Promise((res,rej)=>{
+          try {
+            const tx = idb.transaction('tasks','readonly'); 
+            tx.objectStore('tasks').getAll().onsuccess = e => res(e.target.result); 
+            tx.onerror = e => rej(e.target.error);
+          } catch(e) { rej(e); }
+        }); 
+      },
+      async put(task) { 
+        return new Promise((res,rej)=>{
+          try {
+            const tx = idb.transaction('tasks','readwrite'); 
+            tx.objectStore('tasks').put(task); 
+            tx.oncomplete = () => res(); 
+            tx.onerror = e => rej(e.target.error);
+          } catch(e) { rej(e); }
+        }); 
+      },
+      async delete(id) { 
+        return new Promise((res,rej)=>{
+          try {
+            const tx = idb.transaction('tasks','readwrite'); 
+            tx.objectStore('tasks').delete(id); 
+            tx.oncomplete = () => res(); 
+            tx.onerror = e => rej(e.target.error);
+          } catch(e) { rej(e); }
+        }); 
+      },
+      async clear() { 
+        return new Promise((res,rej)=>{
+          try {
+            const tx = idb.transaction('tasks','readwrite'); 
+            tx.objectStore('tasks').clear(); 
+            tx.oncomplete = () => res(); 
+            tx.onerror = e => rej(e.target.error);
+          } catch(e) { rej(e); }
+        }); 
+      }
     };
 
     // === State ===
@@ -358,29 +414,47 @@
     const uid = () => crypto?.randomUUID?.() || Date.now().toString(36)+Math.random().toString(36).slice(2);
     const esc = s => (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-    // === Init ===
+    // === Init с обработкой ошибок ===
     async function init() {
+      console.log('Starting init...');
       try {
         renderColorPalette();
-        await IDB.init();
         
-        const old = localStorage.getItem('tasks_v3');
-        if (old) {
-          try {
-            const oldTasks = JSON.parse(old);
-            for (const t of oldTasks) {
-              if (t.files) t.files = t.files.map(f => ({ name: f.name, size: f.size, type: f.type, blob: dataURLtoBlob(f.data) }));
-              if (t.tags && typeof t.tags[0] === 'string') {
-                t.tags = t.tags.map(tagName => ({ name: tagName, color: TAG_PRESETS[tagName] || getRandomColor() }));
+        // Пробуем IndexedDB
+        try {
+          console.log('Opening DB...');
+          await IDB.init();
+          console.log('DB opened');
+          
+          // Миграция
+          const old = localStorage.getItem('tasks_v3');
+          if (old) {
+            try {
+              const oldTasks = JSON.parse(old);
+              for (const t of oldTasks) {
+                if (t.files) t.files = t.files.map(f => ({ name: f.name, size: f.size, type: f.type, blob: dataURLtoBlob(f.data) }));
+                if (t.tags && typeof t.tags[0] === 'string') {
+                  t.tags = t.tags.map(tagName => ({ name: tagName, color: TAG_PRESETS[tagName] || getRandomColor() }));
+                }
+                await IDB.put(t);
               }
-              await IDB.put(t);
+              localStorage.removeItem('tasks_v3');
+              console.log('Migration complete');
+            } catch(e) { 
+              console.warn('Migration failed', e); 
             }
-            localStorage.removeItem('tasks_v3');
-            showToast('🔄 Данные мигрированы');
-          } catch(e) { console.warn('Migration failed', e); }
+          }
+          
+          tasks = await IDB.getAll();
+          console.log('Loaded tasks:', tasks.length);
+          
+        } catch(dbError) {
+          console.error('DB Error:', dbError);
+          // Fallback: пустой список
+          tasks = [];
+          showToast('⚠️ Режим офлайн', true);
         }
         
-        tasks = await IDB.getAll();
         const fl = JSON.parse(localStorage.getItem('file_log') || '{}');
         fileLog = fl.date === new Date().toISOString().slice(0,10) ? fl : { date: new Date().toISOString().slice(0,10), count: 0 };
         
@@ -397,13 +471,20 @@
         document.onkeydown = e => { if(e.key==='Escape'){closeModal();showList();} };
         document.body.addEventListener('click', async () => { if(Notification?.permission==='default') await Notification.requestPermission(); }, {once:true});
         
+        console.log('Init complete');
+        
       } catch(e) {
         console.error('Init Error:', e);
+        tasks = [];
         showToast('Ошибка загрузки', true);
       } finally {
+        // Всегда показываем интерфейс
         $('loadingState').classList.add('hidden');
         $('taskList').classList.remove('hidden');
         $('addBtn').classList.remove('hidden');
+        if(tasks.length === 0) {
+          $('emptyState').classList.remove('hidden');
+        }
       }
     }
 
@@ -433,7 +514,6 @@
       return '#' + match.slice(0,3).map(x => parseInt(x).toString(16).padStart(2,'0')).join('');
     }
 
-    // === File Handling (только изображения) ===
     function handleFileSelect(e) {
       const files = Array.from(e.target.files);
       const limit = 5 - fileLog.count;
@@ -464,7 +544,6 @@
     }
     window.removeFile = i => { currentFiles.splice(i,1); updateFilePreview(); };
 
-    // === Render List (без свайпов) ===
     function renderList() {
       const q = $('searchInput').value.toLowerCase();
       const d = $('searchDate').value;
@@ -516,13 +595,12 @@
     window.setStatusFilter = s => { statusFilter=s; document.querySelectorAll('.status-btn').forEach(b=>b.classList.remove('active')); document.querySelector(`.status-btn:nth-child(${s==='all'?1:s==='active'?2:3})`).classList.add('active'); renderList(); };
     window.clearDateFilter = () => { $('searchDate').value=''; renderList(); };
 
-    // === Actions ===
     window.toggleComplete = async id => { 
       const t=tasks.find(x=>x.id===id); 
       if(!t)return; 
       t.completed=!t.completed; 
       t.completedAt=t.completed?Date.now():null; 
-      await IDB.put(t); 
+      try { await IDB.put(t); } catch(e) { showToast('Ошибка сохранения', true); return; }
       renderList(); 
       if($('detailView').classList.contains('active')) openDetail(id);
       showToast(t.completed?'✅ Выполнено':'↩️ Возвращено'); 
@@ -533,7 +611,7 @@
       if(!t)return; 
       if(!t.pinned && tasks.filter(x=>x.pinned).length>=5) return showToast('❌ Макс. 5 закреплённых',true); 
       t.pinned=!t.pinned; 
-      await IDB.put(t); 
+      try { await IDB.put(t); } catch(e) { showToast('Ошибка сохранения', true); return; }
       renderList(); 
       if($('detailView').classList.contains('active')) openDetail(id);
     };
@@ -541,7 +619,7 @@
     window.deleteTask = async id => { 
       if(!confirm('Удалить задачу?'))return; 
       tasks=tasks.filter(x=>x.id!==id); 
-      await IDB.delete(id); 
+      try { await IDB.delete(id); } catch(e) { showToast('Ошибка удаления', true); return; }
       renderList(); 
       updateStorageBadge(); 
       showToast('🗑️ Удалено');
@@ -660,7 +738,7 @@
       showToast('⏳ Подготовка экспорта...');
       try {
         const exportTasks = await Promise.all(tasks.map(async t => {
-          const files = t.files ? await Promise.all(t.files.map(async f => ({ name: f.name, size: f.size, type: f.type,  await blobToDataURL(f.blob) }))) : [];
+          const files = t.files ? await Promise.all(t.files.map(async f => ({ name: f.name, size: f.size, type: f.type, data: await blobToDataURL(f.blob) }))) : [];
           return { ...t, files };
         }));
         const b=new Blob([JSON.stringify({tasks:exportTasks,fileLog},null,2)],{type:'application/json'});
@@ -676,7 +754,7 @@
         try {
           const d=JSON.parse(e.target.result);
           if(d.tasks){
-            await IDB.clear();
+            try { await IDB.clear(); } catch(e) {}
             tasks = d.tasks.map(t => ({
               ...t,
               tags: t.tags?.map(tag => typeof tag === 'string' ? {name: tag, color: TAG_PRESETS[tag]||getRandomColor()} : tag) || [],
@@ -684,7 +762,7 @@
             }));
             fileLog=d.fileLog||{date:new Date().toISOString().slice(0,10),count:0};
             localStorage.setItem('file_log', JSON.stringify(fileLog));
-            for(const t of tasks) await IDB.put(t);
+            for(const t of tasks) { try { await IDB.put(t); } catch(e) {} }
             renderList(); updateStorageBadge(); showToast('✅ Импорт выполнен');
           }
         }catch(err){showToast('❌ Ошибка: '+err.message, true)}
@@ -694,10 +772,11 @@
 
     async function updateStorageBadge() {
       if(navigator.storage?.estimate) {
-        const est = await navigator.storage.estimate();
-        const used = est.usage || 0;
-        const quota = est.quota || 0;
-        $('storageBadge').textContent = `💾 ${formatBytes(used)}`;
+        try {
+          const est = await navigator.storage.estimate();
+          const used = est.usage || 0;
+          $('storageBadge').textContent = `💾 ${formatBytes(used)}`;
+        } catch(e) {}
       }
     }
     function formatBytes(bytes) { if(!bytes) return '0 B'; const k=1024, s=['B','KB','MB','GB']; const i=Math.floor(Math.log(bytes)/Math.log(k)); return parseFloat((bytes/Math.pow(k,i)).toFixed(1))+' '+s[i]; }
@@ -710,14 +789,19 @@
         if(due<now&&t.notify){ showToast('❗ Просрочено: '+t.title); t.notified=true; }
         else if(due-now<=15*60000&&!t.reminded&&t.notify){ showToast('⏰ Скоро: '+t.title); t.reminded=true; }
       });
-      tasks.forEach(t => { if(t.notified || t.reminded) IDB.put(t); });
+      tasks.forEach(t => { if(t.notified || t.reminded) { try { IDB.put(t); } catch(e) {} } });
     }
 
     if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
     let deferredPrompt; window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('installPrompt').classList.add('show'); });
     async function installPWA() { if(!deferredPrompt)return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; $('installPrompt').classList.remove('show'); showToast('✅ Установлено'); }
 
-    init();
+    // Запускаем после загрузки DOM
+    if(document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
   </script>
 </body>
 </html>
