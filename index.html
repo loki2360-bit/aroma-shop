@@ -32,6 +32,7 @@
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
     .btn-danger { background: var(--danger); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
     .btn-sm { padding: 6px 10px; font-size: 0.85rem; min-height: 32px; }
     
     .search-bar { padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
@@ -41,26 +42,25 @@
     .status-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     
     .task-list { list-style: none; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
-    .swipe-wrap { position: relative; overflow: hidden; border-radius: var(--radius); touch-action: pan-y; }
     
-    /* Компактная карточка */
-    .swipe-content { 
+    /* Компактная карточка без свайпов */
+    .task-card { 
       background: var(--card); 
       padding: 12px 14px; 
       box-shadow: var(--shadow); 
       cursor: pointer; 
       border-left: 4px solid var(--primary); 
-      transition: transform 0.2s, background 0.15s; 
-      position: relative; 
-      z-index: 2;
+      border-radius: var(--radius);
+      transition: transform 0.1s, background 0.15s, box-shadow 0.15s; 
       display: flex;
       align-items: center;
       justify-content: space-between;
       min-height: 48px;
     }
-    .swipe-content.completed { opacity: 0.6; border-left-color: var(--muted); }
-    .swipe-content.completed h3 { text-decoration: line-through; color: var(--muted); }
-    .swipe-content:active { background: rgba(37,99,235,0.08); }
+    .task-card:active { transform: scale(0.98); background: rgba(37,99,235,0.05); }
+    .task-card.completed { opacity: 0.6; border-left-color: var(--muted); }
+    .task-card.completed h3 { text-decoration: line-through; color: var(--muted); }
+    .task-card.pinned { border-left-color: var(--warning); }
     
     .task-title-wrap { 
       flex: 1; 
@@ -96,15 +96,11 @@
     .indicator.today { background: #dcfce7; color: #166534; }
     .indicator.file { background: #e0f2fe; color: #075985; }
     
-    .swipe-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; z-index: 1; }
-    .swipe-btn { width: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; font-size: 0.75rem; gap: 4px; }
-    .swipe-btn.complete { background: var(--success); }
-    .swipe-btn.delete { background: var(--danger); }
-    .swipe-btn.pin { background: var(--warning); }
-    
     /* Детали задачи */
-    #detailView { display: none; padding: 16px; }
+    #detailView { display: none; padding: 16px; animation: fadeIn 0.2s; }
     #detailView.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
     .detail-card { background: var(--card); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); }
     .detail-card h1 { font-size: 1.3rem; margin-bottom: 12px; line-height: 1.3; }
     .detail-meta { 
@@ -124,6 +120,9 @@
       line-height: 1.6; 
       white-space: pre-wrap;
       color: var(--text);
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 8px;
     }
     .detail-card .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
     .tag { font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; color: #fff; font-weight: 600; }
@@ -158,8 +157,18 @@
       white-space: nowrap;
     }
     
-    .detail-actions { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
-    .detail-actions button { flex: 1; min-width: 120px; }
+    .detail-actions { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px; 
+      margin-top: 24px; 
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .detail-actions button { 
+      padding: 12px;
+      font-weight: 600;
+    }
     
     .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
     .empty svg { width: 60px; height: 60px; margin-bottom: 12px; opacity: 0.6; }
@@ -433,7 +442,6 @@
       currentFiles = [];
       let loaded = 0;
       files.slice(0, limit).forEach(f => {
-        // Проверка: только изображения
         if(!f.type.startsWith('image/')) {
           showToast(`❌ ${f.name} — не изображение`, true);
           return;
@@ -456,7 +464,7 @@
     }
     window.removeFile = i => { currentFiles.splice(i,1); updateFilePreview(); };
 
-    // === Render List (компактный) ===
+    // === Render List (без свайпов) ===
     function renderList() {
       const q = $('searchInput').value.toLowerCase();
       const d = $('searchDate').value;
@@ -483,64 +491,62 @@
       empty.classList.add('hidden');
 
       list.forEach(task => {
-        const wrap = document.createElement('div');
-        wrap.className = 'swipe-wrap';
+        const card = document.createElement('li');
+        card.className = `task-card ${task.completed?'completed':''} ${task.pinned?'pinned':''}`;
+        card.onclick = () => openDetail(task.id);
         
         const isOverdue = task.dueDate && new Date(task.dueDate) < now && !task.completed;
         const isToday = task.dueDate && new Date(task.dueDate).toDateString() === now.toDateString() && !task.completed;
         
-        wrap.innerHTML = `
-          <div class="swipe-content ${task.completed?'completed':''}">
-            <div class="task-title-wrap">
-              ${task.pinned?'<span class="pin-icon">📌</span>':''}
-              <h3>${esc(task.title)}</h3>
-            </div>
-            <div class="task-indicators">
-              ${task.files?.length?`<span class="indicator file">📷 ${task.files.length}</span>`:''}
-              ${isOverdue?`<span class="indicator due">Просрочено</span>`:''}
-              ${isToday?`<span class="indicator today">Сегодня</span>`:''}
-            </div>
+        card.innerHTML = `
+          <div class="task-title-wrap">
+            ${task.pinned?'<span class="pin-icon">📌</span>':''}
+            <h3>${esc(task.title)}</h3>
           </div>
-          <div class="swipe-actions">
-            <div class="swipe-btn complete" onclick="toggleComplete('${task.id}')">${task.completed?'↩️':'✅'}</div>
-            <div class="swipe-btn delete" onclick="deleteTask('${task.id}')">🗑️</div>
+          <div class="task-indicators">
+            ${task.files?.length?`<span class="indicator file">📷 ${task.files.length}</span>`:''}
+            ${isOverdue?`<span class="indicator due">!</span>`:''}
+            ${isToday?`<span class="indicator today">•</span>`:''}
           </div>
         `;
-        initSwipe(wrap);
-        wrap.querySelector('.swipe-content').onclick = e => { if(!wrap.dataset.swiped) openDetail(task.id); };
-        ul.appendChild(wrap);
+        ul.appendChild(card);
       });
     }
     
     window.setStatusFilter = s => { statusFilter=s; document.querySelectorAll('.status-btn').forEach(b=>b.classList.remove('active')); document.querySelector(`.status-btn:nth-child(${s==='all'?1:s==='active'?2:3})`).classList.add('active'); renderList(); };
     window.clearDateFilter = () => { $('searchDate').value=''; renderList(); };
 
-    function initSwipe(el) {
-      let startX, startY, currentX, isOpen = false;
-      const content = el.querySelector('.swipe-content');
-      const max = 120;
-      const start = e => { startX = e.touches ? e.touches[0].clientX : e.clientX; startY = e.touches ? e.touches[0].clientY : e.clientY; el.dataset.swiped='0'; };
-      const move = e => {
-        if(!startX) return;
-        const x = e.touches ? e.touches[0].clientX : e.clientX;
-        const y = e.touches ? e.touches[0].clientY : e.clientY;
-        if(Math.abs(x-startX) < Math.abs(y-startY)) return;
-        currentX = Math.max(0, Math.min(max, startX - x));
-        if(currentX > 0) content.style.transform = `translateX(-${currentX}px)`;
-      };
-      const end = () => {
-        if(currentX > max/2) { content.style.transform = `translateX(-${max}px)`; isOpen = true; el.dataset.swiped='1'; }
-        else { content.style.transform = ''; isOpen = false; }
-        startX = currentX = 0;
-        setTimeout(()=> delete el.dataset.swiped, 500);
-      };
-      el.addEventListener('touchstart', start, {passive:true}); el.addEventListener('touchmove', move, {passive:true}); el.addEventListener('touchend', end);
-      el.addEventListener('mousedown', start); el.addEventListener('mousemove', move); el.addEventListener('mouseup', end); el.addEventListener('mouseleave', end);
-    }
-
-    window.toggleComplete = async id => { const t=tasks.find(x=>x.id===id); if(!t)return; t.completed=!t.completed; t.completedAt=t.completed?Date.now():null; await IDB.put(t); renderList(); showToast(t.completed?'✅ Выполнено':'↩️ Возвращено'); };
-    window.togglePin = async id => { const t=tasks.find(x=>x.id===id); if(!t)return; if(!t.pinned && tasks.filter(x=>x.pinned).length>=5) return showToast('❌ Макс. 5 закреплённых',true); t.pinned=!t.pinned; await IDB.put(t); renderList(); };
-    window.deleteTask = async id => { if(!confirm('Удалить задачу?'))return; tasks=tasks.filter(x=>x.id!==id); await IDB.delete(id); renderList(); updateStorageBadge(); showToast('🗑️ Удалено'); };
+    // === Actions ===
+    window.toggleComplete = async id => { 
+      const t=tasks.find(x=>x.id===id); 
+      if(!t)return; 
+      t.completed=!t.completed; 
+      t.completedAt=t.completed?Date.now():null; 
+      await IDB.put(t); 
+      renderList(); 
+      if($('detailView').classList.contains('active')) openDetail(id);
+      showToast(t.completed?'✅ Выполнено':'↩️ Возвращено'); 
+    };
+    
+    window.togglePin = async id => { 
+      const t=tasks.find(x=>x.id===id); 
+      if(!t)return; 
+      if(!t.pinned && tasks.filter(x=>x.pinned).length>=5) return showToast('❌ Макс. 5 закреплённых',true); 
+      t.pinned=!t.pinned; 
+      await IDB.put(t); 
+      renderList(); 
+      if($('detailView').classList.contains('active')) openDetail(id);
+    };
+    
+    window.deleteTask = async id => { 
+      if(!confirm('Удалить задачу?'))return; 
+      tasks=tasks.filter(x=>x.id!==id); 
+      await IDB.delete(id); 
+      renderList(); 
+      updateStorageBadge(); 
+      showToast('🗑️ Удалено');
+      if($('detailView').classList.contains('active')) showList();
+    };
     
     function openDetail(id) {
       const t=tasks.find(x=>x.id===id); if(!t)return;
@@ -554,7 +560,7 @@
       }
       
       $('detailContent').innerHTML = `
-        <h1>${esc(t.title)} ${t.completed?'✅':''}</h1>
+        <h1>${esc(t.title)}</h1>
         <div class="detail-meta">
           <div>🕐 ${new Date(t.createdAt).toLocaleString('ru-RU')}</div>
           <div>📅 ${isOverdue?'<span style="color:var(--danger);font-weight:600">Просрочено:</span>':''}${dueStr}</div>
@@ -564,12 +570,14 @@
         ${t.text?`<div class="desc">${esc(t.text)}</div>`:'<div class="desc" style="color:var(--muted)">Без описания</div>'}
         ${filesHtml}
         <div class="detail-actions">
-          <button class="btn ${t.completed?'btn-outline':'btn-primary'}" onclick="toggleComplete('${t.id}');openDetail('${t.id}');">${t.completed?'↩️ Возвратить':'✅ Выполнить'}</button>
+          <button class="btn ${t.completed?'btn-outline':'btn-success'}" onclick="toggleComplete('${t.id}')">${t.completed?'↩️ Возвратить':'✅ Выполнить'}</button>
+          <button class="btn ${t.pinned?'btn-outline':'btn-primary'}" onclick="togglePin('${t.id}')">${t.pinned?'📎 Открепить':'📌 Закрепить'}</button>
           <button class="btn btn-outline" onclick="editTask('${t.id}')">✏️ Редактировать</button>
           <button class="btn btn-danger" onclick="deleteTask('${t.id}')">🗑️ Удалить</button>
         </div>
       `;
-      $('listView').style.display='none'; $('detailView').classList.add('active');
+      $('listView').style.display='none'; 
+      $('detailView').classList.add('active');
     }
     window.showList = () => { $('listView').style.display='block'; $('detailView').classList.remove('active'); };
     window.editTask = id => { showList(); setTimeout(()=>openModal(id),100); };
@@ -652,7 +660,7 @@
       showToast('⏳ Подготовка экспорта...');
       try {
         const exportTasks = await Promise.all(tasks.map(async t => {
-          const files = t.files ? await Promise.all(t.files.map(async f => ({ name: f.name, size: f.size, type: f.type, data: await blobToDataURL(f.blob) }))) : [];
+          const files = t.files ? await Promise.all(t.files.map(async f => ({ name: f.name, size: f.size, type: f.type,  await blobToDataURL(f.blob) }))) : [];
           return { ...t, files };
         }));
         const b=new Blob([JSON.stringify({tasks:exportTasks,fileLog},null,2)],{type:'application/json'});
