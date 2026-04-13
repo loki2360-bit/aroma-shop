@@ -24,7 +24,8 @@
     header { position: sticky; top: 0; z-index: 50; background: var(--card); padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
     .brand { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
     .brand span { font-size: 0.7rem; background: var(--primary); color: #fff; padding: 2px 6px; border-radius: 6px; }
-    .actions { display: flex; gap: 6px; }
+    .actions { display: flex; gap: 6px; align-items: center; }
+    .storage-badge { font-size: 0.65rem; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 8px; white-space: nowrap; }
     
     .btn { padding: 8px 12px; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; min-height: 36px; transition: transform 0.1s; }
     .btn:active { transform: scale(0.96); }
@@ -40,14 +41,10 @@
     .status-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     
     .task-list { list-style: none; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
-    
-    /* Swipe Container */
     .swipe-wrap { position: relative; overflow: hidden; border-radius: var(--radius); touch-action: pan-y; }
     .swipe-content { background: var(--card); padding: 14px; box-shadow: var(--shadow); cursor: pointer; border-left: 4px solid var(--primary); transition: transform 0.2s, background 0.15s; position: relative; z-index: 2; }
     .swipe-content.completed { opacity: 0.65; border-left-color: var(--muted); }
     .swipe-content.completed h3 { text-decoration: line-through; }
-    .swipe-content:active { background: rgba(37,99,235,0.06); }
-    
     .swipe-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; z-index: 1; }
     .swipe-btn { width: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; font-size: 0.8rem; gap: 4px; }
     .swipe-btn.complete { background: var(--success); }
@@ -57,8 +54,10 @@
     .task-card h3 { font-size: 1rem; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: start; }
     .task-card .meta { font-size: 0.75rem; color: var(--muted); margin-top: 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .task-card .desc { font-size: 0.9rem; margin: 6px 0; color: var(--text); opacity: 0.9; }
+    
+    /* Новые стили тегов */
     .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-    .tag { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; color: #fff; font-weight: 600; }
+    .tag { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; color: #fff; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
     
     .due-badge, .file-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
     .due-badge.overdue { background: #fee2e2; color: #991b1b; }
@@ -84,8 +83,14 @@
     .fg textarea { min-height: 80px; resize: vertical; }
     .tags-input { display: flex; gap: 6px; flex-wrap: wrap; }
     .tags-input input, .tags-input select { flex: 1; min-width: 100px; }
-    .tag-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: var(--primary); color: #fff; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    
+    /* Стили для выбора цвета и чипов тегов */
+    .tag-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
     .tag-chip button { background: none; border: none; color: inherit; padding: 0; margin-left: 2px; cursor: pointer; font-size: 1rem; line-height: 1; }
+    .color-palette { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+    .color-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.1s; }
+    .color-dot:hover { transform: scale(1.2); }
+    .color-dot.selected { border-color: var(--text); transform: scale(1.2); }
     
     .file-list { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
     .file-item { background: #e0f2fe; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; color: #075985; display: flex; align-items: center; gap: 4px; }
@@ -101,30 +106,16 @@
     
     .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
     .empty svg { width: 60px; height: 60px; margin-bottom: 12px; opacity: 0.6; }
+    .loading { text-align: center; padding: 20px; color: var(--muted); }
     
-    #installPrompt { 
-      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); 
-      background: var(--card); padding: 10px 16px; border-radius: 10px; 
-      box-shadow: var(--shadow); display: none; align-items: center; gap: 8px; 
-      z-index: 60; border: 1px solid var(--border); font-size: 0.9rem;
-    }
+    #installPrompt { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--card); padding: 10px 16px; border-radius: 10px; box-shadow: var(--shadow); display: none; align-items: center; gap: 8px; z-index: 60; border: 1px solid var(--border); font-size: 0.9rem; }
     #installPrompt.show { display: flex; }
-    
     .hidden { display: none !important; }
     .pin-icon { color: var(--warning); margin-right: 4px; }
-    [data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select { background: #0f172a; border-color: #475569; }
+    [data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select { background: #0f172a; border-color: #475569; }
+    @media(max-width: 480px) { .search-bar { flex-direction: column; } .search-bar input, .search-bar select { width: 100%; } }
     
-    @media(max-width: 480px) {
-      .search-bar { flex-direction: column; }
-      .search-bar input, .search-bar select { width: 100%; }
-    }
-    
-    #toast {
-      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: #1e293b; color: #fff; padding: 10px 16px; border-radius: 8px;
-      font-size: 0.9rem; opacity: 0; transition: all 0.3s; z-index: 200; pointer-events: none;
-      max-width: 90%; text-align: center;
-    }
+    #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1e293b; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 0.9rem; opacity: 0; transition: all 0.3s; z-index: 200; pointer-events: none; max-width: 90%; text-align: center; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     #toast.error { background: var(--danger); }
   </style>
@@ -134,18 +125,17 @@
     <header>
       <div class="brand">Задачи <span>Lite</span></div>
       <div class="actions">
+        <span class="storage-badge" id="storageBadge">💾 0%</span>
         <button class="btn btn-outline btn-sm" onclick="toggleTheme()" title="Тема">🌓</button>
         <button class="btn btn-outline btn-sm" onclick="exportData()" title="Экспорт">📥</button>
-        <label class="btn btn-outline btn-sm" title="Импорт" style="cursor:pointer">
-          📤<input type="file" accept=".json" onchange="importData(this)" style="display:none">
-        </label>
+        <label class="btn btn-outline btn-sm" title="Импорт" style="cursor:pointer">📤<input type="file" accept=".json" onchange="importData(this)" style="display:none"></label>
       </div>
     </header>
     
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="🔍 Поиск..." oninput="renderList()">
       <input type="date" id="searchDate" onchange="renderList()">
-      <button class="btn btn-outline btn-sm" onclick="clearDateFilter()" title="Сбросить дату">✕ Дата</button>
+      <button class="btn btn-outline btn-sm" onclick="clearDateFilter()">✕ Дата</button>
       <div class="status-toggle">
         <button class="status-btn active" onclick="setStatusFilter('all')">Все</button>
         <button class="status-btn" onclick="setStatusFilter('active')">Активные</button>
@@ -153,13 +143,13 @@
       </div>
     </div>
     
-    <ul id="taskList" class="task-list"></ul>
+    <div id="loadingState" class="loading">⏳ Загрузка данных...</div>
+    <ul id="taskList" class="task-list hidden"></ul>
     <div id="emptyState" class="empty hidden">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
       <p>Нет задач. Создайте первую!</p>
     </div>
-    
-    <button class="fab" id="addBtn" onclick="openModal()">+</button>
+    <button class="fab hidden" id="addBtn" onclick="openModal()">+</button>
   </div>
   
   <div id="detailView">
@@ -169,36 +159,31 @@
   
   <div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
     <div class="modal-box">
-      <div class="modal-header">
-        <h2 id="modalTitle">Новая задача</h2>
-        <button class="close" onclick="closeModal()">&times;</button>
-      </div>
+      <div class="modal-header"><h2 id="modalTitle">Новая задача</h2><button class="close" onclick="closeModal()">&times;</button></div>
       <form id="taskForm" class="form-grid">
         <input type="hidden" id="editId">
+        <div class="fg"><label>Заголовок *</label><input type="text" id="inputTitle" required placeholder="Например: Купить продукты"></div>
+        <div class="fg"><label>Описание</label><textarea id="inputText" placeholder="Детали, заметки..."></textarea></div>
+        <div class="fg"><label>Срок выполнения</label><input type="datetime-local" id="inputDue" step="60"><small style="color:var(--muted);font-size:0.7rem">Напоминание за 15 мин</small></div>
         <div class="fg">
-          <label>Заголовок *</label>
-          <input type="text" id="inputTitle" required placeholder="Например: Купить продукты">
-        </div>
-        <div class="fg">
-          <label>Описание</label>
-          <textarea id="inputText" placeholder="Детали, заметки..."></textarea>
-        </div>
-        <div class="fg">
-          <label>Срок выполнения</label>
-          <input type="datetime-local" id="inputDue" step="60">
-          <small style="color:var(--muted);font-size:0.7rem">Напоминание за 15 мин до срока</small>
-        </div>
-        <div class="fg">
-          <label>Файлы (макс. 5/день, до 200КБ)</label>
-          <input type="file" id="inputFiles" multiple accept="image/*,.pdf,.doc,.docx,.txt">
+          <label>Файлы (макс. 5/день, до 5 МБ каждый)</label>
+          <input type="file" id="inputFiles" multiple>
           <small id="fileLimitInfo" style="color:var(--muted);font-size:0.7rem"></small>
           <div id="previewFiles" class="file-list"></div>
         </div>
+        
+        <!-- Блок тегов с палитрой -->
         <div class="fg">
-          <label>Теги</label>
-          <div class="tags-input">
+          <label>Теги (выберите цвет)</label>
+          
+          <!-- Палитра цветов -->
+          <div class="color-palette" id="colorPalette">
+            <!-- Генерируется JS -->
+          </div>
+          
+          <div class="tags-input" style="margin-top:6px">
             <select id="inputTagSelect" onchange="addTagFromSelect()">
-              <option value="">+ Добавить тег</option>
+              <option value="">+ Добавить стандартный</option>
               <option value="срочно">🔴 Срочно</option>
               <option value="важно">🟡 Важно</option>
               <option value="личное">🟣 Личное</option>
@@ -210,69 +195,134 @@
           </div>
           <div id="selectedTags" class="tags" style="margin-top: 8px"></div>
         </div>
-        <div class="fg">
-          <label style="display: flex; align-items: center; gap: 8px;">
-            <input type="checkbox" id="inputPin" style="width: 18px; height: 18px;">
-            <span>📌 Закрепить (макс. 5)</span>
-          </label>
-        </div>
-        <div class="fg">
-          <label style="display: flex; align-items: center; gap: 8px;">
-            <input type="checkbox" id="inputNotify" style="width: 18px; height: 18px;" checked>
-            <span>🔔 Уведомление в срок</span>
-          </label>
-        </div>
-        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
-          <button type="button" class="btn btn-outline" onclick="closeModal()">Отмена</button>
-          <button type="submit" class="btn btn-primary">💾 Сохранить</button>
-        </div>
+
+        <div class="fg"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="inputPin" style="width:18px;height:18px"><span>📌 Закрепить (макс. 5)</span></label></div>
+        <div class="fg"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="inputNotify" style="width:18px;height:18px" checked><span>🔔 Уведомление</span></label></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button type="button" class="btn btn-outline" onclick="closeModal()">Отмена</button><button type="submit" class="btn btn-primary">💾 Сохранить</button></div>
       </form>
     </div>
   </div>
 
-  <div id="installPrompt">
-    <span>📱 Установить приложение?</span>
-    <button class="btn btn-primary btn-sm" onclick="installPWA()">Установить</button>
-    <button class="btn btn-outline btn-sm" onclick="this.parentElement.classList.remove('show')">✕</button>
-  </div>
-  
+  <div id="installPrompt"><span>📱 Установить?</span><button class="btn btn-primary btn-sm" onclick="installPWA()">Установить</button><button class="btn btn-outline btn-sm" onclick="this.parentElement.classList.remove('show')">✕</button></div>
   <div id="toast"></div>
 
   <script>
-    // === PWA & SW ===
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-    }
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('installPrompt').classList.add('show'); });
-    async function installPWA() { if(!deferredPrompt)return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; $('installPrompt').classList.remove('show'); showToast('✅ Установлено'); }
-    
+    // === IndexedDB Engine ===
+    const DB_NAME = 'TaskManager_v4', DB_VER = 1;
+    let idb;
+    const IDB = {
+      async init() {
+        return new Promise((res, rej) => {
+          const req = indexedDB.open(DB_NAME, DB_VER);
+          req.onupgradeneeded = e => { const db = e.target.result; if(!db.objectStoreNames.contains('tasks')) db.createObjectStore('tasks', {keyPath:'id'}); };
+          req.onsuccess = e => { idb = e.target.result; res(); };
+          req.onerror = e => rej(e.target.error);
+        });
+      },
+      async getAll() { return new Promise((res,rej)=>{const tx=idb.transaction('tasks','readonly'); tx.objectStore('tasks').getAll().onsuccess=e=>res(e.target.result); tx.onerror=e=>rej(e.target.error);}); },
+      async put(task) { return new Promise((res,rej)=>{const tx=idb.transaction('tasks','readwrite'); tx.objectStore('tasks').put(task); tx.oncomplete=()=>res(); tx.onerror=e=>rej(e.target.error);}); },
+      async delete(id) { return new Promise((res,rej)=>{const tx=idb.transaction('tasks','readwrite'); tx.objectStore('tasks').delete(id); tx.oncomplete=()=>res(); tx.onerror=e=>rej(e.target.error);}); },
+      async clear() { return new Promise((res,rej)=>{const tx=idb.transaction('tasks','readwrite'); tx.objectStore('tasks').clear(); tx.oncomplete=()=>res(); tx.onerror=e=>rej(e.target.error);}); }
+    };
+
     // === State ===
-    const DB = 'tasks_v3', FILES = 'files_log', THEME = 'theme';
-    let tasks = [], fileLog = { date: '', count: 0 }, editingId = null, currentTags = [], currentFiles = [], statusFilter = 'all';
+    let tasks = [], fileLog = { date: '', count: 0 }, editingId = null;
+    let currentTags = []; // Теперь массив объектов {name, color}
+    let currentFiles = [], statusFilter = 'all';
+    let selectedColor = '#3b82f6'; // Цвет по умолчанию
+
+    // Палитра цветов
+    const PALETTE = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#6366f1', '#64748b'];
     
+    // Соответствие стандартных тегов и цветов
+    const TAG_PRESETS = {
+      'срочно': '#ef4444', 'важно': '#f59e0b', 'личное': '#8b5cf6',
+      'работа': '#3b82f6', 'идея': '#10b981', 'покупки': '#ec4899'
+    };
+
     const $ = id => document.getElementById(id);
-    const uid = () => (crypto?.randomUUID?.() || Date.now().toString(36)+Math.random().toString(36).slice(2));
-    
-    // === Init ===
-    function init() {
+    const uid = () => crypto?.randomUUID?.() || Date.now().toString(36)+Math.random().toString(36).slice(2);
+    const esc = s => (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+    // === Init & Migration ===
+    async function init() {
+      renderColorPalette();
       try {
-        tasks = JSON.parse(localStorage.getItem(DB) || '[]');
-        const fl = JSON.parse(localStorage.getItem(FILES) || '{}');
+        await IDB.init();
+        
+        // Миграция старых данных
+        const old = localStorage.getItem('tasks_v3');
+        if (old) {
+          try {
+            const oldTasks = JSON.parse(old);
+            for (const t of oldTasks) {
+              // Конвертация файлов
+              if (t.files) t.files = t.files.map(f => ({ name: f.name, size: f.size, type: f.type, blob: dataURLtoBlob(f.data) }));
+              // Конвертация тегов из строк в объекты
+              if (t.tags && typeof t.tags[0] === 'string') {
+                t.tags = t.tags.map(tagName => ({
+                  name: tagName,
+                  color: TAG_PRESETS[tagName] || getRandomColor()
+                }));
+              }
+              await IDB.put(t);
+            }
+            localStorage.removeItem('tasks_v3');
+            showToast('🔄 Данные мигрированы');
+          } catch(e) { console.warn('Migration failed', e); }
+        }
+        
+        tasks = await IDB.getAll();
+        const fl = JSON.parse(localStorage.getItem('file_log') || '{}');
         fileLog = fl.date === new Date().toISOString().slice(0,10) ? fl : { date: new Date().toISOString().slice(0,10), count: 0 };
-      } catch(e) { tasks=[]; fileLog={date:new Date().toISOString().slice(0,10),count:0}; }
-      
-      if(localStorage.getItem(THEME)==='dark') document.documentElement.dataset.theme='dark';
-      
-      renderList();
-      checkDueTasks();
-      setInterval(checkDueTasks, 5*60*1000);
-      
-      $('addBtn').onclick = () => openModal();
-      $('taskForm').onsubmit = saveTask;
-      $('inputFiles').onchange = handleFileSelect;
-      document.onkeydown = e => { if(e.key==='Escape'){closeModal();showList();} };
-      document.body.addEventListener('click', async () => { if(Notification?.permission==='default') await Notification.requestPermission(); }, {once:true});
+        
+        if(localStorage.getItem('theme')==='dark') document.documentElement.dataset.theme='dark';
+        
+        renderList();
+        updateStorageBadge();
+        checkDueTasks();
+        setInterval(checkDueTasks, 5*60*1000);
+        
+        $('addBtn').onclick = () => openModal();
+        $('taskForm').onsubmit = saveTask;
+        $('inputFiles').onchange = handleFileSelect;
+        document.onkeydown = e => { if(e.key==='Escape'){closeModal();showList();} };
+        document.body.addEventListener('click', async () => { if(Notification?.permission==='default') await Notification.requestPermission(); }, {once:true});
+        
+        $('loadingState').classList.add('hidden');
+        $('taskList').classList.remove('hidden');
+        $('addBtn').classList.remove('hidden');
+      } catch(e) {
+        $('loadingState').textContent = '❌ Ошибка хранилища.';
+        console.error(e);
+      }
+    }
+
+    function dataURLtoBlob(dataurl) {
+      const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]);
+      let n = bstr.length, u8arr = new Uint8Array(n);
+      while(n--) u8arr[n] = bstr.charCodeAt(n);
+      return new Blob([u8arr], {type:mime});
+    }
+    
+    function getRandomColor() { return PALETTE[Math.floor(Math.random() * PALETTE.length)]; }
+
+    // === UI Helpers ===
+    function renderColorPalette() {
+      $('colorPalette').innerHTML = PALETTE.map(c => 
+        `<div class="color-dot ${c===selectedColor?'selected':''}" style="background:${c}" onclick="selectColor('${c}')"></div>`
+      ).join('') + `<input type="color" id="customColorInput" value="${selectedColor}" style="width:20px;height:20px;border:none;background:none;cursor:pointer" onchange="selectColor(this.value)">`;
+    }
+    window.selectColor = c => {
+      selectedColor = c;
+      document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('selected', d.style.backgroundColor === c || rgbToHex(d.style.backgroundColor) === c));
+      if($('customColorInput')) $('customColorInput').value = c;
+    }
+    function rgbToHex(rgb) { // Упрощенная конвертация для проверки
+      if(rgb.startsWith('#')) return rgb;
+      const match = rgb.match(/\d+/g);
+      if(!match) return rgb;
+      return '#' + match.slice(0,3).map(x => parseInt(x).toString(16).padStart(2,'0')).join('');
     }
 
     // === File Handling ===
@@ -280,46 +330,31 @@
       const files = Array.from(e.target.files);
       const limit = 5 - fileLog.count;
       if(limit <= 0) { showToast('❌ Лимит файлов на день исчерпан', true); e.target.value=''; return; }
-      
       currentFiles = [];
       let loaded = 0;
       files.slice(0, limit).forEach(f => {
-        if(f.size > 200*1024) { showToast(`❌ ${f.name} > 200КБ`, true); return; }
-        const r = new FileReader();
-        r.onload = ev => { currentFiles.push({name:f.name, size:f.size, type:f.type, data:ev.target.result}); loaded++; if(loaded===Math.min(files.length,limit)) updateFilePreview(); };
-        r.readAsDataURL(f);
+        if(f.size > 5*1024*1024) { showToast(`❌ ${f.name} > 5 МБ`, true); return; }
+        currentFiles.push({ name: f.name, size: f.size, type: f.type, blob: f });
+        loaded++;
       });
-      $('fileLimitInfo').textContent = `Загружено: ${Math.min(files.length, limit)}/${limit} (осталось: ${Math.max(0, limit)})`;
+      $('fileLimitInfo').textContent = `Загружено: ${loaded}/${limit}`;
+      updateFilePreview();
     }
-    
-    function updateFilePreview() {
-      $('previewFiles').innerHTML = currentFiles.map((f,i)=>`<span class="file-item">📎 ${f.name} <button type="button" onclick="removeFile(${i})">✕</button></span>`).join('');
-    }
+    function updateFilePreview() { $('previewFiles').innerHTML = currentFiles.map((f,i)=>`<span class="file-item">📎 ${f.name} <button type="button" onclick="removeFile(${i})">✕</button></span>`).join(''); }
     window.removeFile = i => { currentFiles.splice(i,1); updateFilePreview(); };
 
-    // === Save/Load ===
-    function save() {
-      try {
-        localStorage.setItem(DB, JSON.stringify(tasks));
-        localStorage.setItem(FILES, JSON.stringify(fileLog));
-        return true;
-      } catch(e) {
-        if(e.name==='QuotaExceededError') showToast('❌ Хранилище переполнено. Удалите старые файлы/задачи', true);
-        return false;
-      }
-    }
-
-    // === Render ===
+    // === Render List ===
     function renderList() {
       const q = $('searchInput').value.toLowerCase();
       const d = $('searchDate').value;
-      const t = $('searchTag')?.value || '';
+      const tFilter = $('searchTag')?.value || '';
       const now = new Date();
       
       let list = tasks.filter(task => {
         const mq = !q || task.title.toLowerCase().includes(q) || (task.text||'').toLowerCase().includes(q);
         const md = !d || (task.dueDate && new Date(task.dueDate).toISOString().startsWith(d));
-        const mt = !t || task.tags.includes(t);
+        // Поиск по тегу (теперь тег - объект)
+        const mt = !tFilter || task.tags.some(tag => tag.name === tFilter);
         const ms = statusFilter==='all' || (statusFilter==='active' && !task.completed) || (statusFilter==='completed' && task.completed);
         return mq && md && mt && ms;
       });
@@ -339,15 +374,15 @@
         const wrap = document.createElement('div');
         wrap.className = 'swipe-wrap';
         wrap.innerHTML = `
-          <div class="swipe-content ${task.completed?'completed':''}" data-id="${task.id}">
+          <div class="swipe-content ${task.completed?'completed':''}">
             <h3>${task.pinned?'<span class="pin-icon">📌</span>':''}${esc(task.title)}</h3>
             ${task.text?`<div class="desc">${esc(task.text).slice(0,100)}${task.text.length>100?'…':''}</div>`:''}
-            <div class="tags">${task.tags.map(t=>`<span class="tag tag-${t}">${t}</span>`).join('')}</div>
+            <div class="tags">${(task.tags||[]).map(t=>`<span class="tag" style="background-color:${t.color}">${esc(t.name)}</span>`).join('')}</div>
             ${task.files?.length?`<div style="margin-top:4px">${task.files.map(f=>`<span class="file-badge">📎 ${f.name}</span>`).join(' ')}</div>`:''}
             <div class="meta">
               <span>${new Date(task.createdAt).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</span>
               ${task.dueDate?`<span class="due-badge ${new Date(task.dueDate)<now&&!task.completed?'overdue':new Date(task.dueDate).toDateString()===now.toDateString()?'today':'future'}">${new Date(task.dueDate)<now&&!task.completed?'❗ Просрочено':new Date(task.dueDate).toDateString()===now.toDateString()?'📅 Сегодня':new Date(task.dueDate).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</span>`:''}
-              ${task.completed?'<span style="color:var(--success);font-weight:600">✅ Выполнено</span>':''}
+              ${task.completed?'<span style="color:var(--success);font-weight:600">✅</span>':''}
             </div>
           </div>
           <div class="swipe-actions">
@@ -369,15 +404,13 @@
     function initSwipe(el) {
       let startX, startY, currentX, isOpen = false;
       const content = el.querySelector('.swipe-content');
-      const actions = el.querySelector('.swipe-actions');
       const max = 120;
-      
       const start = e => { startX = e.touches ? e.touches[0].clientX : e.clientX; startY = e.touches ? e.touches[0].clientY : e.clientY; el.dataset.swiped='0'; };
       const move = e => {
         if(!startX) return;
         const x = e.touches ? e.touches[0].clientX : e.clientX;
         const y = e.touches ? e.touches[0].clientY : e.clientY;
-        if(Math.abs(x-startX) < Math.abs(y-startY)) return; // vertical scroll
+        if(Math.abs(x-startX) < Math.abs(y-startY)) return;
         currentX = Math.max(0, Math.min(max, startX - x));
         if(currentX > 0) content.style.transform = `translateX(-${currentX}px)`;
       };
@@ -387,32 +420,23 @@
         startX = currentX = 0;
         setTimeout(()=> delete el.dataset.swiped, 500);
       };
-      
-      el.addEventListener('touchstart', start, {passive:true});
-      el.addEventListener('touchmove', move, {passive:true});
-      el.addEventListener('touchend', end);
-      el.addEventListener('mousedown', start);
-      el.addEventListener('mousemove', move);
-      el.addEventListener('mouseup', end);
-      el.addEventListener('mouseleave', end);
+      el.addEventListener('touchstart', start, {passive:true}); el.addEventListener('touchmove', move, {passive:true}); el.addEventListener('touchend', end);
+      el.addEventListener('mousedown', start); el.addEventListener('mousemove', move); el.addEventListener('mouseup', end); el.addEventListener('mouseleave', end);
     }
 
     // === Actions ===
-    window.toggleComplete = id => { const t=tasks.find(x=>x.id===id); if(!t)return; t.completed=!t.completed; t.completedAt=t.completed?Date.now():null; save(); renderList(); showToast(t.completed?'✅ Выполнено':'↩️ Возвращено'); };
-    window.togglePin = id => { const t=tasks.find(x=>x.id===id); if(!t)return; if(!t.pinned && tasks.filter(x=>x.pinned).length>=5) return showToast('❌ Макс. 5 закреплённых',true); t.pinned=!t.pinned; save(); renderList(); };
-    window.deleteTask = id => { if(!confirm('Удалить задачу?'))return; tasks=tasks.filter(x=>x.id!==id); save(); renderList(); showToast('🗑️ Удалено'); };
+    window.toggleComplete = async id => { const t=tasks.find(x=>x.id===id); if(!t)return; t.completed=!t.completed; t.completedAt=t.completed?Date.now():null; await IDB.put(t); renderList(); showToast(t.completed?'✅ Выполнено':'↩️ Возвращено'); };
+    window.togglePin = async id => { const t=tasks.find(x=>x.id===id); if(!t)return; if(!t.pinned && tasks.filter(x=>x.pinned).length>=5) return showToast('❌ Макс. 5 закреплённых',true); t.pinned=!t.pinned; await IDB.put(t); renderList(); };
+    window.deleteTask = async id => { if(!confirm('Удалить задачу?'))return; tasks=tasks.filter(x=>x.id!==id); await IDB.delete(id); renderList(); updateStorageBadge(); showToast('🗑️ Удалено'); };
     
     function openDetail(id) {
       const t=tasks.find(x=>x.id===id); if(!t)return;
       $('detailContent').innerHTML = `
         <h1>${esc(t.title)} ${t.completed?'✅':''}</h1>
-        <div class="meta" style="margin-bottom:12px">
-          <div>🕐 ${new Date(t.createdAt).toLocaleString('ru-RU')}</div>
-          ${t.dueDate?`<div>📅 ${new Date(t.dueDate).toLocaleString('ru-RU')}</div>`:''}
-        </div>
-        <div class="tags" style="margin-bottom:12px">${t.tags.map(tag=>`<span class="tag tag-${tag}">${tag}</span>`).join('')}</div>
+        <div class="meta" style="margin-bottom:12px"><div>🕐 ${new Date(t.createdAt).toLocaleString('ru-RU')}</div>${t.dueDate?`<div>📅 ${new Date(t.dueDate).toLocaleString('ru-RU')}</div>`:''}</div>
+        <div class="tags" style="margin-bottom:12px">${(t.tags||[]).map(tag=>`<span class="tag" style="background-color:${tag.color}">${esc(tag.name)}</span>`).join('')}</div>
         ${t.text?`<div class="desc">${esc(t.text)}</div>`:''}
-        ${t.files?.length?`<div class="file-list" style="margin:12px 0">${t.files.map(f=>`<a href="${f.data}" download="${f.name}" style="color:var(--primary)">${f.name}</a>`).join(' • ')}</div>`:''}
+        ${t.files?.length?`<div class="file-list" style="margin:12px 0">${t.files.map(f=>{const u=URL.createObjectURL(f.blob);return`<a href="${u}" download="${f.name}" style="color:var(--primary);margin-right:8px">${f.name}</a>`}).join('')}</div>`:''}
         <div class="detail-actions">
           <button class="btn ${t.completed?'btn-outline':'btn-primary'}" onclick="toggleComplete('${t.id}');openDetail('${t.id}');">${t.completed?'↩️ Возвратить':'✅ Выполнить'}</button>
           <button class="btn btn-outline" onclick="editTask('${t.id}')">✏️ Ред.</button>
@@ -424,13 +448,16 @@
     window.showList = () => { $('listView').style.display='block'; $('detailView').classList.remove('active'); };
     window.editTask = id => { showList(); setTimeout(()=>openModal(id),100); };
 
-    // === Modal ===
+    // === Modal & Tags ===
     window.openModal = (id=null) => {
-      editingId=id; $('taskForm').reset(); currentTags=[]; currentFiles=[]; $('selectedTags').innerHTML=''; $('previewFiles').innerHTML='';
+      editingId=id; $('taskForm').reset(); currentTags=[]; currentFiles=[]; selectedColor='#3b82f6'; 
+      $('selectedTags').innerHTML=''; $('previewFiles').innerHTML='';
+      renderColorPalette();
+      
       if(id) {
         const t=tasks.find(x=>x.id===id); $('modalTitle').textContent='Редактирование';
         $('inputTitle').value=t.title; $('inputText').value=t.text||''; $('inputDue').value=t.dueDate?t.dueDate.slice(0,16):'';
-        $('inputNotify').checked=t.notify!==false; currentTags=[...t.tags]; currentFiles=[...(t.files||[])]; $('inputPin').checked=t.pinned;
+        $('inputNotify').checked=t.notify!==false; currentTags=[...(t.tags||[])]; currentFiles=[...(t.files||[])]; $('inputPin').checked=t.pinned;
         renderSelectedTags(); updateFilePreview();
       } else {
         $('modalTitle').textContent='Новая задача';
@@ -442,12 +469,39 @@
     };
     window.closeModal = () => { $('modal').classList.remove('active'); editingId=null; };
     
-    window.addTagFromSelect = () => { const v=$('inputTagSelect').value; if(v&&!currentTags.includes(v)){currentTags.push(v);renderSelectedTags();} $('inputTagSelect').value=''; };
-    window.addCustomTag = () => { const v=$('inputTagCustom').value.trim().toLowerCase(); if(v&&!currentTags.includes(v)&&v.length<=20){currentTags.push(v);renderSelectedTags();$('inputTagCustom').value='';} };
-    window.removeTag = t => { currentTags=currentTags.filter(x=>x!==t); renderSelectedTags(); };
-    function renderSelectedTags() { $('selectedTags').innerHTML=currentTags.map(t=>`<span class="tag-chip tag-${t}">${t} <button type="button" onclick="removeTag('${t}')">×</button></span>`).join(''); }
+    // Логика тегов
+    window.addTagFromSelect = () => { 
+      const name = $('inputTagSelect').value; 
+      if(!name) return;
+      // Если тег уже есть, не добавляем
+      if(!currentTags.some(t => t.name === name)) {
+        // Берем цвет из пресета или палитры
+        const color = TAG_PRESETS[name] || selectedColor;
+        currentTags.push({ name, color });
+        renderSelectedTags();
+      }
+      $('inputTagSelect').value=''; 
+    };
+    
+    window.addCustomTag = () => { 
+      const name = $('inputTagCustom').value.trim().toLowerCase(); 
+      if(!name || name.length > 20) return;
+      if(!currentTags.some(t => t.name === name)) {
+        currentTags.push({ name, color: selectedColor });
+        renderSelectedTags();
+        $('inputTagCustom').value='';
+      }
+    };
+    
+    window.removeTag = i => { currentTags.splice(i,1); renderSelectedTags(); };
+    
+    function renderSelectedTags() {
+      $('selectedTags').innerHTML = currentTags.map((t,i) => 
+        `<span class="tag-chip" style="background-color:${t.color}">${esc(t.name)} <button type="button" onclick="removeTag(${i})">×</button></span>`
+      ).join('');
+    }
 
-    function saveTask(e) {
+    async function saveTask(e) {
       e.preventDefault();
       const title=$('inputTitle').value.trim(), text=$('inputText').value.trim(), due=$('inputDue').value?new Date($('inputDue').value).toISOString():null;
       const notify=$('inputNotify').checked, pin=$('inputPin').checked;
@@ -456,23 +510,74 @@
       const now=Date.now();
       const task={id:editingId||uid(), title, text, dueDate:due, notify, tags:[...currentTags], pinned:pin, files:[...currentFiles], completed:false, createdAt:editingId?tasks.find(t=>t.id===editingId)?.createdAt||now:now, updatedAt:now};
       
-      if(editingId) { const idx=tasks.findIndex(t=>t.id===editingId); if(idx>-1) tasks[idx]={...tasks[idx],...task}; }
-      else tasks.unshift(task);
+      const idx = editingId ? tasks.findIndex(t=>t.id===editingId) : -1;
+      if(idx>-1) tasks[idx]=task; else tasks.unshift(task);
       
       if(fileLog.count+currentFiles.filter(f=>!tasks.find(t=>t.id===task.id)?.files?.find(of=>of.name===f.name)).length <=5) {
         fileLog.count += currentFiles.length;
+        localStorage.setItem('file_log', JSON.stringify(fileLog));
       }
       
-      if(!save()) return;
-      closeModal(); renderList(); showToast('✅ Сохранено');
+      try {
+        await IDB.put(task);
+        closeModal(); renderList(); updateStorageBadge(); showToast('✅ Сохранено');
+      } catch(err) { showToast('❌ Ошибка: '+err.message, true); }
     }
 
     // === Utils ===
-    function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-    window.toggleTheme = () => { const d=document.documentElement.dataset.theme==='dark'; document.documentElement.dataset.theme=d?'':'dark'; localStorage.setItem(THEME,d?'light':'dark'); };
-    window.exportData = () => { const b=new Blob([JSON.stringify({tasks,fileLog},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`tasks_${new Date().toISOString().slice(0,10)}.json`; a.click(); showToast('📥 Экспорт'); };
-    window.importData = inp => { const f=inp.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{ try{const d=JSON.parse(e.target.result); if(d.tasks){tasks=d.tasks;fileLog=d.fileLog||{date:new Date().toISOString().slice(0,10),count:0};save();renderList();showToast('✅ Импорт');}}catch(err){showToast('❌ Ошибка',true)} inp.value=''; }; r.readAsText(f); };
-    function checkDueTasks(){const now=Date.now();tasks.forEach(t=>{if(!t.dueDate||t.completed||t.notified)return;const due=new Date(t.dueDate).getTime();if(due<now&&t.notify){showToast('❗ Просрочено: '+t.title);t.notified=true;save();}else if(due-now<=15*60000&&!t.reminded&&t.notify){showToast('⏰ Скоро: '+t.title);t.reminded=true;save();}});}
+    window.toggleTheme = () => { const d=document.documentElement.dataset.theme==='dark'; document.documentElement.dataset.theme=d?'':'dark'; localStorage.setItem('theme',d?'light':'dark'); };
+    
+    async function exportData() {
+      showToast('⏳ Подготовка экспорта...');
+      const exportTasks = await Promise.all(tasks.map(async t => {
+        const files = t.files ? await Promise.all(t.files.map(async f => ({ name: f.name, size: f.size, type: f.type,  await blobToDataURL(f.blob) }))) : [];
+        return { ...t, files };
+      }));
+      const b=new Blob([JSON.stringify({tasks:exportTasks,fileLog},null,2)],{type:'application/json'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`tasks_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+      showToast('📥 Экспорт готов');
+    }
+    function blobToDataURL(blob) { return new Promise(res => { const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(blob); }); }
+    
+    async function importData(inp) {
+      const f=inp.files[0]; if(!f)return;
+      const r=new FileReader(); r.onload=async e=>{
+        try {
+          const d=JSON.parse(e.target.result);
+          if(d.tasks){
+            await IDB.clear();
+            tasks = d.tasks.map(t => ({
+              ...t,
+              // Миграция тегов при импорте (если старые данные)
+              tags: t.tags?.map(tag => typeof tag === 'string' ? {name: tag, color: TAG_PRESETS[tag]||getRandomColor()} : tag) || [],
+              files: t.files?.map(f => ({ ...f, blob: dataURLtoBlob(f.data) })) || []
+            }));
+            fileLog=d.fileLog||{date:new Date().toISOString().slice(0,10),count:0};
+            localStorage.setItem('file_log', JSON.stringify(fileLog));
+            for(const t of tasks) await IDB.put(t);
+            renderList(); updateStorageBadge(); showToast('✅ Импорт выполнен');
+          }
+        }catch(err){showToast('❌ Ошибка: '+err.message, true)}
+        inp.value='';
+      }; r.readAsText(f);
+    }
+
+    async function updateStorageBadge() {
+      if(navigator.storage?.estimate) {
+        const est = await navigator.storage.estimate();
+        const used = est.usage || 0;
+        const quota = est.quota || 0;
+        $('storageBadge').textContent = `💾 ${formatBytes(used)} / ${formatBytes(quota)}`;
+      }
+    }
+    function formatBytes(bytes) { if(!bytes) return '0 B'; const k=1024, s=['B','KB','MB','GB']; const i=Math.floor(Math.log(bytes)/Math.log(k)); return parseFloat((bytes/Math.pow(k,i)).toFixed(1))+' '+s[i]; }
+
+    function checkDueTasks(){const now=Date.now();tasks.forEach(t=>{if(!t.dueDate||t.completed||t.notified)return;const due=new Date(t.dueDate).getTime();if(due<now&&t.notify){showToast('❗ Просрочено: '+t.title);t.notified=true;}else if(due-now<=15*60000&&!t.reminded&&t.notify){showToast('⏰ Скоро: '+t.title);t.reminded=true;}}); try{tasks.forEach(t => IDB.put(t));}catch(e){}}
+
+    // PWA
+    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+    let deferredPrompt; window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('installPrompt').classList.add('show'); });
+    async function installPWA() { if(!deferredPrompt)return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; $('installPrompt').classList.remove('show'); showToast('✅ Установлено'); }
 
     init();
   </script>
