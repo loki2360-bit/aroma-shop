@@ -40,34 +40,143 @@
     .status-btn { padding: 6px 8px; border: 1px solid var(--border); background: transparent; border-radius: 6px; font-size: 0.8rem; cursor: pointer; color: var(--muted); }
     .status-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     
-    .task-list { list-style: none; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .task-list { list-style: none; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
     .swipe-wrap { position: relative; overflow: hidden; border-radius: var(--radius); touch-action: pan-y; }
-    .swipe-content { background: var(--card); padding: 14px; box-shadow: var(--shadow); cursor: pointer; border-left: 4px solid var(--primary); transition: transform 0.2s, background 0.15s; position: relative; z-index: 2; }
-    .swipe-content.completed { opacity: 0.65; border-left-color: var(--muted); }
-    .swipe-content.completed h3 { text-decoration: line-through; }
+    
+    /* Компактная карточка */
+    .swipe-content { 
+      background: var(--card); 
+      padding: 12px 14px; 
+      box-shadow: var(--shadow); 
+      cursor: pointer; 
+      border-left: 4px solid var(--primary); 
+      transition: transform 0.2s, background 0.15s; 
+      position: relative; 
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+    }
+    .swipe-content.completed { opacity: 0.6; border-left-color: var(--muted); }
+    .swipe-content.completed h3 { text-decoration: line-through; color: var(--muted); }
+    .swipe-content:active { background: rgba(37,99,235,0.08); }
+    
+    .task-title-wrap { 
+      flex: 1; 
+      min-width: 0; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+      overflow: hidden;
+    }
+    .task-card h3 { 
+      font-size: 0.95rem; 
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+    .task-indicators {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .indicator {
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .indicator.pin { background: var(--warning); color: #fff; }
+    .indicator.due { background: #fee2e2; color: #991b1b; }
+    .indicator.today { background: #dcfce7; color: #166534; }
+    .indicator.file { background: #e0f2fe; color: #075985; }
+    
     .swipe-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; z-index: 1; }
-    .swipe-btn { width: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; font-size: 0.8rem; gap: 4px; }
+    .swipe-btn { width: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; font-size: 0.75rem; gap: 4px; }
     .swipe-btn.complete { background: var(--success); }
     .swipe-btn.delete { background: var(--danger); }
     .swipe-btn.pin { background: var(--warning); }
     
-    .task-card h3 { font-size: 1rem; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: start; }
-    .task-card .meta { font-size: 0.75rem; color: var(--muted); margin-top: 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .task-card .desc { font-size: 0.9rem; margin: 6px 0; color: var(--text); opacity: 0.9; }
+    /* Детали задачи */
+    #detailView { display: none; padding: 16px; }
+    #detailView.active { display: block; }
+    .detail-card { background: var(--card); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); }
+    .detail-card h1 { font-size: 1.3rem; margin-bottom: 12px; line-height: 1.3; }
+    .detail-meta { 
+      display: flex; 
+      gap: 16px; 
+      flex-wrap: wrap; 
+      margin-bottom: 16px; 
+      padding-bottom: 16px; 
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .detail-meta div { display: flex; align-items: center; gap: 4px; }
+    .detail-card .desc { 
+      font-size: 1rem; 
+      margin: 16px 0; 
+      line-height: 1.6; 
+      white-space: pre-wrap;
+      color: var(--text);
+    }
+    .detail-card .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+    .tag { font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; color: #fff; font-weight: 600; }
     
-    /* Новые стили тегов */
-    .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-    .tag { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; color: #fff; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .file-gallery { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+      gap: 10px; 
+      margin: 16px 0; 
+    }
+    .file-item-img {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      transition: transform 0.2s;
+    }
+    .file-item-img:hover { transform: scale(1.05); }
+    .file-item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .file-item-name {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     
-    .due-badge, .file-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
-    .due-badge.overdue { background: #fee2e2; color: #991b1b; }
-    .due-badge.today { background: #dcfce7; color: #166534; }
-    .due-badge.future { background: #e0f2fe; color: #075985; }
-    .file-badge { background: #f1f5f9; color: #475569; }
+    .detail-actions { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .detail-actions button { flex: 1; min-width: 120px; }
     
-    .fab { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: var(--primary); color: #fff; border: none; border-radius: 50%; font-size: 28px; box-shadow: 0 4px 14px rgba(37,99,235,0.4); cursor: pointer; z-index: 40; }
-    .fab:active { transform: scale(0.95); }
+    .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty svg { width: 60px; height: 60px; margin-bottom: 12px; opacity: 0.6; }
+    .loading { text-align: center; padding: 20px; color: var(--muted); }
     
+    #installPrompt { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--card); padding: 10px 16px; border-radius: 10px; box-shadow: var(--shadow); display: none; align-items: center; gap: 8px; z-index: 60; border: 1px solid var(--border); font-size: 0.9rem; }
+    #installPrompt.show { display: flex; }
+    .hidden { display: none !important; }
+    .pin-icon { color: var(--warning); }
+    [data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select { background: #0f172a; border-color: #475569; }
+    @media(max-width: 480px) { .search-bar { flex-direction: column; } .search-bar input, .search-bar select { width: 100%; } }
+    
+    #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1e293b; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 0.9rem; opacity: 0; transition: all 0.3s; z-index: 200; pointer-events: none; max-width: 90%; text-align: center; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.error { background: var(--danger); }
+    
+    /* Modal */
     .modal { position: fixed; inset: 0; background: rgba(15,23,42,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 100; }
     .modal.active { display: flex; }
     @media(min-width: 640px) { .modal { align-items: center; } }
@@ -84,40 +193,45 @@
     .tags-input { display: flex; gap: 6px; flex-wrap: wrap; }
     .tags-input input, .tags-input select { flex: 1; min-width: 100px; }
     
-    /* Стили для выбора цвета и чипов тегов */
     .tag-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
     .tag-chip button { background: none; border: none; color: inherit; padding: 0; margin-left: 2px; cursor: pointer; font-size: 1rem; line-height: 1; }
-    .color-palette { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
-    .color-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.1s; }
+    .color-palette { display: flex; gap: 6px; margin-top: 6px; align-items: center; flex-wrap: wrap; }
+    .color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.1s; }
     .color-dot:hover { transform: scale(1.2); }
     .color-dot.selected { border-color: var(--text); transform: scale(1.2); }
     
-    .file-list { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
-    .file-item { background: #e0f2fe; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; color: #075985; display: flex; align-items: center; gap: 4px; }
-    .file-item button { background: none; border: none; color: inherit; padding: 0; cursor: pointer; }
-    
-    #detailView { display: none; padding: 16px; }
-    #detailView.active { display: block; }
-    .detail-card { background: var(--card); padding: 16px; border-radius: var(--radius); box-shadow: var(--shadow); }
-    .detail-card h1 { font-size: 1.2rem; margin-bottom: 8px; }
-    .detail-card .desc { font-size: 1rem; margin: 10px 0; line-height: 1.6; white-space: pre-wrap; }
-    .detail-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
-    .detail-actions button { flex: 1; min-width: 100px; }
-    
-    .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
-    .empty svg { width: 60px; height: 60px; margin-bottom: 12px; opacity: 0.6; }
-    .loading { text-align: center; padding: 20px; color: var(--muted); }
-    
-    #installPrompt { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--card); padding: 10px 16px; border-radius: 10px; box-shadow: var(--shadow); display: none; align-items: center; gap: 8px; z-index: 60; border: 1px solid var(--border); font-size: 0.9rem; }
-    #installPrompt.show { display: flex; }
-    .hidden { display: none !important; }
-    .pin-icon { color: var(--warning); margin-right: 4px; }
-    [data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select { background: #0f172a; border-color: #475569; }
-    @media(max-width: 480px) { .search-bar { flex-direction: column; } .search-bar input, .search-bar select { width: 100%; } }
-    
-    #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1e293b; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 0.9rem; opacity: 0; transition: all 0.3s; z-index: 200; pointer-events: none; max-width: 90%; text-align: center; }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #toast.error { background: var(--danger); }
+    .file-list { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .file-preview { 
+      position: relative; 
+      width: 80px; 
+      height: 80px; 
+      border-radius: 8px; 
+      overflow: hidden; 
+      border: 2px solid var(--border);
+    }
+    .file-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .file-preview button {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(239, 68, 68, 0.9);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fab { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: var(--primary); color: #fff; border: none; border-radius: 50%; font-size: 28px; box-shadow: 0 4px 14px rgba(37,99,235,0.4); cursor: pointer; z-index: 40; }
+    .fab:active { transform: scale(0.95); }
   </style>
 </head>
 <body>
@@ -166,21 +280,15 @@
         <div class="fg"><label>Описание</label><textarea id="inputText" placeholder="Детали, заметки..."></textarea></div>
         <div class="fg"><label>Срок выполнения</label><input type="datetime-local" id="inputDue" step="60"><small style="color:var(--muted);font-size:0.7rem">Напоминание за 15 мин</small></div>
         <div class="fg">
-          <label>Файлы (макс. 5/день, до 5 МБ каждый)</label>
-          <input type="file" id="inputFiles" multiple>
+          <label>Фото (только изображения, макс. 5/день)</label>
+          <input type="file" id="inputFiles" multiple accept="image/*">
           <small id="fileLimitInfo" style="color:var(--muted);font-size:0.7rem"></small>
           <div id="previewFiles" class="file-list"></div>
         </div>
         
-        <!-- Блок тегов с палитрой -->
         <div class="fg">
           <label>Теги (выберите цвет)</label>
-          
-          <!-- Палитра цветов -->
-          <div class="color-palette" id="colorPalette">
-            <!-- Генерируется JS -->
-          </div>
-          
+          <div class="color-palette" id="colorPalette"></div>
           <div class="tags-input" style="margin-top:6px">
             <select id="inputTagSelect" onchange="addTagFromSelect()">
               <option value="">+ Добавить стандартный</option>
@@ -231,10 +339,7 @@
     let currentFiles = [], statusFilter = 'all';
     let selectedColor = '#3b82f6'; 
 
-    // Палитра цветов
     const PALETTE = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#6366f1', '#64748b'];
-    
-    // Соответствие стандартных тегов и цветов
     const TAG_PRESETS = {
       'срочно': '#ef4444', 'важно': '#f59e0b', 'личное': '#8b5cf6',
       'работа': '#3b82f6', 'идея': '#10b981', 'покупки': '#ec4899'
@@ -244,26 +349,20 @@
     const uid = () => crypto?.randomUUID?.() || Date.now().toString(36)+Math.random().toString(36).slice(2);
     const esc = s => (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-    // === Init & Migration ===
+    // === Init ===
     async function init() {
       try {
         renderColorPalette();
         await IDB.init();
         
-        // Миграция старых данных
         const old = localStorage.getItem('tasks_v3');
         if (old) {
           try {
             const oldTasks = JSON.parse(old);
             for (const t of oldTasks) {
-              // Конвертация файлов
               if (t.files) t.files = t.files.map(f => ({ name: f.name, size: f.size, type: f.type, blob: dataURLtoBlob(f.data) }));
-              // Конвертация тегов из строк в объекты
               if (t.tags && typeof t.tags[0] === 'string') {
-                t.tags = t.tags.map(tagName => ({
-                  name: tagName,
-                  color: TAG_PRESETS[tagName] || getRandomColor()
-                }));
+                t.tags = t.tags.map(tagName => ({ name: tagName, color: TAG_PRESETS[tagName] || getRandomColor() }));
               }
               await IDB.put(t);
             }
@@ -293,7 +392,6 @@
         console.error('Init Error:', e);
         showToast('Ошибка загрузки', true);
       } finally {
-        // Всегда скрываем загрузку и показываем контент
         $('loadingState').classList.add('hidden');
         $('taskList').classList.remove('hidden');
         $('addBtn').classList.remove('hidden');
@@ -309,11 +407,10 @@
     
     function getRandomColor() { return PALETTE[Math.floor(Math.random() * PALETTE.length)]; }
 
-    // === UI Helpers ===
     function renderColorPalette() {
       $('colorPalette').innerHTML = PALETTE.map(c => 
         `<div class="color-dot ${c===selectedColor?'selected':''}" style="background:${c}" onclick="selectColor('${c}')"></div>`
-      ).join('') + `<input type="color" id="customColorInput" value="${selectedColor}" style="width:20px;height:20px;border:none;background:none;cursor:pointer" onchange="selectColor(this.value)">`;
+      ).join('') + `<input type="color" id="customColorInput" value="${selectedColor}" style="width:24px;height:24px;border:none;background:none;cursor:pointer" onchange="selectColor(this.value)">`;
     }
     window.selectColor = c => {
       selectedColor = c;
@@ -327,25 +424,39 @@
       return '#' + match.slice(0,3).map(x => parseInt(x).toString(16).padStart(2,'0')).join('');
     }
 
-    // === File Handling ===
+    // === File Handling (только изображения) ===
     function handleFileSelect(e) {
       const files = Array.from(e.target.files);
       const limit = 5 - fileLog.count;
       if(limit <= 0) { showToast('❌ Лимит файлов на день исчерпан', true); e.target.value=''; return; }
+      
       currentFiles = [];
       let loaded = 0;
       files.slice(0, limit).forEach(f => {
+        // Проверка: только изображения
+        if(!f.type.startsWith('image/')) {
+          showToast(`❌ ${f.name} — не изображение`, true);
+          return;
+        }
         if(f.size > 5*1024*1024) { showToast(`❌ ${f.name} > 5 МБ`, true); return; }
         currentFiles.push({ name: f.name, size: f.size, type: f.type, blob: f });
         loaded++;
       });
-      $('fileLimitInfo').textContent = `Загружено: ${loaded}/${limit}`;
+      $('fileLimitInfo').textContent = `Загружено: ${loaded}/${limit} (только изображения)`;
       updateFilePreview();
     }
-    function updateFilePreview() { $('previewFiles').innerHTML = currentFiles.map((f,i)=>`<span class="file-item">📎 ${f.name} <button type="button" onclick="removeFile(${i})">✕</button></span>`).join(''); }
+    
+    function updateFilePreview() { 
+      $('previewFiles').innerHTML = currentFiles.map((f,i)=>`
+        <div class="file-preview">
+          <img src="${URL.createObjectURL(f.blob)}" alt="${esc(f.name)}">
+          <button type="button" onclick="removeFile(${i})">×</button>
+        </div>
+      `).join(''); 
+    }
     window.removeFile = i => { currentFiles.splice(i,1); updateFilePreview(); };
 
-    // === Render List ===
+    // === Render List (компактный) ===
     function renderList() {
       const q = $('searchInput').value.toLowerCase();
       const d = $('searchDate').value;
@@ -355,7 +466,6 @@
       let list = tasks.filter(task => {
         const mq = !q || task.title.toLowerCase().includes(q) || (task.text||'').toLowerCase().includes(q);
         const md = !d || (task.dueDate && new Date(task.dueDate).toISOString().startsWith(d));
-        // Поиск по тегу (теперь тег - объект)
         const mt = !tFilter || task.tags.some(tag => tag.name === tFilter);
         const ms = statusFilter==='all' || (statusFilter==='active' && !task.completed) || (statusFilter==='completed' && task.completed);
         return mq && md && mt && ms;
@@ -375,22 +485,25 @@
       list.forEach(task => {
         const wrap = document.createElement('div');
         wrap.className = 'swipe-wrap';
+        
+        const isOverdue = task.dueDate && new Date(task.dueDate) < now && !task.completed;
+        const isToday = task.dueDate && new Date(task.dueDate).toDateString() === now.toDateString() && !task.completed;
+        
         wrap.innerHTML = `
           <div class="swipe-content ${task.completed?'completed':''}">
-            <h3>${task.pinned?'<span class="pin-icon">📌</span>':''}${esc(task.title)}</h3>
-            ${task.text?`<div class="desc">${esc(task.text).slice(0,100)}${task.text.length>100?'…':''}</div>`:''}
-            <div class="tags">${(task.tags||[]).map(t=>`<span class="tag" style="background-color:${t.color}">${esc(t.name)}</span>`).join('')}</div>
-            ${task.files?.length?`<div style="margin-top:4px">${task.files.map(f=>`<span class="file-badge">📎 ${f.name}</span>`).join(' ')}</div>`:''}
-            <div class="meta">
-              <span>${new Date(task.createdAt).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</span>
-              ${task.dueDate?`<span class="due-badge ${new Date(task.dueDate)<now&&!task.completed?'overdue':new Date(task.dueDate).toDateString()===now.toDateString()?'today':'future'}">${new Date(task.dueDate)<now&&!task.completed?'❗ Просрочено':new Date(task.dueDate).toDateString()===now.toDateString()?'📅 Сегодня':new Date(task.dueDate).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</span>`:''}
-              ${task.completed?'<span style="color:var(--success);font-weight:600">✅</span>':''}
+            <div class="task-title-wrap">
+              ${task.pinned?'<span class="pin-icon">📌</span>':''}
+              <h3>${esc(task.title)}</h3>
+            </div>
+            <div class="task-indicators">
+              ${task.files?.length?`<span class="indicator file">📷 ${task.files.length}</span>`:''}
+              ${isOverdue?`<span class="indicator due">Просрочено</span>`:''}
+              ${isToday?`<span class="indicator today">Сегодня</span>`:''}
             </div>
           </div>
           <div class="swipe-actions">
-            <div class="swipe-btn pin" onclick="togglePin('${task.id}')">📌<br>Пин</div>
-            <div class="swipe-btn complete" onclick="toggleComplete('${task.id}')">${task.completed?'↩️<br>Возвр.':'✅<br>Готово'}</div>
-            <div class="swipe-btn delete" onclick="deleteTask('${task.id}')">🗑️<br>Удалить</div>
+            <div class="swipe-btn complete" onclick="toggleComplete('${task.id}')">${task.completed?'↩️':'✅'}</div>
+            <div class="swipe-btn delete" onclick="deleteTask('${task.id}')">🗑️</div>
           </div>
         `;
         initSwipe(wrap);
@@ -402,7 +515,6 @@
     window.setStatusFilter = s => { statusFilter=s; document.querySelectorAll('.status-btn').forEach(b=>b.classList.remove('active')); document.querySelector(`.status-btn:nth-child(${s==='all'?1:s==='active'?2:3})`).classList.add('active'); renderList(); };
     window.clearDateFilter = () => { $('searchDate').value=''; renderList(); };
 
-    // === Swipe ===
     function initSwipe(el) {
       let startX, startY, currentX, isOpen = false;
       const content = el.querySelector('.swipe-content');
@@ -426,23 +538,35 @@
       el.addEventListener('mousedown', start); el.addEventListener('mousemove', move); el.addEventListener('mouseup', end); el.addEventListener('mouseleave', end);
     }
 
-    // === Actions ===
     window.toggleComplete = async id => { const t=tasks.find(x=>x.id===id); if(!t)return; t.completed=!t.completed; t.completedAt=t.completed?Date.now():null; await IDB.put(t); renderList(); showToast(t.completed?'✅ Выполнено':'↩️ Возвращено'); };
     window.togglePin = async id => { const t=tasks.find(x=>x.id===id); if(!t)return; if(!t.pinned && tasks.filter(x=>x.pinned).length>=5) return showToast('❌ Макс. 5 закреплённых',true); t.pinned=!t.pinned; await IDB.put(t); renderList(); };
     window.deleteTask = async id => { if(!confirm('Удалить задачу?'))return; tasks=tasks.filter(x=>x.id!==id); await IDB.delete(id); renderList(); updateStorageBadge(); showToast('🗑️ Удалено'); };
     
     function openDetail(id) {
       const t=tasks.find(x=>x.id===id); if(!t)return;
+      const tagsHtml = (t.tags||[]).map(tag=>`<span class="tag" style="background-color:${tag.color}">${esc(tag.name)}</span>`).join('');
+      const dueStr = t.dueDate ? new Date(t.dueDate).toLocaleString('ru-RU') : 'Не указан';
+      const isOverdue = t.dueDate && new Date(t.dueDate) < new Date() && !t.completed;
+      
+      let filesHtml = '';
+      if(t.files?.length) {
+        filesHtml = `<div style="margin:16px 0"><strong>Фотографии:</strong><div class="file-gallery">${t.files.map((f,i)=>{const u=URL.createObjectURL(f.blob);return`<div class="file-item-img" onclick="window.open('${u}','_blank')"><img src="${u}" alt="${esc(f.name)}"><div class="file-item-name">${esc(f.name)}</div></div>`}).join('')}</div></div>`;
+      }
+      
       $('detailContent').innerHTML = `
         <h1>${esc(t.title)} ${t.completed?'✅':''}</h1>
-        <div class="meta" style="margin-bottom:12px"><div>🕐 ${new Date(t.createdAt).toLocaleString('ru-RU')}</div>${t.dueDate?`<div>📅 ${new Date(t.dueDate).toLocaleString('ru-RU')}</div>`:''}</div>
-        <div class="tags" style="margin-bottom:12px">${(t.tags||[]).map(tag=>`<span class="tag" style="background-color:${tag.color}">${esc(tag.name)}</span>`).join('')}</div>
-        ${t.text?`<div class="desc">${esc(t.text)}</div>`:''}
-        ${t.files?.length?`<div class="file-list" style="margin:12px 0">${t.files.map(f=>{const u=URL.createObjectURL(f.blob);return`<a href="${u}" download="${f.name}" style="color:var(--primary);margin-right:8px">${f.name}</a>`}).join('')}</div>`:''}
+        <div class="detail-meta">
+          <div>🕐 ${new Date(t.createdAt).toLocaleString('ru-RU')}</div>
+          <div>📅 ${isOverdue?'<span style="color:var(--danger);font-weight:600">Просрочено:</span>':''}${dueStr}</div>
+          ${t.completed?`<div>✅ Выполнено: ${new Date(t.completedAt).toLocaleString('ru-RU')}</div>`:''}
+        </div>
+        ${tagsHtml?`<div style="margin-bottom:12px">${tagsHtml}</div>`:''}
+        ${t.text?`<div class="desc">${esc(t.text)}</div>`:'<div class="desc" style="color:var(--muted)">Без описания</div>'}
+        ${filesHtml}
         <div class="detail-actions">
           <button class="btn ${t.completed?'btn-outline':'btn-primary'}" onclick="toggleComplete('${t.id}');openDetail('${t.id}');">${t.completed?'↩️ Возвратить':'✅ Выполнить'}</button>
-          <button class="btn btn-outline" onclick="editTask('${t.id}')">✏️ Ред.</button>
-          <button class="btn btn-danger" onclick="deleteTask('${t.id}')">🗑️</button>
+          <button class="btn btn-outline" onclick="editTask('${t.id}')">✏️ Редактировать</button>
+          <button class="btn btn-danger" onclick="deleteTask('${t.id}')">🗑️ Удалить</button>
         </div>
       `;
       $('listView').style.display='none'; $('detailView').classList.add('active');
@@ -450,7 +574,6 @@
     window.showList = () => { $('listView').style.display='block'; $('detailView').classList.remove('active'); };
     window.editTask = id => { showList(); setTimeout(()=>openModal(id),100); };
 
-    // === Modal & Tags ===
     window.openModal = (id=null) => {
       editingId=id; $('taskForm').reset(); currentTags=[]; currentFiles=[]; selectedColor='#3b82f6'; 
       $('selectedTags').innerHTML=''; $('previewFiles').innerHTML='';
@@ -465,19 +588,16 @@
         $('modalTitle').textContent='Новая задача';
         const p=tasks.filter(x=>x.pinned).length; $('inputPin').disabled=p>=5; $('inputPin').title=p>=5?'Макс. 5':'';
         const tm=new Date(); tm.setDate(tm.getDate()+1); tm.setHours(18,0); $('inputDue').value=tm.toISOString().slice(0,16);
-        $('fileLimitInfo').textContent=`Доступно файлов сегодня: ${Math.max(0,5-fileLog.count)}`;
+        $('fileLimitInfo').textContent=`Доступно фото сегодня: ${Math.max(0,5-fileLog.count)}`;
       }
       $('modal').classList.add('active'); setTimeout(()=>$('inputTitle').focus(),100);
     };
     window.closeModal = () => { $('modal').classList.remove('active'); editingId=null; };
     
-    // Логика тегов
     window.addTagFromSelect = () => { 
       const name = $('inputTagSelect').value; 
       if(!name) return;
-      // Если тег уже есть, не добавляем
       if(!currentTags.some(t => t.name === name)) {
-        // Берем цвет из пресета или палитры
         const color = TAG_PRESETS[name] || selectedColor;
         currentTags.push({ name, color });
         renderSelectedTags();
@@ -526,24 +646,19 @@
       } catch(err) { showToast('❌ Ошибка: '+err.message, true); }
     }
 
-    // === Utils ===
     window.toggleTheme = () => { const d=document.documentElement.dataset.theme==='dark'; document.documentElement.dataset.theme=d?'':'dark'; localStorage.setItem('theme',d?'light':'dark'); };
     
     async function exportData() {
       showToast('⏳ Подготовка экспорта...');
       try {
         const exportTasks = await Promise.all(tasks.map(async t => {
-          const files = t.files ? await Promise.all(t.files.map(async f => ({ 
-            name: f.name, size: f.size, type: f.type, data: await blobToDataURL(f.blob) // ИСПРАВЛЕНО: добавлено 'data:'
-          }))) : [];
+          const files = t.files ? await Promise.all(t.files.map(async f => ({ name: f.name, size: f.size, type: f.type, data: await blobToDataURL(f.blob) }))) : [];
           return { ...t, files };
         }));
         const b=new Blob([JSON.stringify({tasks:exportTasks,fileLog},null,2)],{type:'application/json'});
         const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`tasks_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
         showToast('📥 Экспорт готов');
-      } catch(err) {
-        showToast('❌ Ошибка экспорта: '+err.message, true);
-      }
+      } catch(err) { showToast('❌ Ошибка экспорта', true); }
     }
     function blobToDataURL(blob) { return new Promise(res => { const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(blob); }); }
     
@@ -556,7 +671,6 @@
             await IDB.clear();
             tasks = d.tasks.map(t => ({
               ...t,
-              // Миграция тегов при импорте (если старые данные)
               tags: t.tags?.map(tag => typeof tag === 'string' ? {name: tag, color: TAG_PRESETS[tag]||getRandomColor()} : tag) || [],
               files: t.files?.map(f => ({ ...f, blob: dataURLtoBlob(f.data) })) || []
             }));
@@ -575,7 +689,7 @@
         const est = await navigator.storage.estimate();
         const used = est.usage || 0;
         const quota = est.quota || 0;
-        $('storageBadge').textContent = `💾 ${formatBytes(used)} / ${formatBytes(quota)}`;
+        $('storageBadge').textContent = `💾 ${formatBytes(used)}`;
       }
     }
     function formatBytes(bytes) { if(!bytes) return '0 B'; const k=1024, s=['B','KB','MB','GB']; const i=Math.floor(Math.log(bytes)/Math.log(k)); return parseFloat((bytes/Math.pow(k,i)).toFixed(1))+' '+s[i]; }
@@ -585,19 +699,12 @@
       tasks.forEach(t=>{
         if(!t.dueDate||t.completed||t.notified)return;
         const due=new Date(t.dueDate).getTime();
-        if(due<now&&t.notify){
-          showToast('❗ Просрочено: '+t.title);
-          t.notified=true;
-        } else if(due-now<=15*60000&&!t.reminded&&t.notify){
-          showToast('⏰ Скоро: '+t.title);
-          t.reminded=true;
-        }
+        if(due<now&&t.notify){ showToast('❗ Просрочено: '+t.title); t.notified=true; }
+        else if(due-now<=15*60000&&!t.reminded&&t.notify){ showToast('⏰ Скоро: '+t.title); t.reminded=true; }
       });
-      // Обновляем статусы в БД тихо
       tasks.forEach(t => { if(t.notified || t.reminded) IDB.put(t); });
     }
 
-    // PWA
     if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
     let deferredPrompt; window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('installPrompt').classList.add('show'); });
     async function installPWA() { if(!deferredPrompt)return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; $('installPrompt').classList.remove('show'); showToast('✅ Установлено'); }
