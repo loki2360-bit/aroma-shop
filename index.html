@@ -24,13 +24,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.5; padding-bottom: 80px; }
     
-    /* Header */
     header { position: sticky; top: 0; z-index: 50; background: var(--card); padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
     .brand { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
     .brand span { font-size: 0.7rem; background: var(--primary); color: #fff; padding: 2px 6px; border-radius: 6px; }
     .actions { display: flex; gap: 6px; }
     
-    /* Buttons */
     .btn { padding: 8px 12px; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; min-height: 36px; transition: transform 0.1s; }
     .btn:active { transform: scale(0.96); }
     .btn-primary { background: var(--primary); color: #fff; }
@@ -39,11 +37,9 @@
     .btn-sm { padding: 6px 10px; font-size: 0.85rem; min-height: 32px; }
     .btn-icon { width: 36px; height: 36px; padding: 0; justify-content: center; }
     
-    /* Search */
     .search-bar { padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap; }
     .search-bar input, .search-bar select { flex: 1; min-width: 120px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; background: var(--bg); color: var(--text); }
     
-    /* Task List */
     .task-list { list-style: none; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
     .task-card { background: var(--card); padding: 14px; border-radius: var(--radius); box-shadow: var(--shadow); cursor: pointer; border-left: 4px solid var(--primary); transition: background 0.15s; position: relative; }
     .task-card:active { background: rgba(37,99,235,0.06); }
@@ -65,11 +61,9 @@
     .due-badge.today { background: #dcfce7; color: #166534; }
     .due-badge.future { background: #e0f2fe; color: #075985; }
     
-    /* FAB */
     .fab { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: var(--primary); color: #fff; border: none; border-radius: 50%; font-size: 28px; box-shadow: 0 4px 14px rgba(37,99,235,0.4); cursor: pointer; z-index: 40; }
     .fab:active { transform: scale(0.95); }
     
-    /* Modal */
     .modal { position: fixed; inset: 0; background: rgba(15,23,42,0.5); display: none; justify-content: center; align-items: flex-end; z-index: 100; }
     .modal.active { display: flex; }
     @media(min-width: 640px) { .modal { align-items: center; } }
@@ -79,7 +73,6 @@
     .modal-header h2 { font-size: 1.1rem; font-weight: 700; }
     .close { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--muted); }
     
-    /* Form */
     .form-grid { display: flex; flex-direction: column; gap: 12px; }
     .fg label { font-size: 0.75rem; color: var(--muted); display: block; margin-bottom: 4px; }
     .fg input, .fg textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; background: var(--bg); color: var(--text); }
@@ -89,7 +82,6 @@
     .tag-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: var(--primary); color: #fff; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
     .tag-chip button { background: none; border: none; color: inherit; padding: 0; margin-left: 2px; cursor: pointer; font-size: 1rem; line-height: 1; }
     
-    /* Detail View */
     #detailView { display: none; padding: 16px; }
     #detailView.active { display: block; }
     .detail-card { background: var(--card); padding: 16px; border-radius: var(--radius); box-shadow: var(--shadow); }
@@ -98,11 +90,9 @@
     .detail-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
     .detail-actions button { flex: 1; min-width: 100px; }
     
-    /* Empty State */
     .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
     .empty svg { width: 60px; height: 60px; margin-bottom: 12px; opacity: 0.6; }
     
-    /* Install Prompt */
     #installPrompt { 
       position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); 
       background: var(--card); padding: 10px 16px; border-radius: 10px; 
@@ -111,7 +101,6 @@
     }
     #installPrompt.show { display: flex; }
     
-    /* Utilities */
     .hidden { display: none !important; }
     .pin-icon { color: var(--warning); margin-right: 4px; }
     [data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select { background: #0f172a; border-color: #475569; }
@@ -120,6 +109,16 @@
       .search-bar { flex-direction: column; }
       .search-bar input, .search-bar select { width: 100%; }
     }
+    
+    /* Toast уведомления */
+    #toast {
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #1e293b; color: #fff; padding: 10px 16px; border-radius: 8px;
+      font-size: 0.9rem; opacity: 0; transition: all 0.3s; z-index: 200; pointer-events: none;
+      max-width: 90%; text-align: center;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.error { background: var(--danger); }
   </style>
 </head>
 <body>
@@ -130,12 +129,16 @@
       <div class="actions">
         <button class="btn btn-outline btn-sm" onclick="toggleTheme()" title="Тема">🌓</button>
         <button class="btn btn-outline btn-sm" onclick="exportData()" title="Экспорт">📥</button>
+        <label class="btn btn-outline btn-sm" title="Импорт" style="cursor:pointer">
+          📤<input type="file" accept=".json" onchange="importData(this)" style="display:none">
+        </label>
       </div>
     </header>
     
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="🔍 Поиск..." oninput="renderList()">
       <input type="date" id="searchDate" onchange="renderList()">
+      <button class="btn btn-outline btn-sm" onclick="clearDateFilter()" title="Сбросить дату">✕ Дата</button>
       <select id="searchTag" onchange="renderList()">
         <option value="">Все теги</option>
         <option value="срочно">🔴 Срочно</option>
@@ -226,19 +229,16 @@
     <button class="btn btn-primary btn-sm" onclick="installPWA()">Установить</button>
     <button class="btn btn-outline btn-sm" onclick="this.parentElement.classList.remove('show')">✕</button>
   </div>
+  
+  <!-- Toast -->
+  <div id="toast"></div>
 
   <script>
     // === PWA Registration ===
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-          .then(reg => {
-            console.log('SW registered', reg.scope);
-            // Запрос разрешения на уведомления
-            if ('Notification' in window && Notification.permission === 'default') {
-              // Не запрашиваем сразу, ждём действия пользователя
-            }
-          })
+          .then(reg => console.log('SW registered', reg.scope))
           .catch(err => console.log('SW error', err));
       });
     }
@@ -254,144 +254,197 @@
     async function installPWA() {
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
-      const choice = await deferredPrompt.userChoice;
-      if (choice.outcome === 'accepted') {
-        console.log('PWA installed');
-      }
+      await deferredPrompt.userChoice;
       deferredPrompt = null;
       $('installPrompt').classList.remove('show');
     }
     
     window.addEventListener('appinstalled', () => {
-      console.log('PWA installed');
       $('installPrompt').classList.remove('show');
+      showToast('✅ Приложение установлено!');
     });
 
     // === Хранилище ===
     const DB_KEY = 'tasks_lite_v2';
     const NOTIF_KEY = 'tasks_notifs_v1';
-    const uuid = () => (crypto.randomUUID?.() || Math.random().toString(36).substr(2, 9));
     
-    let tasks = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-    let notifSchedule = JSON.parse(localStorage.getItem(NOTIF_KEY) || '{}');
+    // Генерация UUID с защитой от коллизий
+    function generateId() {
+      if (crypto?.randomUUID) return crypto.randomUUID();
+      return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    let tasks = [];
+    let notifSchedule = {};
     let editingId = null;
     let currentTags = [];
+    
+    // Загрузка с обработкой ошибок
+    function loadTasks() {
+      try {
+        const raw = localStorage.getItem(DB_KEY);
+        tasks = raw ? JSON.parse(raw) : [];
+        console.log(`📦 Загружено задач: ${tasks.length}`);
+      } catch(e) {
+        console.error('❌ Ошибка загрузки:', e);
+        tasks = [];
+        showToast('⚠️ Ошибка загрузки данных', true);
+      }
+      try {
+        const raw = localStorage.getItem(NOTIF_KEY);
+        notifSchedule = raw ? JSON.parse(raw) : {};
+      } catch(e) { notifSchedule = {}; }
+    }
+    
+    // Сохранение с обработкой квоты
+    function saveTasks() {
+      try {
+        localStorage.setItem(DB_KEY, JSON.stringify(tasks));
+        localStorage.setItem(NOTIF_KEY, JSON.stringify(notifSchedule));
+        console.log(`💾 Сохранено задач: ${tasks.length}`);
+        return true;
+      } catch(e) {
+        console.error('❌ Ошибка сохранения:', e);
+        if (e.name === 'QuotaExceededError') {
+          showToast('❌ Память переполнена! Удалите старые задачи', true);
+        } else {
+          showToast('❌ Ошибка сохранения', true);
+        }
+        return false;
+      }
+    }
     
     // === DOM ===
     const $ = id => document.getElementById(id);
     
+    // === Toast уведомления ===
+    function showToast(msg, isError = false) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.className = isError ? 'error show' : 'show';
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    
     // === Инициализация ===
     function init() {
+      loadTasks();
       renderList();
       updateTagFilter();
-      checkDueTasks(); // Проверка дедлайнов при запуске
-      scheduleReminderChecks(); // Периодическая проверка
+      checkDueTasks();
+      scheduleReminderChecks();
       
-      // События
       $('addBtn').onclick = () => openModal();
       $('taskForm').onsubmit = saveTask;
       document.onkeydown = e => { if(e.key==='Escape'){ closeModal(); showList(); } };
       
-      // Тема
       if(localStorage.getItem('theme') === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
       }
       
-      // Запрос прав на уведомления при первом действии
       document.body.addEventListener('click', requestNotifPermission, { once: true });
+      console.log('🚀 App initialized');
     }
     
-    // === Уведомления: разрешение ===
+    // === Уведомления ===
     async function requestNotifPermission() {
       if ('Notification' in window && Notification.permission === 'default') {
         try {
-          const perm = await Notification.requestPermission();
-          console.log('Notification permission:', perm);
+          await Notification.requestPermission();
         } catch(e) { console.log('Notif error', e); }
       }
     }
     
-    // === Уведомления: показать ===
     function showLocalNotification(title, body, tag, icon = null) {
       if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(title, { body, tag, icon, requireInteraction: true });
       } else if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.ready.then(reg => {
+        navigator.serviceWorker.ready?.then(reg => {
           reg.showNotification(title, { body, tag, icon, requireInteraction: true });
         });
       }
     }
     
-    // === Уведомления: планирование ===
     function scheduleTaskNotification(task) {
       if (!task.dueDate || !task.notify) return;
       const due = new Date(task.dueDate).getTime();
       const now = Date.now();
-      const remindAt = due - 15 * 60 * 1000; // за 15 минут
+      const remindAt = due - 15 * 60 * 1000;
       
-      if (remindAt <= now) return; // уже прошло
+      if (remindAt <= now) return;
       
-      // Сохраняем в localStorage
       notifSchedule[task.id] = { due: task.dueDate, remindAt };
       localStorage.setItem(NOTIF_KEY, JSON.stringify(notifSchedule));
       
-      // Планируем через setTimeout (работает пока вкладка открыта)
       const timeout = remindAt - now;
       setTimeout(() => {
         showLocalNotification('⏰ Напоминание', `Задача: ${task.title}`, `task-${task.id}`);
-        // Удаляем из расписания после срабатывания
         delete notifSchedule[task.id];
         localStorage.setItem(NOTIF_KEY, JSON.stringify(notifSchedule));
       }, timeout);
       
-      console.log(`🔔 Reminder scheduled for ${task.title} at ${new Date(remindAt).toLocaleString()}`);
+      console.log(`🔔 Reminder: ${task.title} at ${new Date(remindAt).toLocaleString()}`);
     }
     
-    // === Проверка дедлайнов (при запуске и периодически) ===
     function checkDueTasks() {
       const now = Date.now();
+      let changed = false;
+      
       tasks.forEach(t => {
         if (!t.dueDate || t.notified) return;
         const due = new Date(t.dueDate).getTime();
         
-        // Если дедлайн прошёл
         if (due < now) {
           if (t.notify) {
             showLocalNotification('❗ Просрочено', `Задача "${t.title}" просрочена!`, `task-${t.id}`);
           }
-          t.notified = true; // чтобы не спамить
-          save();
+          t.notified = true;
+          changed = true;
         }
-        // Если сейчас время напоминания (за 15 мин)
         else if (due - now <= 15 * 60 * 1000 && !t.reminded) {
           if (t.notify) {
-            showLocalNotification('⏰ Скоро дедлайн', `Задача: ${t.title}`, `task-${t.id}`);
+            showLocalNotification('⏰ Скоро дедлайн', `Задача: ${task.title}`, `task-${t.id}`);
           }
           t.reminded = true;
-          save();
+          changed = true;
         }
       });
+      
+      if (changed) saveTasks();
     }
     
     function scheduleReminderChecks() {
-      // Проверяем каждые 5 минут
       setInterval(checkDueTasks, 5 * 60 * 1000);
     }
     
-    // === Рендер списка задач ===
+    // === Рендер списка ===
     function renderList() {
       const query = $('searchInput').value.toLowerCase();
       const date = $('searchDate').value;
       const tag = $('searchTag').value;
       
       let filtered = tasks.filter(t => {
-        const matchQuery = !query || t.title.toLowerCase().includes(query) || (t.text||'').toLowerCase().includes(query);
-        const matchDate = !date || (t.dueDate && new Date(t.dueDate).toISOString().startsWith(date));
+        // Поиск по тексту
+        const matchQuery = !query || 
+          t.title.toLowerCase().includes(query) || 
+          (t.text||'').toLowerCase().includes(query);
+        
+        // 🔧 ИСПРАВЛЕНИЕ: фильтр по дате
+        // Показываем задачу, если:
+        // 1. Дата не выбрана ИЛИ
+        // 2. У задачи есть срок И он совпадает ИЛИ
+        // 3. У задачи НЕТ срока (показываем всегда при фильтре)
+        const taskDue = t.dueDate ? new Date(t.dueDate) : null;
+        const matchDate = !date || 
+          (taskDue && taskDue.toISOString().startsWith(date)) ||
+          (!taskDue); // 🔑 Ключевое: задачи без срока показываются всегда
+        
+        // Фильтр по тегу
         const matchTag = !tag || t.tags.includes(tag);
+        
         return matchQuery && matchDate && matchTag;
       });
       
-      // Сортировка: закреплённые → просроченные → сегодня → остальные
+      // Сортировка
       filtered.sort((a, b) => {
         if (a.pinned && !b.pinned) return -1;
         if (!a.pinned && b.pinned) return 1;
@@ -410,7 +463,7 @@
         if (aToday && !bToday) return -1;
         if (!aToday && bToday) return 1;
         
-        return (bDue || Infinity) - (aDue || Infinity);
+        return (bDue?.getTime() || Infinity) - (aDue?.getTime() || Infinity);
       });
       
       const list = $('taskList');
@@ -429,7 +482,6 @@
         const pin = t.pinned ? '<span class="pin-icon">📌</span>' : '';
         const tagsHtml = t.tags.map(tag => `<span class="tag tag-${tag}">${getTagName(tag)}</span>`).join('');
         
-        // Бейдж дедлайна
         let dueBadge = '';
         if (t.dueDate) {
           const due = new Date(t.dueDate);
@@ -457,7 +509,12 @@
       }).join('');
     }
     
-    // === Детальный просмотр ===
+    function clearDateFilter() {
+      $('searchDate').value = '';
+      renderList();
+    }
+    
+    // === Детали ===
     function openDetail(id) {
       const t = tasks.find(x => x.id === id);
       if (!t) return;
@@ -496,16 +553,15 @@
       $('detailView').classList.remove('active');
     }
     
-    // === Отложить задачу ===
     function snoozeTask(id) {
       const t = tasks.find(x => x.id === id);
       if (!t || !t.dueDate) return;
       const oldDue = new Date(t.dueDate);
-      const newDue = new Date(oldDue.getTime() + 60 * 60 * 1000); // +1 час
+      const newDue = new Date(oldDue.getTime() + 60 * 60 * 1000);
       t.dueDate = newDue.toISOString().slice(0, 16);
       t.notified = false;
       t.reminded = false;
-      save();
+      saveTasks();
       scheduleTaskNotification(t);
       openDetail(id);
       renderList();
@@ -526,17 +582,15 @@
         $('inputText').value = t.text || '';
         $('inputDue').value = t.dueDate ? t.dueDate.slice(0,16) : '';
         $('inputNotify').checked = t.notify !== false;
-        currentTags = [...t.tags];
+        currentTags = [...(t.tags || [])];
         $('inputPin').checked = t.pinned;
         renderSelectedTags();
       } else {
         $('modalTitle').textContent = 'Новая задача';
-        // Лимит пинов
         const pinnedCount = tasks.filter(t => t.pinned).length;
-        $('inputPin').disabled = pinnedCount >= 5 && !editingId;
-        if (pinnedCount >= 5 && !editingId) {
-          $('inputPin').title = 'Максимум 5 закреплённых задач';
-        }
+        $('inputPin').disabled = pinnedCount >= 5;
+        $('inputPin').title = pinnedCount >= 5 ? 'Максимум 5 закреплённых' : '';
+        
         // Дефолтный дедлайн: завтра 18:00
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -544,15 +598,18 @@
         $('inputDue').value = tomorrow.toISOString().slice(0, 16);
       }
       $('modal').classList.add('active');
-      $('inputTitle').focus();
+      setTimeout(() => $('inputTitle').focus(), 100);
     }
     
     function closeModal() {
       $('modal').classList.remove('active');
       editingId = null;
+      $('taskForm').reset();
+      currentTags = [];
+      $('selectedTags').innerHTML = '';
     }
     
-    // === Теги в модалке ===
+    // === Теги ===
     function addTagFromSelect() {
       const val = $('inputTagSelect').value;
       if (val && !currentTags.includes(val)) {
@@ -596,7 +653,8 @@
       
       const title = $('inputTitle').value.trim();
       const text = $('inputText').value.trim();
-      const dueDate = $('inputDue').value ? new Date($('inputDue').value).toISOString() : null;
+      const dueVal = $('inputDue').value;
+      const dueDate = dueVal ? new Date(dueVal).toISOString() : null;
       const notify = $('inputNotify').checked;
       const pinned = $('inputPin').checked;
       
@@ -604,14 +662,14 @@
       if (pinned && !editingId) {
         const pinnedCount = tasks.filter(t => t.pinned).length;
         if (pinnedCount >= 5) {
-          alert('Максимум 5 закреплённых задач. Сначала открепите одну.');
+          showToast('❌ Максимум 5 закреплённых задач', true);
           return;
         }
       }
       
       const now = Date.now();
       const task = {
-        id: editingId || uuid(),
+        id: editingId || generateId(),
         title,
         text,
         dueDate,
@@ -624,13 +682,16 @@
         reminded: false
       };
       
+      console.log('📝 Saving task:', task);
+      
       if (editingId) {
-        tasks = tasks.map(t => t.id === editingId ? task : t);
+        const idx = tasks.findIndex(t => t.id === editingId);
+        if (idx >= 0) tasks[idx] = task;
       } else {
         tasks.unshift(task);
       }
       
-      localStorage.setItem(DB_KEY, JSON.stringify(tasks));
+      if (!saveTasks()) return;
       
       // Планируем уведомление
       if (dueDate && notify) {
@@ -640,23 +701,24 @@
       closeModal();
       renderList();
       updateTagFilter();
+      showToast('✅ Задача сохранена');
+      console.log('✅ Task saved');
     }
     
-    // === Действия с задачей ===
+    // === Действия ===
     function editTask(id) {
       showList();
       setTimeout(() => openModal(id), 100);
     }
     
     function deleteTask(id) {
-      if (confirm('Удалить задачу?')) {
-        tasks = tasks.filter(t => t.id !== id);
-        // Удаляем из расписания уведомлений
-        delete notifSchedule[id];
-        localStorage.setItem(NOTIF_KEY, JSON.stringify(notifSchedule));
-        localStorage.setItem(DB_KEY, JSON.stringify(tasks));
+      if (!confirm('Удалить задачу?')) return;
+      tasks = tasks.filter(t => t.id !== id);
+      delete notifSchedule[id];
+      if (saveTasks()) {
         showList();
         renderList();
+        showToast('🗑️ Задача удалена');
       }
     }
     
@@ -667,13 +729,13 @@
       if (!t.pinned) {
         const pinnedCount = tasks.filter(x => x.pinned).length;
         if (pinnedCount >= 5) {
-          alert('Максимум 5 закреплённых задач');
+          showToast('❌ Максимум 5 закреплённых задач', true);
           return;
         }
       }
       t.pinned = !t.pinned;
       t.updatedAt = Date.now();
-      localStorage.setItem(DB_KEY, JSON.stringify(tasks));
+      saveTasks();
       openDetail(id);
       renderList();
     }
@@ -687,7 +749,7 @@
     
     function updateTagFilter() {
       const tags = new Set();
-      tasks.forEach(t => t.tags.forEach(tag => tags.add(tag)));
+      tasks.forEach(t => (t.tags||[]).forEach(tag => tags.add(tag)));
       const sel = $('searchTag');
       const current = sel.value;
       sel.innerHTML = '<option value="">Все теги</option>' + 
@@ -696,14 +758,12 @@
       sel.value = current;
     }
     
-    // === Тема ===
     function toggleTheme() {
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
       localStorage.setItem('theme', isDark ? 'light' : 'dark');
     }
     
-    // === Экспорт данных ===
     function exportData() {
       const data = { tasks, notifSchedule, exportedAt: new Date().toISOString() };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -713,9 +773,9 @@
       a.download = `tasks_backup_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
+      showToast('📥 Экспорт выполнен');
     }
     
-    // === Импорт данных ===
     function importData(input) {
       const file = input.files[0];
       if (!file) return;
@@ -725,18 +785,17 @@
           const data = JSON.parse(e.target.result);
           if (data.tasks) {
             tasks = data.tasks;
-            localStorage.setItem(DB_KEY, JSON.stringify(tasks));
+            notifSchedule = data.notifSchedule || {};
+            saveTasks();
+            renderList();
+            updateTagFilter();
+            checkDueTasks();
+            showToast('✅ Данные импортированы');
+          } else {
+            throw new Error('Неверный формат файла');
           }
-          if (data.notifSchedule) {
-            notifSchedule = data.notifSchedule;
-            localStorage.setItem(NOTIF_KEY, JSON.stringify(notifSchedule));
-          }
-          renderList();
-          updateTagFilter();
-          checkDueTasks();
-          alert('✅ Данные импортированы');
         } catch(err) {
-          alert('❌ Ошибка импорта: ' + err.message);
+          showToast('❌ Ошибка импорта: ' + err.message, true);
         }
         input.value = '';
       };
